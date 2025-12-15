@@ -211,3 +211,76 @@
     font-size: 24px;
   }
 }
+
+/* 이메일 input + 버튼 한 줄 배치 */
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row input {
+  flex: 1;
+}
+
+/* 중복확인 버튼 */
+.btn-outline {
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  border-color: #cbd5e1;
+}
+
+.btn-outline:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* 안내/에러 메시지 */
+.hint {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.hint.ok {
+  color: #059669;
+}
+
+.hint.err {
+  color: #dc2626;
+}
+
+.hint.info {
+  color: #6b7280;
+}
+
+/* 비밀번호 규칙 표시 */
+.pw-rules {
+  margin-top: 8px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pw-rules .ok {
+  color: #059669;
+}
+
+.pw-rules .err {
+  color: #dc2626;
+}
+
+/* 회원가입 버튼 disabled 처리 */
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
