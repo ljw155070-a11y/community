@@ -1,4 +1,4 @@
-package kr.co.community.main.dao;
+package kr.co.community.backend.main.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 

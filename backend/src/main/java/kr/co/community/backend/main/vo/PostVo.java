@@ -1,4 +1,4 @@
-package kr.co.community.main.vo;
+package kr.co.community.backend.main.vo;
 
 import java.sql.Date;
 
