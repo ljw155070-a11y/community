@@ -1,0 +1,150 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.login-box {
+  width: 360px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 40px 30px;
+}
+
+/* 로고 섹션 */
+.logo-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo-circle {
+  width: 56px;
+  height: 56px;
+  background-color: #2563eb;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.login-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.login-subtitle {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* 입력 필드 */
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  border-color: #2563eb;
+}
+
+.input-field::placeholder {
+  color: #9ca3af;
+}
+
+/* 로그인 버튼 */
+.login-button {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 16px;
+}
+
+.login-button:hover {
+  background-color: #1d4ed8;
+}
+
+.login-button:active {
+  background-color: #1e40af;
+}
+
+/* 링크 섹션 */
+.link-section {
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.link {
+  color: #2563eb;
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.divider {
+  color: #d1d5db;
+  margin: 0 8px;
+}
+
+/* 회원가입 섹션 */
+.signup-section {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.signup-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .login-box {
+    width: 90%;
+    padding: 30px 20px;
+  }
+}
