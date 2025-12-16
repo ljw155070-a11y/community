@@ -1,1 +1,254 @@
 @charset "UTF-8";
+
+/* 전체 초기화 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333;
+}
+
+/* 메인 배너 */
+.mainpage-banner {
+    background: #4169E1;
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+.mainpage-banner-content h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.mainpage-banner-content p {
+    font-size: 18px;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.mainpage-banner-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.mainpage-btn-primary {
+    background: white;
+    color: #4169E1;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mainpage-btn-secondary {
+    background: transparent;
+    color: white;
+    padding: 15px 40px;
+    border: 2px solid white;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* 커뮤니티 특징 */
+.mainpage-features {
+    padding: 80px 20px;
+    text-align: center;
+    background: white;
+}
+
+.mainpage-features h2 {
+    font-size: 36px;
+    margin-bottom: 60px;
+}
+
+.mainpage-feature-list {
+    display: flex;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.mainpage-feature-item {
+    flex: 1;
+    max-width: 350px;
+}
+
+.mainpage-feature-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+.mainpage-feature-item h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.mainpage-feature-item p {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* 인기 게시글 */
+.mainpage-posts {
+    padding: 80px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #f5f5f5;
+}
+
+.mainpage-posts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.mainpage-posts-header h2 {
+    font-size: 36px;
+}
+
+.mainpage-more-link {
+    color: #4169E1;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.mainpage-post-list {
+    display: flex;
+    gap: 30px;
+}
+
+.mainpage-post-card {
+    flex: 1;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 30px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.mainpage-post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.mainpage-post-tag {
+    display: inline-block;
+    background: #4169E1;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.mainpage-post-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.mainpage-post-card p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.mainpage-post-info {
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+    color: #999;
+}
+
+/* 공지사항 */
+.mainpage-notices {
+    padding: 80px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+}
+
+.mainpage-notices h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+}
+
+.mainpage-notice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mainpage-notice-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.mainpage-notice-badge {
+    background: #ff6b6b;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.mainpage-notice-title {
+    flex: 1;
+    font-size: 16px;
+}
+
+.mainpage-notice-date {
+    color: #999;
+    font-size: 14px;
+}
+
+/* 하단 배너 */
+.mainpage-bottom-banner {
+    background: #4169E1;
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.mainpage-bottom-content h2 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.mainpage-bottom-content p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.mainpage-btn-join {
+    background: white;
+    color: #4169E1;
+    padding: 15px 50px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
