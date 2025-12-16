@@ -135,7 +135,7 @@ export default function Signup() {
 
       // 서버로 GET 요청
       const res = await axios.get(
-        `${import.meta.env.VITE_BACK_SERVER}/api/auth/email-exists`,
+        `${import.meta.env.VITE_BACK_SERVER}/member/email-exists`,
         {
           params: { email: form.email },
         }
@@ -158,11 +158,45 @@ export default function Signup() {
 
   // 회원가입 버튼 클릭 시 실행
   const onSubmit = async () => {
-    // 조건 미충족 시 중단
+    // 조건 미충족이면 중단
     if (!canSubmit) return;
 
-    // 실제 회원가입 API는 나중에 연결
-    console.log("회원가입 요청 데이터", form);
+    try {
+      // (선택) 요청 시작 표시
+      // setLoading(true);
+
+      // ✅ 백엔드로 보낼 데이터 (DTO에 맞춰 이름 맞추기)
+      const payload = {
+        memberName: form.name, // 너 DTO에 memberName 있음
+        email: form.email, // DTO에 추가했다면 같이
+        password: form.password, // 보통은 password(원문) 보내고 백엔드에서 해시
+        // nickname: ...
+      };
+
+      // ✅ 회원가입 호출
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACK_SERVER}/member/signup`,
+        payload,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      // 백엔드 응답 예: { success: true }
+      if (res.data?.success) {
+        alert("회원가입 성공!");
+        // TODO: 가입 후 로그인 페이지로 이동
+        // navigate("/login");
+      } else {
+        alert("회원가입 실패(서버 응답)");
+      }
+    } catch (error) {
+      console.log("SIGNUP ERROR", error);
+      console.log("response", error?.response);
+      alert("회원가입 요청 실패(네트워크/서버 오류)");
+    } finally {
+      // setLoading(false);
+    }
   };
 
   // 화면 렌더링

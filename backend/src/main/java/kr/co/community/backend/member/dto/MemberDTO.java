@@ -1,7 +1,7 @@
 package kr.co.community.backend.member.dto;
 
+import java.util.Date;
 import org.apache.ibatis.type.Alias;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,16 +9,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Alias(value="/member")
+@Alias("member")
 public class MemberDTO {
-	private int memberId;			//pk
-	private String email;			//회원 로그인ID
-	private String passwordHash;	//암호화된 비밀번호(bcrypt)
-	private String name;			//회원 이름
-	private String nickname;		//회원 닉네임
-	private String role;			//회원 등급(일반회원인지 관리자인지)
-	private String status;			//회원 권한 상태(활성화/비활성화/정지)
-	private String createdAt;		//가입일
-	private String updatedAt;		//수정일
-	private String lastLoginAt;		//마지막 로그인 날짜
-}
+	  private Long memberId;       // MEMBER_ID
+	  private String email;        // EMAIL
+	  private String password;     // 프론트에서 받는 원문(백엔드에서 해시)
+	  private String passwordHash; // DB 저장용(선택: 서비스에서 세팅)
+	  private String name;         // NAME
+	  private String nickname;     // NICKNAME
+	  private String role;         // ROLE
+	  private String status;       // STATUS
+	  //private String createdAt;		//가입일
+	  //private String updatedAt;		//수정일
+	  //private String lastLoginAt;	//마지막 로그인 날짜
+	}
+
