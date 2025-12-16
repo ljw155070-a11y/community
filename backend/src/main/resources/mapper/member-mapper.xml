@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.co.community.backend.member.dao.MemberDao">
+
+
+  <!-- 이메일 중복 체크 -->
+  <select id="countByEmail" parameterType="string" resultType="int">
+    SELECT COUNT(*)
+    FROM MEMBER
+    WHERE EMAIL = #{email}
+  </select>
+
+  <!-- 회원가입 -->
+  <insert id="insertMember" parameterType="member">
+    INSERT INTO MEMBER (
+      MEMBER_ID,
+      EMAIL,
+      PASSWORD_HASH,
+      NAME,
+      NICKNAME,
+      ROLE,
+      STATUS,
+      CREATED_AT
+    ) VALUES (
+      MEMBER_SEQ.NEXTVAL,
+      #{email},
+      #{passwordHash},
+      #{name},
+      #{nickname},
+      #{role},
+      #{status},
+      SYSDATE
+    )
+  </insert>
+</mapper>
