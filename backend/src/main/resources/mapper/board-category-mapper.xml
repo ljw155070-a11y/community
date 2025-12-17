@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.community.backend.category.dao.BoardCategoryDao">
+
+  <select id="selectActiveCategories" resultType="boardCategory">
+    SELECT
+      CATEGORY_ID   AS categoryId,
+      CATEGORY_NAME AS categoryName,
+      SORT_ORDER    AS sortOrder,
+      IS_ACTIVE     AS isActive
+    FROM BOARD_CATEGORY
+    WHERE IS_ACTIVE = 'Y'
+    ORDER BY SORT_ORDER ASC, CATEGORY_ID ASC
+  </select>
+
+</mapper>

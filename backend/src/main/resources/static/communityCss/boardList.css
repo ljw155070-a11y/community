@@ -1,0 +1,246 @@
+body {
+  margin: 0;
+  color: #111827;
+  background: radial-gradient(
+      1200px 600px at 10% 10%,
+      rgba(37, 99, 235, 0.12),
+      transparent 55%
+    ),
+    radial-gradient(
+      900px 500px at 90% 20%,
+      rgba(16, 185, 129, 0.1),
+      transparent 55%
+    ),
+    #f5f7fb;
+    min-height : 1200px;
+}
+
+.bl-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 18px 80px;
+}
+
+.bl-head { margin: 8px 0 18px; }
+.bl-title { margin: 0 0 6px; font-size: 34px; font-weight: 900; letter-spacing: -0.02em; }
+.bl-sub { margin: 0; color: #6b7280; font-weight: 600; }
+
+.bl-toolbar {
+  margin-top: 18px;
+  background: #fff;
+  border: 1px solid #e9eef6;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+}
+
+.bl-search {
+  display: grid;
+  grid-template-columns: 1fr 120px 92px;
+  gap: 12px;
+  align-items: center;
+}
+
+.bl-search-input {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #d7dfec;
+  padding: 0 14px;
+  outline: none;
+  font-size: 14px;
+}
+
+.bl-search-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
+}
+
+.bl-sort-select {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #d7dfec;
+  padding: 0 12px;
+  background: #fff;
+}
+
+.bl-search-btn {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.bl-search-btn:hover { background: #1e4fd6; border-color: #1e4fd6; }
+
+.bl-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0 18px;
+}
+
+.bl-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid #e5eaf3;
+  background: #f8fafc;
+  color: #111827;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.bl-tab.is-active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.bl-list { display: flex; flex-direction: column; gap: 14px; }
+
+.bl-empty {
+  background: #fff;
+  border: 1px solid #e9eef6;
+  border-radius: 14px;
+  padding: 22px;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.bl-card {
+  background: #fff;
+  border: 1px solid #e9eef6;
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+}
+
+.bl-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+
+.bl-badge {
+  display: inline-flex;
+  height: 26px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #eef6ff;
+  border: 1px solid #cfe0ff;
+  color: #2563eb;
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.bl-date { color: #6b7280; font-weight: 700; font-size: 13px; }
+
+.bl-card-title { margin: 0 0 8px; font-size: 18px; font-weight: 900; letter-spacing: -0.01em; }
+.bl-card-desc { margin: 0 0 14px; color: #6b7280; font-weight: 600; line-height: 1.5; }
+
+/* ✅ 여기부터: 닉네임(작성자) “메타 정보”처럼 보이게 수정 */
+.bl-card-bottom{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.bl-author{
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.bl-author::before{
+  content: "작성자 · ";
+  font-weight: 500;
+  color: #94a3b8;
+}
+/* ✅ 여기까지 */
+
+.bl-metrics { display: flex; gap: 14px; color: #6b7280; font-weight: 800; }
+.bl-metric em { font-style: normal; margin-left: 6px; color: #111827; }
+
+/* =============================
+   Pagination (NEW)
+   ============================= */
+
+.bl-pagination {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 32px;
+}
+
+/* 공통 버튼 */
+.bl-page-btn,
+.bl-page-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  min-width: 48px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid #d7dfec;
+  background: #ffffff;
+  color: #374151;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+/* 숫자 버튼 기본 배경 */
+.bl-page-num {
+  background: #f8fafc;
+}
+
+/* hover */
+.bl-page-btn:hover,
+.bl-page-num:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* 현재 페이지 */
+.bl-page-num.is-active {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  border-color: #2563eb;
+  color: #ffffff;
+  font-weight: 900;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
+  transform: translateY(-2px);
+}
+
+/* 이전/다음/처음/끝 버튼은 살짝 단단하게 */
+.bl-page-btn {
+  font-weight: 800;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+/* 비활성 */
+.bl-page-btn.is-disabled {
+  opacity: 0.35;
+  pointer-events: none;
+  background: #f1f5f9;
+  border-color: #e5eaf3;
+  color: #9ca3af;
+}
+
+
+@media (max-width: 720px) {
+  .bl-search { grid-template-columns: 1fr; }
+}
