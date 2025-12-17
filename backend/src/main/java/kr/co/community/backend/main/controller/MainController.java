@@ -29,6 +29,9 @@ public class MainController {
 		model.addAttribute("postList", postList); //모달 어트리뷰트로 페이지에 보내기
 		model.addAttribute("noticeList", noticeList);
 		
+		System.out.println(postList);
+		System.out.println(noticeList);
+		
 		return "mainpage/mainpage";
 	}
 }
