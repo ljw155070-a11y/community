@@ -4,7 +4,7 @@
 
 /* ✅ 페이지 전체 배경 담당 래퍼 */
 .bw-wrap {
-  min-height: 100vh;
+  min-height: 70vh;
   padding: 48px 16px;
   display: flex;
   align-items: flex-start;
