@@ -1,34 +1,58 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./boardwrite.css"; // 파일명/대소문자 실제 파일과 완전 동일해야 함
+import "./boardwrite.css";
 
 const BoardWrite = () => {
   const navigate = useNavigate();
 
-  // ✅ DB는 CATEGORY_ID라서 숫자로 관리하는 게 정석
-  const [categoryId, setCategoryId] = useState(1); // 1: 자유, 2: 공지(예시)
+  const [categories, setCategories] = useState([]);
+  const [categoryId, setCategoryId] = useState(""); // 처음엔 비워두고 API로 채움
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ✅ 카테고리 목록 불러오기
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACK_SERVER}/category/list`
+        );
+
+        const list = res?.data?.list ?? [];
+        setCategories(list);
+
+        // 기본 선택값: 첫 번째 카테고리
+        if (list.length > 0) {
+          setCategoryId(list[0].categoryId);
+        }
+      } catch (e) {
+        console.error(e);
+        alert("카테고리 목록을 불러오지 못했습니다.");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const submitPost = async () => {
+    if (!categoryId) return alert("카테고리를 선택해주세요.");
     if (!title.trim()) return alert("제목을 입력해주세요.");
     if (!content.trim()) return alert("내용을 입력해주세요.");
 
     try {
       setLoading(true);
 
-      // ✅ 로그인 붙이기 전 임시 authorId
-      //    (나중에 JWT 붙으면 여기에서 빼고 백엔드에서 인증정보로 처리)
+      // ✅ JWT 완료 전 임시 authorId
+      //    JWT 완료되면 이 필드 자체를 보내지 않는 게 정석이고,
+      //    백엔드에서 토큰으로 authorId를 세팅하도록 바꿔.
       const authorId = 1;
 
-      // ✅ 백엔드: POST http://localhost:9999/post/write
-      // ✅ DTO: categoryId, authorId, title, content
       const res = await axios.post(
         `${import.meta.env.VITE_BACK_SERVER}/post/write`,
         {
-          categoryId,
+          categoryId: Number(categoryId),
           authorId,
           title,
           content,
@@ -51,7 +75,6 @@ const BoardWrite = () => {
 
   return (
     <div className="bw-page">
-      {/* 상단: 뒤로가기 */}
       <div className="bw-top">
         <button className="bw-back" type="button" onClick={() => navigate(-1)}>
           <span className="bw-back-icon" aria-hidden="true">
@@ -61,26 +84,29 @@ const BoardWrite = () => {
         </button>
       </div>
 
-      {/* 타이틀 */}
       <h1 className="bw-title">글쓰기</h1>
 
-      {/* 카드 */}
       <div className="bw-card">
-        {/* 카테고리 */}
         <div className="bw-field">
           <label className="bw-label">카테고리</label>
           <select
             className="bw-control"
             value={categoryId}
-            onChange={(e) => setCategoryId(Number(e.target.value))}
+            onChange={(e) => setCategoryId(e.target.value)}
+            disabled={categories.length === 0}
           >
-            {/* ✅ 여기 숫자는 너 DB의 CATEGORY 테이블/코드에 맞춰서 수정 */}
-            <option value={1}>자유</option>
-            <option value={2}>공지</option>
+            {categories.length === 0 ? (
+              <option value="">카테고리 불러오는 중...</option>
+            ) : (
+              categories.map((c) => (
+                <option key={c.categoryId} value={c.categoryId}>
+                  {c.categoryName}
+                </option>
+              ))
+            )}
           </select>
         </div>
 
-        {/* 제목 */}
         <div className="bw-field">
           <label className="bw-label">제목</label>
           <input
@@ -92,7 +118,6 @@ const BoardWrite = () => {
           />
         </div>
 
-        {/* 내용 */}
         <div className="bw-field">
           <label className="bw-label">내용</label>
           <textarea
@@ -103,7 +128,6 @@ const BoardWrite = () => {
           />
         </div>
 
-        {/* 가이드 박스 */}
         <div className="bw-guide" role="note" aria-label="커뮤니티 가이드 안내">
           <span className="bw-guide-icon" aria-hidden="true">
             💡
@@ -118,7 +142,6 @@ const BoardWrite = () => {
           </p>
         </div>
 
-        {/* 버튼 */}
         <div className="bw-actions">
           <button
             className="bw-btn bw-btn-ghost"
