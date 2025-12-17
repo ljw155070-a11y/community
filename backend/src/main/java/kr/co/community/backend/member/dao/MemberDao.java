@@ -17,4 +17,6 @@ public interface MemberDao {
     Integer selectMaxNicknameSuffix(@Param("base") String base);
     
     int insertMember(MemberDTO dto);
+    
+    MemberDTO selectMemberByEmail(String username);
 }
