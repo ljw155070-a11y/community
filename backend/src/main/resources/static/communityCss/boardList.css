@@ -12,7 +12,7 @@ body {
       transparent 55%
     ),
     #f5f7fb;
-    min-height : 1200px;
+  min-height: 1200px;
 }
 
 .bl-wrap {
@@ -116,6 +116,8 @@ body {
 }
 
 .bl-card {
+  position: relative; /* ✅ hover 버튼 띄우기 위해 필요 */
+  overflow: hidden;
   background: #fff;
   border: 1px solid #e9eef6;
   border-radius: 14px;
@@ -143,7 +145,7 @@ body {
 .bl-card-title { margin: 0 0 8px; font-size: 18px; font-weight: 900; letter-spacing: -0.01em; }
 .bl-card-desc { margin: 0 0 14px; color: #6b7280; font-weight: 600; line-height: 1.5; }
 
-/* ✅ 여기부터: 닉네임(작성자) “메타 정보”처럼 보이게 수정 */
+/* ✅ 작성자 라인 */
 .bl-card-bottom{
   display: flex;
   align-items: center;
@@ -164,82 +166,92 @@ body {
   font-weight: 500;
   color: #94a3b8;
 }
-/* ✅ 여기까지 */
 
 .bl-metrics { display: flex; gap: 14px; color: #6b7280; font-weight: 800; }
 .bl-metric em { font-style: normal; margin-left: 6px; color: #111827; }
 
-/* =============================
-   Pagination (NEW)
-   ============================= */
+/* ✅ hover 시 뜨는 수정 버튼 */
+.bl-card-actions{
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: all 0.18s ease;
+  pointer-events: none;
+}
 
+.bl-card:hover .bl-card-actions{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.bl-edit-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  background: rgba(37, 99, 235, 0.10);
+  color: #1d4ed8;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.10);
+}
+
+.bl-edit-btn:hover{
+  background: rgba(37, 99, 235, 0.16);
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+/* ✅ pagination 디자인 업그레이드 */
 .bl-pagination {
   display: flex;
   gap: 10px;
   justify-content: center;
-  align-items: center;
-  margin-top: 32px;
+  margin-top: 24px;
+  flex-wrap: wrap;
 }
 
-/* 공통 버튼 */
-.bl-page-btn,
-.bl-page-num {
+.bl-page-btn, .bl-page-num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 44px;
-  min-width: 48px;
-  padding: 0 16px;
+  height: 42px;
+  min-width: 46px;
+  padding: 0 14px;
   border-radius: 14px;
-  border: 1px solid #d7dfec;
-  background: #ffffff;
-  color: #374151;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  background: rgba(255,255,255,0.85);
+  color: #0f172a;
   text-decoration: none;
-  font-weight: 700;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-/* 숫자 버튼 기본 배경 */
-.bl-page-num {
-  background: #f8fafc;
-}
-
-/* hover */
-.bl-page-btn:hover,
-.bl-page-num:hover {
-  background: #eef2ff;
-  border-color: #c7d2fe;
-  color: #1d4ed8;
-  transform: translateY(-1px);
-}
-
-/* 현재 페이지 */
-.bl-page-num.is-active {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-  border-color: #2563eb;
-  color: #ffffff;
   font-weight: 900;
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
-  transform: translateY(-2px);
+  letter-spacing: -0.01em;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
-/* 이전/다음/처음/끝 버튼은 살짝 단단하게 */
-.bl-page-btn {
-  font-weight: 800;
-  background: #ffffff;
-  color: #1f2937;
+.bl-page-btn:hover, .bl-page-num:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.10);
+  background: #fff;
 }
 
-/* 비활성 */
+.bl-page-num.is-active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.30);
+}
+
 .bl-page-btn.is-disabled {
-  opacity: 0.35;
+  opacity: 0.45;
   pointer-events: none;
-  background: #f1f5f9;
-  border-color: #e5eaf3;
-  color: #9ca3af;
+  box-shadow: none;
 }
-
 
 @media (max-width: 720px) {
   .bl-search { grid-template-columns: 1fr; }
