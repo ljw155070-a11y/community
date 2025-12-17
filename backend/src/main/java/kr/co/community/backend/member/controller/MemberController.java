@@ -23,10 +23,12 @@ public class MemberController {
 	@Autowired
 	private MemberService memberService;
 
+	/*
 	// ✅ 로그인
 	@ResponseBody
 	@PostMapping(value = "/login")
 	public String login(MemberDTO member) {
+
 		MemberDTO m = memberService.login(member);
 		if (m != null) {
 
@@ -34,7 +36,9 @@ public class MemberController {
 
 		}
 		return m;
+		
 	}
+*/
 
 	// ✅ 이메일 중복 체크
 	// GET http://localhost:9999/member/email-exists?email=aaa@bbb.com
