@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/communityCss/header.css">
+</head>
+<body>
+    <header th:fragment="header" class="header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">◀</span>
+                <span class="logo-text">커뮤니티</span>
+            </div>
+            
+            <nav class="header-nav">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/board" class="nav-link">게시판</a>
+                <a href="/notice" class="nav-link">공지</a>
+            </nav>
+            
+            <div class="header-right">
+                <button class="btn-login" onclick="location.href='/login'">로그인</button>
+                <button class="btn-signup" onclick="location.href='/signup'">회원가입</button>
+            </div>
+        </div>
+    </header>
+</body>
+</html>

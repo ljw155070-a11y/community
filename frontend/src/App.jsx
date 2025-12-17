@@ -4,14 +4,23 @@ import Login from "./components/common/Login";
 import BoardWrite from "./components/board/BoardWrite";
 import BoardEditPage from "./components/board/BoardEditPage";
 
+import Header from "./components/common/Header";
+import Footer from "./components/common/Footer";
+
 function App() {
   return (
-    <Routes>
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/boardwrite" element={<BoardWrite />} />
-      <Route path="/boardEditePage/:postId" element={<BoardEditPage />} />
-    </Routes>
+    <div className="wrap">
+      <Header></Header>
+      <main className="section">
+        <Routes>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/boardwrite" element={<BoardWrite />} />
+          <Route path="/boardEditePage/:postId" element={<BoardEditPage />} />
+        </Routes>
+      </main>
+      <Footer></Footer>
+    </div>
   );
 }
 
