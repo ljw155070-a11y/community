@@ -7,7 +7,7 @@
   <link rel="stylesheet" th:href="@{/communityCss/boardList.css}" />
 </head>
 <body>
-
+<th:block th:include="common/header"></th:block>
   <!-- 프로젝트에서 header fragment 쓰는 중이면 이걸로 교체 -->
   <!-- <div th:replace="fragments/header :: headerFrag"></div> -->
 
@@ -125,6 +125,6 @@
     </section>
 
   </main>
-
+<th:block th:include="common/footer"></th:block>
 </body>
 </html>
