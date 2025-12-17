@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
 import kr.co.community.backend.post.dao.PostSsrDao;
+import kr.co.community.backend.post.dto.PostDTO;
 import kr.co.community.backend.post.dto.PostListDTO;
 import lombok.RequiredArgsConstructor;
 
@@ -51,4 +52,6 @@ public class PostSsrService {
 
         return result;
     }
+
+
 }

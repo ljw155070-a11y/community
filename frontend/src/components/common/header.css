@@ -72,6 +72,7 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s;
+  text-decoration: none;
 }
 
 .btn-login:hover {
@@ -88,6 +89,7 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.2s;
+  text-decoration: none;
 }
 
 .btn-signup:hover {

@@ -1,5 +1,6 @@
 package kr.co.community.backend.post.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,7 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpSession;
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
+import kr.co.community.backend.post.dto.PostDTO;
 import kr.co.community.backend.post.service.PostSsrService;
 import lombok.RequiredArgsConstructor;
 
@@ -69,5 +72,19 @@ public class PostSsrController {
         model.addAttribute("nextPage", nextPage);
 
         return "board/boardList";
+    }
+    @GetMapping("/postDetail/{postId}")
+    public String getPostDetail(@PathVariable Long postId, Model model, HttpSession session) {
+        // 더미 데이터
+        PostDTO dummyPost = new PostDTO();
+        dummyPost.setPostId(postId);
+        dummyPost.setTitle("테스트 제목");
+        dummyPost.setContent("테스트 내용입니다.");
+        dummyPost.setViewCount(100);
+        dummyPost.setCommentCount(5);
+        dummyPost.setLikeCount(10);
+        
+        model.addAttribute("post", dummyPost);
+        return "post/postDetail";
     }
 }

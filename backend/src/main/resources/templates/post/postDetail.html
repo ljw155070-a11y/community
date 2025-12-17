@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title th:text="${post.title} + ' - 커뮤니티'">게시글 - 커뮤니티</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+            'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        background-color: #f9fafb;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    main {
+        flex: 1;
+        max-width: 800px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    /* 뒤로가기 버튼 */
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        padding: 0.5rem 0;
+        transition: color 0.2s;
+    }
+    
+    .back-button:hover {
+        color: #2563eb;
+    }
+    
+    .back-button svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* 게시글 컨테이너 */
+    .post-container {
+        background-color: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+    }
+    
+    /* 게시글 헤더 */
+    .post-header {
+        padding: 2rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .post-category {
+        display: inline-block;
+        padding: 0.375rem 0.75rem;
+        background-color: #dbeafe;
+        color: #2563eb;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+    }
+    
+    .post-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+    
+    .post-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+    
+    .author-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .author-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e5e7eb;
+    }
+    
+    .author-name {
+        font-weight: 500;
+        color: #1f2937;
+    }
+    
+    .post-date {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .post-stats {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: auto;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .stat-item svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* 게시글 본문 */
+    .post-content {
+        padding: 2rem;
+        color: #374151;
+        font-size: 1rem;
+        line-height: 1.8;
+        word-break: break-word;
+    }
+    
+    .post-content p {
+        margin-bottom: 1rem;
+    }
+    
+    /* 게시글 액션 버튼 */
+    .post-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.5rem 2rem;
+        border-top: 1px solid #e5e7eb;
+    }
+    
+    .action-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1rem;
+        border: 1px solid #e5e7eb;
+        background-color: white;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .action-button:hover {
+        background-color: #f9fafb;
+        border-color: #d1d5db;
+    }
+    
+    .action-button.liked {
+        color: #ef4444;
+        border-color: #fecaca;
+        background-color: #fef2f2;
+    }
+    
+    .action-button svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .share-button {
+        margin-left: auto;
+    }
+    
+    /* 댓글 섹션 */
+    .comments-section {
+        margin-top: 2rem;
+        background-color: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+    }
+    
+    .comments-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .comments-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+    
+    .comments-count {
+        color: #2563eb;
+    }
+    
+    /* 댓글 작성 폼 */
+    .comment-form {
+        padding: 2rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .comment-notice {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+    }
+    
+    .comment-notice a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .comment-notice a:hover {
+        text-decoration: underline;
+    }
+    
+    .comment-textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        resize: vertical;
+        transition: border-color 0.2s;
+    }
+    
+    .comment-textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+    }
+    
+    .comment-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+    
+    .submit-comment-btn {
+        padding: 0.75rem 1.5rem;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .submit-comment-btn:hover {
+        background-color: #1d4ed8;
+    }
+    
+    .submit-comment-btn:disabled {
+        background-color: #9ca3af;
+        cursor: not-allowed;
+    }
+    
+    /* 댓글 리스트 */
+    .comments-list {
+        padding: 0;
+    }
+    
+    .comment-item {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .comment-item:last-child {
+        border-bottom: none;
+    }
+    
+    .comment-author {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .comment-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e5e7eb;
+    }
+    
+    .comment-author-info {
+        flex: 1;
+    }
+    
+    .comment-author-name {
+        font-weight: 500;
+        color: #1f2937;
+        font-size: 0.95rem;
+    }
+    
+    .comment-date {
+        color: #9ca3af;
+        font-size: 0.85rem;
+    }
+    
+    .comment-content {
+        color: #374151;
+        line-height: 1.6;
+        margin-left: 3rem;
+    }
+    
+    .empty-comments {
+        padding: 3rem 2rem;
+        text-align: center;
+        color: #9ca3af;
+    }
+    
+    /* 반응형 디자인 */
+    @media (max-width: 768px) {
+        main {
+            padding: 1rem 0.5rem;
+        }
+        
+        .post-header {
+            padding: 1.5rem 1rem;
+        }
+        
+        .post-title {
+            font-size: 1.5rem;
+        }
+        
+        .post-meta {
+            flex-wrap: wrap;
+        }
+        
+        .post-stats {
+            margin-left: 0;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        
+        .post-content {
+            padding: 1.5rem 1rem;
+        }
+        
+        .post-actions {
+            padding: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .share-button {
+            margin-left: 0;
+        }
+        
+        .comments-header {
+            padding: 1rem;
+        }
+        
+        .comment-form {
+            padding: 1rem;
+        }
+        
+        .comment-item {
+            padding: 1rem;
+        }
+        
+        .comment-content {
+            margin-left: 0;
+            margin-top: 0.5rem;
+        }
+    }
+</style>
+</head>
+<body>
+<th:block th:include="common/header"></th:block>
+    <main>
+        <!-- 뒤로가기 버튼 -->
+        <a href="/board" class="back-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            목록으로
+        </a>
+        
+        <!-- 게시글 컨테이너 -->
+        <div class="post-container">
+            <!-- 게시글 헤더 -->
+            <div class="post-header">
+                <span class="post-category" th:text="${post.category}">질문</span>
+                <h1 class="post-title" th:text="${post.title}">주말에 뭐 하세요?</h1>
+                
+                <div class="post-meta">
+                    <div class="author-info">
+                        <img th:src="${post.author.profileImage}" 
+                             alt="작성자" 
+                             class="author-avatar"
+                             onerror="this.src='/images/default-profile.png'">
+                        <span class="author-name" th:text="${post.author.name}">최여생</span>
+                    </div>
+                    <span class="post-date">
+                        <span th:text="${#temporals.format(post.createdAt, 'yyyy. MM. dd.')}">2024. 12. 14.</span>
+                        오후
+                        <span th:text="${#temporals.format(post.createdAt, 'h:mm')}">4:30:00</span>
+                    </span>
+                    <div class="post-stats">
+                        <span class="stat-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span th:text="${post.viewCount}">134</span>
+                        </span>
+                        <span class="stat-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            <span th:text="${post.commentCount}">0</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 게시글 본문 -->
+            <div class="post-content">
+                <p th:utext="${post.content}">ex) 뭐먹지?</p>
+            </div>
+            
+            <!-- 게시글 액션 버튼 -->
+            <div class="post-actions">
+                <button class="action-button" id="likeButton" 
+                        th:classappend="${post.isLiked} ? 'liked' : ''"
+                        onclick="toggleLike()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span id="likeCount" th:text="${post.likeCount}">18</span>
+                </button>
+                
+                <button class="action-button share-button" onclick="sharePost()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                    공유
+                </button>
+                
+                <button class="action-button" onclick="reportPost()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    신고
+                </button>
+            </div>
+        </div>
+        
+        <!-- 댓글 섹션 -->
+        <div class="comments-section">
+            <div class="comments-header">
+                <h2 class="comments-title">
+                    댓글 <span class="comments-count" th:text="${post.commentCount}">0</span>
+                </h2>
+            </div>
+            
+            <!-- 댓글 작성 폼 (로그인 했을 때만) -->
+            <div th:if="${session.member != null}" class="comment-form">
+                <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post">
+                    <textarea 
+                        name="content" 
+                        class="comment-textarea" 
+                        placeholder="댓글을 작성해주세요"
+                        required></textarea>
+                    <div class="comment-form-actions">
+                        <button type="submit" class="submit-comment-btn">댓글 작성</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- 로그인 안했을 때 -->
+            <div th:if="${session.member == null}" class="comment-notice">
+                댓글을 작성하려면 <a href="/login">로그인</a>이 필요합니다.
+            </div>
+            
+            <!-- 댓글 리스트 -->
+            <div class="comments-list">
+                <!-- 댓글이 있을 때 -->
+                <div th:if="${post.comments != null and !post.comments.isEmpty()}">
+                    <div class="comment-item" th:each="comment : ${post.comments}">
+                        <div class="comment-author">
+                            <img th:src="${comment.author.profileImage}" 
+                                 alt="작성자" 
+                                 class="comment-avatar"
+                                 onerror="this.src='/images/default-profile.png'">
+                            <div class="comment-author-info">
+                                <div class="comment-author-name" th:text="${comment.author.name}">홍길동</div>
+                                <div class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy. MM. dd. HH:mm')}">2024. 12. 14. 16:30</div>
+                            </div>
+                        </div>
+                        <div class="comment-content" th:text="${comment.content}">
+                            좋은 글 감사합니다!
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 댓글이 없을 때 -->
+                <div th:if="${post.comment == null or post.comment.isEmpty()}" class="empty-comments">
+                    첫 번째 댓글을 작성해보세요!
+                </div>
+            </div>
+        </div>
+    </main>
+    <th:block th:include="common/footer"></th:block>
+    <script>
+        // 좋아요 토글
+        function toggleLike() {
+            const button = document.getElementById('likeButton');
+            const countSpan = document.getElementById('likeCount');
+            const postId = /*[[${post.id}]]*/ 1;
+            
+            fetch(`/posts/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                button.classList.toggle('liked');
+                countSpan.textContent = data.likeCount;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        // 공유하기
+        function sharePost() {
+            if (navigator.share) {
+                navigator.share({
+                    title: /*[[${post.title}]]*/ '게시글',
+                    url: window.location.href
+                });
+            } else {
+                // 클립보드 복사
+                navigator.clipboard.writeText(window.location.href);
+                alert('링크가 복사되었습니다!');
+            }
+        }
+        
+        // 신고하기
+        function reportPost() {
+            if (confirm('이 게시글을 신고하시겠습니까?')) {
+                // 신고 로직
+                alert('신고가 접수되었습니다.');
+            }
+        }
+    </script>
+</body>
+</html>

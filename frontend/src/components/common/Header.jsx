@@ -52,7 +52,6 @@ const Header = () => {
           <Link className="btn-signup" to="/signup">
             회원가입
           </Link>
-
           <a href="/notifications" className="notification-link">
             <svg
               className="notification-icon"
@@ -71,12 +70,14 @@ const Header = () => {
 
           <div className="profile-dropdown" ref={dropdownRef}>
             <button className="profile-button" onClick={toggleDropdown}>
+              {/* 회원 이미지 넣을 시 적용 or 기본이미지 삽입?
               <img
                 src="/images/profile.jpg"
                 alt="프로필"
                 className="profile-image"
                 onError={(e) => (e.target.src = "/images/default-profile.png")}
               />
+              */}
               <span className="profile-name">홍길동</span>
             </button>
 
