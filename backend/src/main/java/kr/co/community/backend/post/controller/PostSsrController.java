@@ -18,6 +18,7 @@ public class PostSsrController {
 
     private final PostSsrService postSsrService;
 
+    // ✅ SSR 게시판 목록 (비로그인)
     @GetMapping("")
     public String boardList(
             @RequestParam(value = "categoryId", required = false) Long categoryId,
@@ -29,51 +30,39 @@ public class PostSsrController {
 
         List<BoardCategoryDTO> categories = postSsrService.getActiveCategories();
 
-        int size = 5;
-        Map<String, Object> listResult =
-                postSsrService.getPostList(categoryId, q, sort, page, size);
+        int size = 5; // 화면 카드 기준
+        Map<String, Object> listResult = postSsrService.getPostList(categoryId, q, sort, page, size);
 
         int totalPages = (int) listResult.get("totalPages");
+        int currentPage = (int) listResult.get("page");
 
-        // ✅ totalPages가 0일 수도 있으니 방어
-        if (totalPages < 1) totalPages = 1;
-
-        // ✅ page도 범위 보정
-        if (page < 1) page = 1;
-        if (page > totalPages) page = totalPages;
-
-        /* ===============================
-           ✅ 페이지 번호 5개 + 중앙 정렬
-           =============================== */
+        // ✅ 페이지네이션: 5개씩 노출 + 현재 페이지가 중앙에 오도록
         int window = 5;
-        int startPage = page - 2;          // 현재 페이지가 3번째
+        int half = window / 2; // 3
+
+        int startPage = Math.max(1, currentPage - half);
         int endPage = startPage + window - 1;
 
-        if (startPage < 1) {
-            startPage = 1;
-            endPage = Math.min(window, totalPages);
-        }
         if (endPage > totalPages) {
             endPage = totalPages;
             startPage = Math.max(1, endPage - window + 1);
         }
 
-        /* ===============================
-           ✅ 이전 / 다음 : -5 / +5
-           =============================== */
-        int prevPage = Math.max(1, page - 5);
-        int nextPage = Math.min(totalPages, page + 5);
+        // ✅ 이전/다음: -5 / +5 점프
+        int prevPage = Math.max(1, currentPage - 5);
+        int nextPage = Math.min(totalPages, currentPage + 5);
 
         model.addAttribute("categories", categories);
-        model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("selectedCategoryId", categoryId); // null이면 전체
         model.addAttribute("q", q == null ? "" : q);
         model.addAttribute("sort", sort);
 
         model.addAttribute("posts", listResult.get("posts"));
-        model.addAttribute("page", page);
+        model.addAttribute("page", currentPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("total", listResult.get("total"));
 
+        // ✅ pagination 관련
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("prevPage", prevPage);
