@@ -17,12 +17,81 @@
                 <a href="/board" class="nav-link">게시판</a>
                 <a href="/notice" class="nav-link">공지</a>
             </nav>
-            
             <div class="header-right">
+            <th:block th:if="${session.member == null}">
                 <button class="btn-login" onclick="location.href='/login'">로그인</button>
                 <button class="btn-signup" onclick="location.href='/signup'">회원가입</button>
+            </th:block>
+            <th:block th:if="${session.member != null}">
+                <a href="/notifications" class="notification-link">
+                    <svg class="notification-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="notification-badge" th:if="${unreadCount > 0}"></span>
+                </a>
+                
+                <div class="profile-dropdown">
+                    <button class="profile-button" onclick="toggleDropdown()">
+                        <img th:src="${session.member.profileImage}" 
+                             alt="프로필" 
+                             class="profile-image"
+                             onerror="this.src='/images/default-profile.png'">
+                        <span class="profile-name" th:text="${session.member.nickName}">홍길동</span>
+                    </button>
+                    
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="/profile" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>내 프로필</span>
+                        </a>
+                        <a href="/settings" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M12 1v6m0 6v6m-6-6H0m12 0h6"></path>
+                            </svg>
+                            <span>설정</span>
+                        </a>
+                        <a href="/my-posts" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            <span>내 게시글</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout" class="dropdown-item logout">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>로그아웃</span>
+                        </a>
+                    </div>
+                </div>
+            </th:block>
             </div>
         </div>
     </header>
+    <script>
+       function toggleDropdown() {
+           const dropdown = document.getElementById('dropdownMenu');
+           dropdown.classList.toggle('active');
+       }
+
+       // 외부 클릭시 드롭다운 닫기
+       document.addEventListener('click', function(e) {
+           const profileDropdown = document.querySelector('.profile-dropdown');
+           const dropdown = document.getElementById('dropdownMenu');
+           
+           if (profileDropdown && !profileDropdown.contains(e.target)) {
+               dropdown.classList.remove('active');
+           }
+       });
+     </script>
 </body>
 </html>
