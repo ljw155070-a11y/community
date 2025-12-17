@@ -2,57 +2,57 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.community.backend.main.dao.MainDao">
 
-	<select id="getPostList" resultType="post">
-		SELECT * FROM (
-		    SELECT p.title, m.nickname, c.category_name, p.view_count, p.like_count, p.comment_count, p.created_at, p.post_id
-		    FROM post p
-		    JOIN member m ON p.author_id = m.member_id
-		    JOIN board_category c ON p.category_id = c.category_id
-		    WHERE p.is_deleted = 'N'
-		    ORDER BY p.view_count DESC
-		) WHERE ROWNUM <![CDATA[<=]]> 4
-		
-		UNION
-		
-		SELECT * FROM (
-		    SELECT p.title, m.nickname, c.category_name, p.view_count, p.like_count, p.comment_count, p.created_at, p.post_id
-		    FROM post p
-		    JOIN member m ON p.author_id = m.member_id
-		    JOIN board_category c ON p.category_id = c.category_id
-		    WHERE p.is_deleted = 'N'
-		    AND p.post_id NOT IN (
-		        SELECT post_id FROM (
-		            SELECT post_id FROM post WHERE is_deleted = 'N' ORDER BY view_count DESC
-		        ) WHERE ROWNUM <![CDATA[<=]]> 4
-		    )
-		    ORDER BY p.like_count DESC
-		) WHERE ROWNUM <![CDATA[<=]]> 4
-		
-		UNION
-		
-		SELECT * FROM (
-		    SELECT p.title, m.nickname, c.category_name, p.view_count, p.like_count, p.comment_count, p.created_at, p.post_id
-		    FROM post p
-		    JOIN member m ON p.author_id = m.member_id
-		    JOIN board_category c ON p.category_id = c.category_id
-		    WHERE p.is_deleted = 'N'
-		    AND p.post_id NOT IN (
-		        SELECT post_id FROM (
-		            SELECT post_id FROM post WHERE is_deleted = 'N' ORDER BY view_count DESC
-		        ) WHERE ROWNUM <![CDATA[<=]]> 4
-		    )
-		    AND p.post_id NOT IN (
-		        SELECT post_id FROM (
-		            SELECT post_id FROM post WHERE is_deleted = 'N'
-		            AND post_id NOT IN (
-		                SELECT post_id FROM (SELECT post_id FROM post WHERE is_deleted = 'N' ORDER BY view_count DESC) WHERE ROWNUM <![CDATA[<=]]> 4
-		            )
-		            ORDER BY like_count DESC
-		        ) WHERE ROWNUM <![CDATA[<=]]> 4
-		    )
-		    ORDER BY p.comment_count DESC
-		) WHERE ROWNUM <![CDATA[<=]]> 4
-	</select>
+<select id="getPostList" resultType="post">
+    SELECT * FROM (
+        SELECT p.title, m.nickname, c.category_name, p.view_count, p.like_count, p.comment_count, p.created_at, p.post_id
+        FROM post p
+        JOIN member m ON p.author_id = m.member_id
+        JOIN board_category c ON p.category_id = c.category_id
+        WHERE p.is_deleted = 'N'
+        ORDER BY p.view_count DESC
+    ) WHERE ROWNUM <![CDATA[<=]]> 4
+    
+    UNION
+    
+    SELECT * FROM (
+        SELECT p.title, m.nickname, c.category_name, p.view_count, p.like_count, p.comment_count, p.created_at, p.post_id
+        FROM post p
+        JOIN member m ON p.author_id = m.member_id
+        JOIN board_category c ON p.category_id = c.category_id
+        WHERE p.is_deleted = 'N'
+        AND p.post_id NOT IN (
+            SELECT post_id FROM (
+                SELECT post_id FROM post WHERE is_deleted = 'N' ORDER BY view_count DESC
+            ) WHERE ROWNUM <![CDATA[<=]]> 4
+        )
+        ORDER BY p.like_count DESC
+    ) WHERE ROWNUM <![CDATA[<=]]> 4
+    
+    UNION
+    
+    SELECT * FROM (
+        SELECT p.title, m.nickname, c.category_name, p.view_count, p.like_count, p.comment_count, p.created_at, p.post_id
+        FROM post p
+        JOIN member m ON p.author_id = m.member_id
+        JOIN board_category c ON p.category_id = c.category_id
+        WHERE p.is_deleted = 'N'
+        AND p.post_id NOT IN (
+            SELECT post_id FROM (
+                SELECT post_id FROM post WHERE is_deleted = 'N' ORDER BY view_count DESC
+            ) WHERE ROWNUM <![CDATA[<=]]> 4
+        )
+        AND p.post_id NOT IN (
+            SELECT post_id FROM (
+                SELECT post_id FROM post WHERE is_deleted = 'N' 
+                AND post_id NOT IN (
+                    SELECT post_id FROM (SELECT post_id FROM post WHERE is_deleted = 'N' ORDER BY view_count DESC) WHERE ROWNUM <![CDATA[<=]]> 4
+                )
+                ORDER BY like_count DESC
+            ) WHERE ROWNUM <![CDATA[<=]]> 4
+        )
+        ORDER BY p.comment_count DESC
+    ) WHERE ROWNUM <![CDATA[<=]]> 4
+</select>
 
 	<select id="getNoticeList" resultType="notice">
 		SELECT * FROM (

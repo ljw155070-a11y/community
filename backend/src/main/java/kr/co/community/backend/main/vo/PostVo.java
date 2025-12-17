@@ -16,6 +16,7 @@ public class PostVo {
 	private int postId;
 	private	String title;
 	private String nickname;
+	private String categoryName;
 	private int viewCount;
 	private int likeCount;
 	private int commentCount;
