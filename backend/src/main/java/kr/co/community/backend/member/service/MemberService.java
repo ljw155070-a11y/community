@@ -71,4 +71,20 @@ public class MemberService {
 
     return nick;
   }
+  //========== 로그인 기능 (추가) ==========
+  public MemberDTO login(String email, String password) {
+      
+      MemberDTO member = memberDao.selectMemberByEmail(email);
+      
+      if (member == null) {
+          return null;
+      }
+      
+      if (encoder.matches(password, member.getPasswordHash())) {
+          member.setPasswordHash(null);
+          return member;
+      }
+      
+      return null;
+  }
 }

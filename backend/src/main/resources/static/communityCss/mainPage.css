@@ -315,3 +315,31 @@ body {
 .mainpage-btn-join:hover {
     background: #f0f0f0;
 }
+
+/* TOP 뱃지 공통 */
+.mainpage-top-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* 조회수 TOP 뱃지 */
+.view-badge {
+    background: #4169E1;
+    color: white;
+}
+
+/* 좋아요 TOP 뱃지 */
+.like-badge {
+    background: #ff6b6b;
+    color: white;
+}
+
+/* 댓글 TOP 뱃지 */
+.comment-badge {
+    background: #51cf66;
+    color: white;
+}
