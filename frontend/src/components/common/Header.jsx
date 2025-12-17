@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -45,8 +46,12 @@ const Header = () => {
         </nav>
 
         <div className="header-right">
-          <button className="btn-login">로그인</button>
-          <button className="btn-signup">회원가입</button>
+          <Link className="btn-login" to="/login">
+            로그인
+          </Link>
+          <Link className="btn-signup" to="/signup">
+            회원가입
+          </Link>
 
           <a href="/notifications" className="notification-link">
             <svg
