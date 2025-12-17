@@ -1,114 +1,370 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>커뮤니티 메인</title>
-<link rel="stylesheet" href="/communityCss/mainPage.css">
-</head>
-<body>
-<th:block th:include="common/header"></th:block>
+  <head>
+    <meta charset="UTF-8" />
+    <title>커뮤니티 메인</title>
+    <link rel="stylesheet" href="/communityCss/mainPage.css" />
+  </head>
+  <body>
+    <th:block th:include="common/header"></th:block>
     <!-- 메인 배너 -->
+    <!-- 메인 배너 영역 -->
     <section class="mainpage-banner">
-        <div class="mainpage-banner-content">
-            <h1>함께 소통하고 성장하는 커뮤니티</h1>
-            <p>다양한 주제로 대화하고, 지식을 공유하며, 새로운 친구를 만나보세요</p>
-            <div class="mainpage-banner-buttons">
-                <button class="mainpage-btn-primary">지금 시작하기</button>
-                <button class="mainpage-btn-secondary">둘러보기</button>
-            </div>
+      <div class="mainpage-banner-content">
+        <h1>함께 소통하고 성장하는 커뮤니티</h1>
+        <p>다양한 주제로 대화하고, 지식을 공유하며, 새로운 친구를 만나보세요</p>
+        <!-- 로그인/회원가입 버튼 -->
+        <div class="mainpage-banner-buttons">
+          <!-- 로그인 페이지로 이동 -->
+          <button class="mainpage-btn-primary" onclick="location.href='/login'">
+            로그인
+          </button>
+          <!-- 회원가입 페이지로 이동 -->
+          <button
+            class="mainpage-btn-secondary"
+            onclick="location.href='/signup'"
+          >
+            처음이신가요?
+          </button>
         </div>
+      </div>
     </section>
 
-    <!-- 커뮤니티 특징 -->
+    <!-- 커뮤니티 특징 소개 -->
     <section class="mainpage-features">
-        <h2>커뮤니티의 특징</h2>
-        <div class="mainpage-feature-list">
-            <div class="mainpage-feature-item">
-                <div class="mainpage-feature-icon">💬</div>
-                <h3>자유로운 소통</h3>
-                <p>다양한 주제로 자유롭게 대화하고 의견을 나눠보세요</p>
-            </div>
-            <div class="mainpage-feature-item">
-                <div class="mainpage-feature-icon">👥</div>
-                <h3>활발한 커뮤니티</h3>
-                <p>활발하게 질문과 답변 등을 올리는 커뮤니티</p>
-            </div>
-            <div class="mainpage-feature-item">
-                <div class="mainpage-feature-icon">📈</div>
-                <h3>트렌딩 콘텐츠</h3>
-                <p>인기 있는 게시글과 핫한 토픽을 만들어요</p>
-            </div>
+      <h2>커뮤니티의 특징</h2>
+      <div class="mainpage-feature-list">
+        <!-- 특징 1 -->
+        <div class="mainpage-feature-item">
+          <div class="mainpage-feature-icon">💬</div>
+          <h3>자유로운 소통</h3>
+          <p>다양한 주제로 자유롭게 대화하고 의견을 나눠보세요</p>
         </div>
+        <!-- 특징 2 -->
+        <div class="mainpage-feature-item">
+          <div class="mainpage-feature-icon">👥</div>
+          <h3>활발한 커뮤니티</h3>
+          <p>활발하게 질문과 답변 등을 올리는 커뮤니티</p>
+        </div>
+        <!-- 특징 3 -->
+        <div class="mainpage-feature-item">
+          <div class="mainpage-feature-icon">📈</div>
+          <h3>트렌딩 콘텐츠</h3>
+          <p>인기 있는 게시글과 핫한 토픽을 만들어요</p>
+        </div>
+      </div>
     </section>
 
-    <!-- 인기 게시글 -->
+    <!-- 인기 게시글 영역 -->
     <section class="mainpage-posts">
-        <div class="mainpage-posts-header">
-            <h2>인기 게시글</h2>
-            <a href="#" class="mainpage-more-link">더보기 →</a>
+      <div class="mainpage-posts-header">
+        <h2>인기 게시글</h2>
+        <!-- 더보기 버튼 (클릭시 3개 <-> 12개 토글) -->
+        <a
+          href="javascript:void(0);"
+          class="mainpage-more-link"
+          onclick="togglePosts()"
+          >더보기 →</a
+        >
+      </div>
+      <!-- 게시글 목록 (처음 3개만 보임) -->
+      <div class="mainpage-post-list" id="postList">
+        <!-- 게시글 1 -->
+        <div class="mainpage-post-card">
+          <span class="mainpage-post-tag">자유</span>
+          <h3>첫 게시글입니다. 반갑습니다!</h3>
+          <p>안녕하세요. 처음으로 게시글을 올립니다. 앞으로 잘 부탁드립니다!</p>
+          <div class="mainpage-post-info">
+            <span>홍길동</span>
+            <span>👁 153</span>
+            <span>❤ 24</span>
+            <span>💬 8</span>
+          </div>
         </div>
-        <div class="mainpage-post-list">
-            <div class="mainpage-post-card">
-                <span class="mainpage-post-tag">자유</span>
-                <h3>첫 게시글입니다. 반갑습니다!</h3>
-                <p>안녕하세요. 처음으로 게시글을 올립니다. 앞으로 잘 부탁드립니다!</p>
-                <div class="mainpage-post-info">
-                    <span>홍길동</span>
-                    <span>👁 153</span>
-                    <span>❤ 24</span>
-                    <span>💬 8</span>
-                </div>
-            </div>
-            <div class="mainpage-post-card">
-                <span class="mainpage-post-tag">자유</span>
-                <h3>React 개발 팁 공유합니다</h3>
-                <p>React 를 활용한 다양한 팁들을 공유합니다. useState, useEffect 등...</p>
-                <div class="mainpage-post-info">
-                    <span>김개발</span>
-                    <span>👁 234</span>
-                    <span>❤ 67</span>
-                    <span>💬 15</span>
-                </div>
-            </div>
-            <div class="mainpage-post-card">
-                <span class="mainpage-post-tag">질문</span>
-                <h3>오늘 점심 뭐 먹을까요?</h3>
-                <p>고민되네요. 추천 좀 해주세요. 근처 맛집이나 추천 메뉴 있으시면...</p>
-                <div class="mainpage-post-info">
-                    <span>이배고</span>
-                    <span>👁 53</span>
-                    <span>❤ 12</span>
-                    <span>💬 23</span>
-                </div>
-            </div>
+        <!-- 게시글 2 -->
+        <div class="mainpage-post-card">
+          <span class="mainpage-post-tag">자유</span>
+          <h3>React 개발 팁 공유합니다</h3>
+          <p>
+            React 를 활용한 다양한 팁들을 공유합니다. useState, useEffect 등...
+          </p>
+          <div class="mainpage-post-info">
+            <span>김개발</span>
+            <span>👁 234</span>
+            <span>❤ 67</span>
+            <span>💬 15</span>
+          </div>
         </div>
+        <!-- 게시글 3 -->
+        <div class="mainpage-post-card">
+          <span class="mainpage-post-tag">질문</span>
+          <h3>오늘 점심 뭐 먹을까요?</h3>
+          <p>
+            고민되네요. 추천 좀 해주세요. 근처 맛집이나 추천 메뉴 있으시면...
+          </p>
+          <div class="mainpage-post-info">
+            <span>이배고</span>
+            <span>👁 53</span>
+            <span>❤ 12</span>
+            <span>💬 23</span>
+          </div>
+        </div>
+        <!-- 게시글 4-12는 처음에 숨김 -->
+        <div class="mainpage-post-card mainpage-post-hidden">
+          <span class="mainpage-post-tag">자유</span>
+          <h3>스프링 부트 질문있어요</h3>
+          <p>스프링 부트 공부중인데 궁금한게 있습니다</p>
+          <div class="mainpage-post-info">
+            <span>이학생</span>
+            <span>👁 89</span>
+            <span>❤ 15</span>
+            <span>💬 12</span>
+          </div>
+        </div>
+        <div class="mainpage-post-card mainpage-post-hidden">
+          <span class="mainpage-post-tag">질문</span>
+          <h3>오라클 DB 연결 오류</h3>
+          <p>오라클 연결이 안되는데 도와주세요</p>
+          <div class="mainpage-post-info">
+            <span>박개발</span>
+            <span>👁 76</span>
+            <span>❤ 8</span>
+            <span>💬 5</span>
+          </div>
+        </div>
+        <div class="mainpage-post-card mainpage-post-hidden">
+          <span class="mainpage-post-tag">자유</span>
+          <h3>코딩 공부 방법 공유</h3>
+          <p>효과적인 코딩 공부 방법을 공유합니다</p>
+          <div class="mainpage-post-info">
+            <span>최공부</span>
+            <span>👁 145</span>
+            <span>❤ 32</span>
+            <span>💬 18</span>
+          </div>
+        </div>
+        <div class="mainpage-post-card mainpage-post-hidden">
+          <span class="mainpage-post-tag">자유</span>
+          <h3>Git 사용법 정리</h3>
+          <p>Git 기본 사용법을 정리했습니다</p>
+          <div class="mainpage-post-info">
+            <span>김깃</span>
+            <span>👁 201</span>
+            <span>❤ 45</span>
+            <span>💬 22</span>
+          </div>
+        </div>
+        <div class="mainpage-post-card mainpage-post-hidden">
+          <span class="mainpage-post-tag">질문</span>
+          <h3>프로젝트 주제 추천</h3>
+          <p>포트폴리오용 프로젝트 주제 추천 부탁드립니다</p>
+          <div class="mainpage-post-info">
+            <span>신입개발</span>
+            <span>👁 167</span>
+            <span>❤ 28</span>
+            <span>💬 31</span>
+          </div>
+        </div>
+        <div class="mainpage-post-card mainpage-post-hidden">
+          <span class="mainpage-post-tag">자유</span>
+          <h3>면접 후기 공유</h3>
+          <p>최근 면접 본 후기 공유드립니다</p>
+          <div class="mainpage-post-info">
+            <span>취준생</span>
+            <span>👁 312</span>
+            <span>❤ 67</span>
+            <span>💬 43</span>
+          </div>
+        </div>
+        <div class="mainpage-post-card mainpage-post-hidden">
+          <span class="mainpage-post-tag">자유</span>
+          <h3>개발자 도서 추천</h3>
+          <p>읽으면 좋은 개발 서적 추천합니다</p>
+          <div class="mainpage-post-info">
+            <span>독서광</span>
+            <span>👁 189</span>
+            <span>❤ 41</span>
+            <span>💬 25</span>
+          </div>
+        </div>
+        <div class="mainpage-post-card mainpage-post-hidden">
+          <span class="mainpage-post-tag">질문</span>
+          <h3>SQL 쿼리 최적화</h3>
+          <p>SQL 쿼리 최적화 방법 알려주세요</p>
+          <div class="mainpage-post-info">
+            <span>DB관리자</span>
+            <span>👁 98</span>
+            <span>❤ 19</span>
+            <span>💬 14</span>
+          </div>
+        </div>
+        <div class="mainpage-post-card mainpage-post-hidden">
+          <span class="mainpage-post-tag">자유</span>
+          <h3>코딩테스트 준비 팁</h3>
+          <p>코딩테스트 준비하는 방법 공유합니다</p>
+          <div class="mainpage-post-info">
+            <span>알고리즘왕</span>
+            <span>👁 267</span>
+            <span>❤ 54</span>
+            <span>💬 38</span>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- 공지사항 -->
+    <!-- 공지사항 영역 -->
     <section class="mainpage-notices">
+      <div class="mainpage-notices-header">
         <h2>공지사항</h2>
-        <div class="mainpage-notice-list">
-            <div class="mainpage-notice-item">
-                <span class="mainpage-notice-badge">중요</span>
-                <span class="mainpage-notice-title">커뮤니티 이용 규칙 안내</span>
-                <span class="mainpage-notice-date">2024. 12. 1.</span>
-            </div>
-            <div class="mainpage-notice-item">
-                <span class="mainpage-notice-badge">공지</span>
-                <span class="mainpage-notice-title">서비스 점검 안내 (12/20)</span>
-                <span class="mainpage-notice-date">2024. 12. 10.</span>
-            </div>
+        <!-- 더보기 버튼 (클릭시 3개 <-> 10개 토글) -->
+        <a
+          href="javascript:void(0);"
+          class="mainpage-more-link"
+          onclick="toggleNotices()"
+          >더보기 →</a
+        >
+      </div>
+      <!-- 공지사항 목록 (처음 3개만 보임) -->
+      <div class="mainpage-notice-list" id="noticeList">
+        <!-- 공지사항 1 -->
+        <div class="mainpage-notice-item">
+          <span class="mainpage-notice-badge">중요</span>
+          <span class="mainpage-notice-title">커뮤니티 이용 규칙 안내</span>
+          <span class="mainpage-notice-date">2024. 12. 15.</span>
         </div>
+        <!-- 공지사항 2 -->
+        <div class="mainpage-notice-item">
+          <span class="mainpage-notice-badge">공지</span>
+          <span class="mainpage-notice-title">서비스 점검 안내 (12/20)</span>
+          <span class="mainpage-notice-date">2024. 12. 14.</span>
+        </div>
+        <!-- 공지사항 3 -->
+        <div class="mainpage-notice-item">
+          <span class="mainpage-notice-badge">공지</span>
+          <span class="mainpage-notice-title">신규 기능 업데이트 안내</span>
+          <span class="mainpage-notice-date">2024. 12. 13.</span>
+        </div>
+        <!-- 공지사항 4-10은 처음에 숨김 -->
+        <div class="mainpage-notice-item mainpage-notice-hidden">
+          <span class="mainpage-notice-badge">공지</span>
+          <span class="mainpage-notice-title">회원 등급 시스템 안내</span>
+          <span class="mainpage-notice-date">2024. 12. 12.</span>
+        </div>
+        <div class="mainpage-notice-item mainpage-notice-hidden">
+          <span class="mainpage-notice-badge">공지</span>
+          <span class="mainpage-notice-title">개인정보 처리방침 변경</span>
+          <span class="mainpage-notice-date">2024. 12. 11.</span>
+        </div>
+        <div class="mainpage-notice-item mainpage-notice-hidden">
+          <span class="mainpage-notice-badge">공지</span>
+          <span class="mainpage-notice-title">이벤트 당첨자 발표</span>
+          <span class="mainpage-notice-date">2024. 12. 10.</span>
+        </div>
+        <div class="mainpage-notice-item mainpage-notice-hidden">
+          <span class="mainpage-notice-badge">공지</span>
+          <span class="mainpage-notice-title"
+            >커뮤니티 가이드라인 업데이트</span
+          >
+          <span class="mainpage-notice-date">2024. 12. 9.</span>
+        </div>
+        <div class="mainpage-notice-item mainpage-notice-hidden">
+          <span class="mainpage-notice-badge">공지</span>
+          <span class="mainpage-notice-title">모바일 앱 출시 안내</span>
+          <span class="mainpage-notice-date">2024. 12. 8.</span>
+        </div>
+        <div class="mainpage-notice-item mainpage-notice-hidden">
+          <span class="mainpage-notice-badge">공지</span>
+          <span class="mainpage-notice-title">서비스 이용약관 개정</span>
+          <span class="mainpage-notice-date">2024. 12. 7.</span>
+        </div>
+        <div class="mainpage-notice-item mainpage-notice-hidden">
+          <span class="mainpage-notice-badge">공지</span>
+          <span class="mainpage-notice-title">연말 이벤트 안내</span>
+          <span class="mainpage-notice-date">2024. 12. 6.</span>
+        </div>
+      </div>
     </section>
 
     <!-- 하단 배너 -->
     <section class="mainpage-bottom-banner">
-        <div class="mainpage-bottom-content">
-            <h2>지금 바로 커뮤니티에 참여하세요</h2>
-            <p>무료로 가입하고 다양한 사람들과 소통해보세요</p>
-            <button class="mainpage-btn-join">회원가입</button>
-        </div>
+      <div class="mainpage-bottom-content">
+        <h2>지금 바로 커뮤니티에 참여하세요</h2>
+        <p>무료로 가입하고 다양한 사람들과 소통해보세요</p>
+        <!-- 회원가입 페이지로 이동 -->
+        <button class="mainpage-btn-join" onclick="location.href='/signup'">
+          회원가입
+        </button>
+      </div>
     </section>
-<th:block th:include="common/footer"></th:block>
-</body>
+
+    <!-- 자바스크립트 -->
+    <script>
+      // 게시글 더보기 토글 (3개 <-> 12개)
+      function togglePosts() {
+        const hiddenPosts = document.querySelectorAll(".mainpage-post-hidden");
+        const moreLink = document.querySelector(
+          ".mainpage-posts .mainpage-more-link"
+        );
+
+        // 숨겨진 게시글이 있으면 모두 보여주기
+        if (
+          hiddenPosts[0].style.display === "none" ||
+          hiddenPosts[0].style.display === ""
+        ) {
+          hiddenPosts.forEach((post) => {
+            post.style.display = "block";
+          });
+          moreLink.textContent = "접기 ↑";
+        } else {
+          // 숨기기
+          hiddenPosts.forEach((post) => {
+            post.style.display = "none";
+          });
+          moreLink.textContent = "더보기 →";
+        }
+      }
+
+      // 공지사항 더보기 토글 (3개 <-> 10개)
+      function toggleNotices() {
+        const hiddenNotices = document.querySelectorAll(
+          ".mainpage-notice-hidden"
+        );
+        const moreLink = document.querySelector(
+          ".mainpage-notices .mainpage-more-link"
+        );
+
+        // 숨겨진 공지사항이 있으면 모두 보여주기
+        if (
+          hiddenNotices[0].style.display === "none" ||
+          hiddenNotices[0].style.display === ""
+        ) {
+          hiddenNotices.forEach((notice) => {
+            notice.style.display = "flex";
+          });
+          moreLink.textContent = "접기 ↑";
+        } else {
+          // 숨기기
+          hiddenNotices.forEach((notice) => {
+            notice.style.display = "none";
+          });
+          moreLink.textContent = "더보기 →";
+        }
+      }
+
+      // 페이지 로드시 숨김 처리
+      window.onload = function () {
+        const hiddenPosts = document.querySelectorAll(".mainpage-post-hidden");
+        hiddenPosts.forEach((post) => {
+          post.style.display = "none";
+        });
+
+        const hiddenNotices = document.querySelectorAll(
+          ".mainpage-notice-hidden"
+        );
+        hiddenNotices.forEach((notice) => {
+          notice.style.display = "none";
+        });
+      };
+    </script>
+  </body>
 </html>

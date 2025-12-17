@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.community.backend.post.dao.PostSsrDao">
+
+  <!-- 카테고리 탭 -->
+  <select id="selectActiveCategories" resultType="kr.co.community.backend.category.dto.BoardCategoryDTO">
+    SELECT
+      CATEGORY_ID   AS categoryId,
+      CATEGORY_NAME AS categoryName,
+      SORT_ORDER    AS sortOrder,
+      IS_ACTIVE     AS isActive
+    FROM BOARD_CATEGORY
+    WHERE IS_ACTIVE = 'Y'
+    ORDER BY SORT_ORDER ASC, CATEGORY_ID ASC
+  </select>
+
+  <!-- total -->
+  <select id="countPostList" resultType="int">
+    SELECT COUNT(*)
+    FROM POST P
+    JOIN BOARD_CATEGORY C ON C.CATEGORY_ID = P.CATEGORY_ID
+    JOIN MEMBER M ON M.MEMBER_ID = P.AUTHOR_ID
+    WHERE P.IS_DELETED = 'N'
+      AND C.IS_ACTIVE = 'Y'
+      <if test="categoryId != null">
+        AND P.CATEGORY_ID = #{categoryId}
+      </if>
+      <if test="q != null and q != ''">
+        AND (
+          P.TITLE LIKE '%' || #{q} || '%'
+          OR DBMS_LOB.SUBSTR(P.CONTENT, 2000, 1) LIKE '%' || #{q} || '%'
+          OR NVL(M.NICKNAME, M.NAME) LIKE '%' || #{q} || '%'
+        )
+      </if>
+  </select>
+
+  <!-- list -->
+<select id="selectPostList" resultType="kr.co.community.backend.post.dto.PostListDTO">
+  SELECT *
+  FROM (
+    SELECT
+      T.*,
+      ROW_NUMBER() OVER (
+        ORDER BY T.createdAt DESC, T.postId DESC
+      ) AS RN
+    FROM (
+      SELECT
+        P.POST_ID       AS postId,
+        P.CATEGORY_ID   AS categoryId,
+        C.CATEGORY_NAME AS categoryName,
+        P.AUTHOR_ID     AS authorId,
+        NVL(M.NICKNAME, M.NAME) AS authorName,
+        P.TITLE         AS title,
+        DBMS_LOB.SUBSTR(P.CONTENT, 120, 1) AS contentPreview,
+        P.VIEW_COUNT    AS viewCount,
+        P.LIKE_COUNT    AS likeCount,
+        P.COMMENT_COUNT AS commentCount,
+        P.CREATED_AT    AS createdAt
+      FROM POST P
+      JOIN BOARD_CATEGORY C ON C.CATEGORY_ID = P.CATEGORY_ID
+      JOIN MEMBER M ON M.MEMBER_ID = P.AUTHOR_ID
+      WHERE P.IS_DELETED = 'N'
+        AND C.IS_ACTIVE = 'Y'
+        <if test="categoryId != null">
+          AND P.CATEGORY_ID = #{categoryId}
+        </if>
+        <if test="q != null and q != ''">
+          AND (
+            P.TITLE LIKE '%' || #{q} || '%'
+            OR DBMS_LOB.SUBSTR(P.CONTENT, 2000, 1) LIKE '%' || #{q} || '%'
+            OR NVL(M.NICKNAME, M.NAME) LIKE '%' || #{q} || '%'
+          )
+        </if>
+    ) T
+  )
+  WHERE RN BETWEEN #{startRow} AND #{endRow}
+  ORDER BY RN
+</select>
+
+
+</mapper>
