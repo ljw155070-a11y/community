@@ -1,6 +1,6 @@
 // react-router-dom에서 Link 컴포넌트 import
 // Link는 <a>처럼 보이지만 페이지 새로고침 없이 SPA 이동을 담당
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // React에서 상태와 메모이제이션 훅 import
 // useState: 상태 저장
@@ -52,6 +52,7 @@ const validatePassword = (pw) => {
 
 // Signup 컴포넌트 정의
 export default function Signup() {
+  const navigate = useNavigate();
   // 회원가입 폼 전체 값을 하나의 state 객체로 관리
   const [form, setForm] = useState({
     name: "", // 이름
@@ -167,10 +168,9 @@ export default function Signup() {
 
       // ✅ 백엔드로 보낼 데이터 (DTO에 맞춰 이름 맞추기)
       const payload = {
-        memberName: form.name, // 너 DTO에 memberName 있음
+        name: form.name, // DTO에 memberName 있음
         email: form.email, // DTO에 추가했다면 같이
         password: form.password, // 보통은 password(원문) 보내고 백엔드에서 해시
-        // nickname: ...
       };
 
       // ✅ 회원가입 호출
@@ -186,7 +186,7 @@ export default function Signup() {
       if (res.data?.success) {
         alert("회원가입 성공!");
         // TODO: 가입 후 로그인 페이지로 이동
-        // navigate("/login");
+        navigate("/login");
       } else {
         alert("회원가입 실패(서버 응답)");
       }
