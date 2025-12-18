@@ -44,7 +44,7 @@ const Header = () => {
             공지
           </a>
           <a href="/about" className="nav-link">
-            사이트 소개
+            사이트 소개 (임시)
           </a>
         </nav>
 
