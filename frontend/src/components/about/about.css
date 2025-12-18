@@ -1,82 +1,119 @@
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --line: rgba(15, 23, 42, 0.08);
+  --brand: #2563eb;
+  --brand2: #1d4ed8;
+  --shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
+  --radius: 18px;
+}
+body {
+  background: #f5f7fb;
+}
+
 .about-wrap {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 18px 0;
+  padding: 18px 0 40px;
+  background: transparent;
 }
 
-/* 상단 히어로(고정) */
+/* ====== HERO (스샷 느낌: 파랑) ====== */
 .hero {
-  background: linear-gradient(180deg, #1e6bff 0%, #1b5fe6 100%);
-  color: #fff;
-  border-radius: 16px;
-  padding: 30px 26px;
+  background: linear-gradient(180deg, #f4f8ff 0%, #ffffff 70%);
+  color: #0f172a;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  padding: 34px 26px;
   text-align: center;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
 }
+
 .hero h1 {
   margin: 0 0 8px;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 900;
+  letter-spacing: -0.2px;
 }
+
 .hero p {
   margin: 0;
-  opacity: 0.9;
+  color: #475569;
+  font-size: 14px;
 }
+
+/* 지표 박스(700%/4주→4일/4명) — 파란 배경 말고 "칩 카드"로 */
 .hero-metrics {
   display: flex;
-  gap: 22px;
+  gap: 14px;
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 18px;
 }
+
 .m {
   min-width: 160px;
+  background: #ffffff;
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
 }
+
 .m-num {
   font-size: 26px;
   font-weight: 900;
-}
-.m-label {
-  font-size: 13px;
-  opacity: 0.9;
+  color: #2563eb;
 }
 
-/* 공통 카드 */
+.m-label {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ====== 공통 카드 ====== */
 .card {
   margin-top: 18px;
   background: #fff;
-  border: 1px solid #eee;
-  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
   padding: 18px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
 }
 .card-title {
   margin: 0 0 12px;
   font-size: 18px;
   font-weight: 900;
+  color: var(--text);
 }
 
-/* 목적/성과 */
+/* ====== 목적/성과 ====== */
 .goal-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 .goal {
-  background: #f7f8fb;
-  border: 1px solid #eee;
-  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 16px;
   padding: 14px;
 }
 .goal-head {
   font-weight: 900;
   margin-bottom: 8px;
+  color: var(--text);
 }
 .goal p {
   margin: 0;
-  color: #374151;
+  color: #334155;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
+/* 3개 스택 박스: 스샷처럼 은은한 색 */
 .stack3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -84,30 +121,31 @@
   margin-top: 12px;
 }
 .stackBox {
-  border: 1px solid #eee;
-  border-radius: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
   padding: 14px;
 }
 .stackBox ul {
   margin: 10px 0 0;
   padding-left: 18px;
-  color: #374151;
+  color: #334155;
   font-size: 13px;
 }
 .stackTitle {
   font-weight: 900;
+  color: var(--text);
 }
 .stackBox.ssr {
-  background: #f3f7ff;
+  background: #eef4ff;
 }
 .stackBox.csr {
-  background: #f2fbf7;
+  background: #ecfdf5;
 }
 .stackBox.auth {
-  background: #fbf5ff;
+  background: #f5f3ff;
 }
 
-/* 팀 포트폴리오 */
+/* ====== 팀 포트폴리오 ====== */
 .team-head {
   display: flex;
   gap: 10px;
@@ -118,13 +156,13 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: #eef3ff;
+  background: #eaf1ff;
   display: grid;
   place-items: center;
 }
 .muted {
   margin: 4px 0 0;
-  color: #6b7280;
+  color: var(--muted);
   font-size: 13px;
 }
 
@@ -132,12 +170,14 @@
   display: grid;
   grid-template-columns: 260px 1fr;
   gap: 14px;
+  align-items: start;
 }
 .team-left {
   padding-right: 12px;
-  border-right: 1px solid #eee;
+  border-right: 1px solid var(--line);
 }
 
+/* 좌측 멤버 버튼: 가볍게 + active만 강조 */
 .member {
   width: 100%;
   display: flex;
@@ -145,15 +185,22 @@
   align-items: center;
   padding: 10px;
   background: #fff;
-  border: 1px solid #eee;
-  border-radius: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
   cursor: pointer;
   text-align: left;
   margin-bottom: 10px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+    border-color 0.12s ease;
+}
+.member:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
 }
 .member.active {
-  border-color: #2b6cff;
-  background: #eef3ff;
+  border-color: rgba(37, 99, 235, 0.45);
+  background: #eef4ff;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.14);
 }
 .avatar {
   width: 42px;
@@ -163,22 +210,26 @@
 }
 .meta .name {
   font-weight: 900;
+  color: var(--text);
 }
 .meta .role {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--muted);
 }
 
-/* 우측 상단 다크 프로필 */
+/* 우측 상단 프로필 배너: 여기만 다크로 포인트 */
 .profile {
   display: flex;
   gap: 14px;
   align-items: center;
   padding: 18px;
-  border-radius: 14px;
-  background: linear-gradient(90deg, #0b1324 0%, #0f203c 100%);
-  color: #fff;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f1f5ff 0%, #ffffff 80%);
+  color: #0f172a;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
 }
+
 .profile-avatar {
   width: 74px;
   height: 74px;
@@ -198,29 +249,29 @@
   margin-top: 8px;
   display: flex;
   gap: 14px;
-  opacity: 0.85;
+  opacity: 0.88;
   font-size: 13px;
   flex-wrap: wrap;
 }
 
-/* 탭 */
+/* 탭: 스샷처럼 밑줄만 깔끔하게 */
 .tabs {
   display: flex;
-  gap: 22px;
-  padding: 12px 6px 0;
-  border-bottom: 1px solid #eee;
+  gap: 18px;
+  padding: 10px 2px 0;
+  border-bottom: 1px solid var(--line);
 }
 .tab {
-  padding: 12px 8px;
+  padding: 12px 6px;
   background: transparent;
   border: none;
   cursor: pointer;
-  font-weight: 800;
+  font-weight: 900;
   color: #111827;
   position: relative;
 }
 .tab.active {
-  color: #2b6cff;
+  color: var(--brand);
 }
 .tab.active::after {
   content: "";
@@ -229,46 +280,48 @@
   right: 0;
   bottom: -1px;
   height: 2px;
-  background: #2b6cff;
+  background: var(--brand);
   border-radius: 2px;
 }
 
 .tab-body {
-  padding: 14px 6px 6px;
+  padding: 14px 2px 6px;
 }
 .role-desc {
   margin: 0 0 14px;
-  color: #374151;
+  color: #334155;
 }
 
-/* 역할 탭 박스 */
+/* 역할 탭 */
 .role-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 .role-box {
-  border: 1px solid #eee;
-  border-radius: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
   padding: 14px;
 }
 .role-box h3 {
   margin: 0 0 10px;
   font-size: 15px;
+  font-weight: 900;
 }
 .role-box ul {
   margin: 0;
   padding-left: 18px;
-  color: #374151;
+  color: #334155;
   font-size: 13px;
 }
 .role-box.ssr {
-  background: #f3f7ff;
+  background: #eef4ff;
 }
 .role-box.csr {
-  background: #f2fbf7;
+  background: #ecfdf5;
 }
 
+/* 스택 카드: 다크 제거하고 밝게 */
 .stack-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -276,18 +329,18 @@
   margin-top: 12px;
 }
 .stack-card {
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 14px;
-  background: #0b1324;
-  color: #fff;
-  border: 1px solid #1f2937;
+  background: #f8fafc;
+  color: var(--text);
+  border: 1px solid var(--line);
 }
 .stack-card-title {
   font-weight: 900;
   margin-bottom: 10px;
 }
 
-/* chips */
+/* chips: 밝은 칩 기본 + 강조만 브랜드 */
 .chips {
   display: flex;
   gap: 8px;
@@ -297,17 +350,18 @@
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 800;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.08);
+  font-weight: 900;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: #0f172a;
 }
 .chips.light .chip {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--line);
   background: #fff;
-  color: #111827;
+  color: #0f172a;
 }
 
-/* 기술 스택 탭 막대 */
+/* 기술 스택 바 */
 .sec-title {
   margin: 0 0 12px;
   font-size: 18px;
@@ -318,7 +372,7 @@
 }
 .skill-head {
   font-weight: 900;
-  color: #2563eb;
+  color: var(--brand);
   margin-bottom: 10px;
 }
 .skill-row {
@@ -329,7 +383,8 @@
   margin-bottom: 10px;
 }
 .skill-name {
-  font-weight: 800;
+  font-weight: 900;
+  color: #0f172a;
 }
 
 .bars {
@@ -341,10 +396,10 @@
   width: 28px;
   height: 6px;
   border-radius: 999px;
-  background: #e5e7eb;
+  background: #e2e8f0;
 }
 .bar.on {
-  background: #2b6cff;
+  background: var(--brand);
 }
 
 /* 프로젝트 탭 */
@@ -354,14 +409,19 @@
   gap: 12px;
 }
 .proj-card {
-  border: 1px solid #eee;
-  border-radius: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
   overflow: hidden;
   background: #fff;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.proj-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.1);
 }
 .proj-img {
   height: 150px;
-  background: #f3f4f6;
+  background: #f1f5f9;
 }
 .proj-body {
   padding: 14px;
@@ -374,38 +434,40 @@
 }
 .proj-title {
   font-weight: 900;
+  color: var(--text);
 }
 .badge {
   font-size: 12px;
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 999px;
   background: #eaf1ff;
-  color: #2563eb;
-  border: 1px solid #dbe6ff;
+  color: var(--brand);
+  border: 1px solid rgba(37, 99, 235, 0.22);
   font-weight: 900;
 }
 .proj-desc {
-  margin: 10px 0 10px;
-  color: #374151;
+  margin: 10px 0;
+  color: #334155;
   font-size: 13px;
 }
 .proj-link {
   display: inline-block;
   margin-top: 10px;
   font-weight: 900;
-  color: #2563eb;
+  color: var(--brand);
   text-decoration: none;
 }
 
-/* 핵심 학습 내용(고정) */
+/* 핵심 학습 내용 */
 .learn-bg {
-  background: linear-gradient(180deg, #f4f8ff 0%, #ffffff 70%);
+  background: linear-gradient(180deg, #eef5ff 0%, #ffffff 70%);
 }
 .learn-title {
   margin: 0 0 12px;
   text-align: center;
   font-weight: 900;
   font-size: 18px;
+  color: var(--text);
 }
 .learn-grid {
   display: grid;
@@ -414,21 +476,21 @@
 }
 .learn-box {
   background: #fff;
-  border: 1px solid #e8eefc;
-  border-radius: 14px;
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  border-radius: 16px;
   padding: 14px;
 }
 .learn-box h3 {
   margin: 0 0 8px;
   font-size: 15px;
   font-weight: 900;
-  color: #2563eb;
+  color: var(--brand);
 }
 .learn-box p {
   margin: 0;
-  color: #374151;
+  color: #334155;
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 /* 반응형 */
