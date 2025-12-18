@@ -1,29 +1,47 @@
-// Header.jsx (수정)
+// Header.jsx
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
 import { logout } from "../utils/authUtils";
+import axios from "axios";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
   const loginUser = useRecoilValue(loginUserState);
   const setLoginUser = useSetRecoilState(loginUserState);
 
-  // 드롭다운 토글 함수
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  // 로그아웃 처리
   const handleLogout = (e) => {
     e.preventDefault();
     logout(setLoginUser);
   };
 
-  // 외부 클릭 감지
+  const loadUnreadCount = async () => {
+    try {
+      const memberId = loginUser.memberId;
+      const response = await axios.get(
+        `http://localhost:9999/alert/list/${memberId}`
+      );
+      const count = response.data.filter((a) => a.isRead === "N").length;
+      setUnreadCount(count);
+    } catch (error) {
+      console.error("알림 개수 불러오기 실패:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (loginUser) {
+      loadUnreadCount();
+    }
+  }, [loginUser]);
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -60,44 +78,7 @@ const Header = () => {
         </nav>
 
         <div className="header-right">
-<<<<<<< HEAD
-          <Link className="btn-login" to="/login">
-            로그인
-          </Link>
-          <Link className="btn-signup" to="/signup">
-            회원가입
-          </Link>
-          <a href="/notifications" className="notification-link">
-            <svg
-              className="notification-icon"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-            <span className="notification-badge"></span>
-          </a>
-
-          <div className="profile-dropdown" ref={dropdownRef}>
-            <button className="profile-button" onClick={toggleDropdown}>
-              {/* 회원 이미지 넣을 시 적용 or 기본이미지 삽입?
-              <img
-                src="/images/profile.jpg"
-                alt="프로필"
-                className="profile-image"
-                onError={(e) => (e.target.src = "/images/default-profile.png")}
-              />
-              */}
-              <span className="profile-name">홍길동</span>
-            </button>
-=======
-          {/* 로그인 안했을 때 */}
-          {!loginUser && (
+          {!loginUser ? (
             <>
               <Link className="btn-login" to="/login">
                 로그인
@@ -106,12 +87,8 @@ const Header = () => {
                 회원가입
               </Link>
             </>
-          )}
-
-          {/* 로그인 했을 때 */}
-          {loginUser && (
+          ) : (
             <>
-              {/* 알림 링크 */}
               <Link to="/alert" className="notification-link">
                 <svg
                   className="notification-icon"
@@ -125,25 +102,15 @@ const Header = () => {
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                   <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                 </svg>
-                <span className="notification-badge"></span>
+                {unreadCount > 0 && (
+                  <span className="notification-badge">{unreadCount}</span>
+                )}
               </Link>
 
-              {/* 프로필 드롭다운 */}
               <div className="profile-dropdown" ref={dropdownRef}>
                 <button className="profile-button" onClick={toggleDropdown}>
-                  <img
-                    src="/images/profile.jpg"
-                    alt="프로필"
-                    className="profile-image"
-                    onError={(e) =>
-                      (e.target.src = "/images/default-profile.png")
-                    }
-                  />
-                  <span className="profile-name">
-                    {loginUser.nickname || loginUser.name}
-                  </span>
+                  <span className="profile-name">{loginUser.name}</span>
                 </button>
->>>>>>> wjsgusdn
 
                 <div
                   className={`dropdown-menu ${isDropdownOpen ? "active" : ""}`}
