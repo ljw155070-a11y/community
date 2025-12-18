@@ -6,7 +6,11 @@ import BoardEditPage from "./components/board/BoardEditPage";
 
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
+<<<<<<< HEAD
 import About from "./components/about/About";
+=======
+import Alert from "./components/alert/Alert";
+>>>>>>> wjsgusdn
 
 function App() {
   return (
@@ -18,7 +22,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/boardwrite" element={<BoardWrite />} />
           <Route path="/boardEditePage/:postId" element={<BoardEditPage />} />
+<<<<<<< HEAD
           <Route path="/about" element={<About />} />
+=======
+          <Route path="/alert" element={<Alert />} />
+>>>>>>> wjsgusdn
         </Routes>
       </main>
       <Footer></Footer>
