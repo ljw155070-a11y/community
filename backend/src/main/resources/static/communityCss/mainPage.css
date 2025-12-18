@@ -15,34 +15,30 @@ body {
 
 /* 메인 배너 영역 */
 .mainpage-banner {
-    background: #4169E1; /* 파란색 배경 */
+    background: #4169E1;
     color: white;
     padding: 100px 20px;
     text-align: center;
 }
 
-/* 배너 제목 */
 .mainpage-banner-content h1 {
     font-size: 48px;
     font-weight: 700;
     margin-bottom: 20px;
 }
 
-/* 배너 설명 */
 .mainpage-banner-content p {
     font-size: 18px;
     margin-bottom: 40px;
     opacity: 0.9;
 }
 
-/* 배너 버튼 영역 */
 .mainpage-banner-buttons {
     display: flex;
     gap: 20px;
     justify-content: center;
 }
 
-/* 로그인 버튼 (흰색 배경) */
 .mainpage-btn-primary {
     background: white;
     color: #4169E1;
@@ -59,7 +55,6 @@ body {
     background: #f0f0f0;
 }
 
-/* 처음이신가요? 버튼 (투명 배경) */
 .mainpage-btn-secondary {
     background: transparent;
     color: white;
@@ -83,13 +78,11 @@ body {
     background: white;
 }
 
-/* 특징 영역 제목 */
 .mainpage-features h2 {
     font-size: 36px;
     margin-bottom: 60px;
 }
 
-/* 특징 리스트 (가로 배치) */
 .mainpage-feature-list {
     display: flex;
     gap: 40px;
@@ -98,25 +91,21 @@ body {
     justify-content: center;
 }
 
-/* 특징 각 항목 */
 .mainpage-feature-item {
     flex: 1;
     max-width: 350px;
 }
 
-/* 특징 아이콘 */
 .mainpage-feature-icon {
     font-size: 60px;
     margin-bottom: 20px;
 }
 
-/* 특징 제목 */
 .mainpage-feature-item h3 {
     font-size: 24px;
     margin-bottom: 15px;
 }
 
-/* 특징 설명 */
 .mainpage-feature-item p {
     font-size: 16px;
     color: #666;
@@ -128,10 +117,9 @@ body {
     padding: 80px 20px;
     max-width: 1200px;
     margin: 0 auto;
-    background: #f5f5f5; /* 연한 회색 배경 */
+    background: #f5f5f5;
 }
 
-/* 인기 게시글 헤더 (제목 + 더보기) */
 .mainpage-posts-header {
     display: flex;
     justify-content: space-between;
@@ -139,12 +127,10 @@ body {
     margin-bottom: 40px;
 }
 
-/* 인기 게시글 제목 */
 .mainpage-posts-header h2 {
     font-size: 36px;
 }
 
-/* 더보기 링크 */
 .mainpage-more-link {
     color: #4169E1;
     text-decoration: none;
@@ -157,58 +143,91 @@ body {
     text-decoration: underline;
 }
 
-/* 게시글 카드 리스트 */
-.mainpage-post-list {
+/* 3개 칸 컨테이너 */
+.mainpage-top-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3열 그리드 */
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px;
 }
 
-/* 게시글 카드 */
-.mainpage-post-card {
+/* 각 섹션 */
+.mainpage-top-section {
     background: white;
-    border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 30px;
-    transition: transform 0.3s, box-shadow 0.3s; /* 호버시 애니메이션 */
 }
 
-/* 게시글 카드 호버 효과 */
-.mainpage-post-card:hover {
-    transform: translateY(-5px); /* 위로 살짝 올라감 */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* 그림자 */
+/* 섹션 제목 */
+.mainpage-section-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e5e7eb;
 }
 
-/* 게시글 카테고리 태그 */
+/* 리스트 */
+.mainpage-top-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* 각 항목 */
+.mainpage-top-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.mainpage-top-item:hover {
+    background: #f0f0f0;
+}
+
+/* 순위 표시 */
+.mainpage-rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: #4169E1;
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* 내용 영역 */
+.mainpage-item-content {
+    flex: 1;
+}
+
+/* 카테고리 태그 */
 .mainpage-post-tag {
     display: inline-block;
     background: #4169E1;
     color: white;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 14px;
-    margin-bottom: 15px;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    margin-bottom: 8px;
 }
 
-/* 게시글 제목 */
-.mainpage-post-card h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
+/* 제목 */
+.mainpage-item-content h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
 }
 
-/* 게시글 내용 미리보기 */
-.mainpage-post-card p {
-    color: #666;
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-/* 게시글 정보 (작성자, 조회수 등) */
+/* 게시글 정보 */
 .mainpage-post-info {
     display: flex;
-    gap: 15px;
-    font-size: 14px;
+    gap: 10px;
+    font-size: 13px;
     color: #999;
 }
 
@@ -220,7 +239,6 @@ body {
     background: white;
 }
 
-/* 공지사항 헤더 (제목 + 더보기) */
 .mainpage-notices-header {
     display: flex;
     justify-content: space-between;
@@ -228,19 +246,16 @@ body {
     margin-bottom: 40px;
 }
 
-/* 공지사항 제목 */
 .mainpage-notices h2 {
     font-size: 36px;
 }
 
-/* 공지사항 리스트 */
 .mainpage-notice-list {
     display: flex;
-    flex-direction: column; /* 세로 배치 */
+    flex-direction: column;
     gap: 20px;
 }
 
-/* 공지사항 각 항목 */
 .mainpage-notice-item {
     display: flex;
     align-items: center;
@@ -256,9 +271,8 @@ body {
     background: #f9f9f9;
 }
 
-/* 공지사항 뱃지 (중요, 공지) */
 .mainpage-notice-badge {
-    background: #ff6b6b; /* 빨간색 */
+    background: #ff6b6b;
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
@@ -266,13 +280,11 @@ body {
     font-weight: 600;
 }
 
-/* 공지사항 제목 */
 .mainpage-notice-title {
     flex: 1;
     font-size: 16px;
 }
 
-/* 공지사항 날짜 */
 .mainpage-notice-date {
     color: #999;
     font-size: 14px;
@@ -286,20 +298,17 @@ body {
     text-align: center;
 }
 
-/* 하단 배너 제목 */
 .mainpage-bottom-content h2 {
     font-size: 36px;
     margin-bottom: 15px;
 }
 
-/* 하단 배너 설명 */
 .mainpage-bottom-content p {
     font-size: 18px;
     margin-bottom: 30px;
     opacity: 0.9;
 }
 
-/* 회원가입 버튼 */
 .mainpage-btn-join {
     background: white;
     color: #4169E1;
@@ -316,30 +325,50 @@ body {
     background: #f0f0f0;
 }
 
-/* TOP 뱃지 공통 */
-.mainpage-top-badge {
-    display: inline-block;
-    padding: 5px 12px;
-    border-radius: 15px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-/* 조회수 TOP 뱃지 */
-.view-badge {
+/* 순위 표시 - 조회수 TOP */
+.mainpage-top-section:nth-child(1) .mainpage-rank {
     background: #4169E1;
-    color: white;
 }
 
-/* 좋아요 TOP 뱃지 */
-.like-badge {
+/* 순위 표시 - 좋아요 TOP */
+.mainpage-top-section:nth-child(2) .mainpage-rank {
     background: #ff6b6b;
-    color: white;
 }
 
-/* 댓글 TOP 뱃지 */
-.comment-badge {
+/* 순위 표시 - 댓글 TOP */
+.mainpage-top-section:nth-child(3) .mainpage-rank {
     background: #51cf66;
-    color: white;
+}
+
+/* 카테고리 태그 - 조회수 TOP */
+.mainpage-top-section:nth-child(1) .mainpage-post-tag {
+    background: #4169E1;
+}
+
+/* 카테고리 태그 - 좋아요 TOP */
+.mainpage-top-section:nth-child(2) .mainpage-post-tag {
+    background: #ff6b6b;
+}
+
+/* 카테고리 태그 - 댓글 TOP */
+.mainpage-top-section:nth-child(3) .mainpage-post-tag {
+    background: #51cf66;
+}
+
+/* 섹션 제목 색상 - 조회수 TOP */
+.mainpage-top-section:nth-child(1) .mainpage-section-title {
+    color: #4169E1;
+    border-bottom: 2px solid #4169E1;
+}
+
+/* 섹션 제목 색상 - 좋아요 TOP */
+.mainpage-top-section:nth-child(2) .mainpage-section-title {
+    color: #ff6b6b;
+    border-bottom: 2px solid #ff6b6b;
+}
+
+/* 섹션 제목 색상 - 댓글 TOP */
+.mainpage-top-section:nth-child(3) .mainpage-section-title {
+    color: #51cf66;
+    border-bottom: 2px solid #51cf66;
 }
