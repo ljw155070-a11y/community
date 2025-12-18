@@ -212,7 +212,7 @@ export default function About() {
       {/* ✅ 1) 상단 프로젝트 소개(고정) */}
       <section className="hero">
         <h1>프로젝트 소개</h1>
-        <p>SSR과 CSR의 최적 조합으로 구현한 하이브리드 커뮤니티 플랫폼</p>
+        <p>VIBE CODING으로 구현한 SSR과 CSR 하이브리드 커뮤니티 플랫폼</p>
 
         <div className="hero-metrics">
           <div className="m">
