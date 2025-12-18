@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Signup from "./components/common/Signup";
 import Login from "./components/common/Login";
 import BoardWrite from "./components/board/BoardWrite";
@@ -7,6 +7,12 @@ import BoardEditPage from "./components/board/BoardEditPage";
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
 import About from "./components/about/About";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminMembers from "./components/admin/AdminMembers";
+import AdminPosts from "./components/admin/AdminPosts";
+import AdminReports from "./components/admin/AdminReports";
+import AdminSettings from "./components/admin/AdminSettings";
 
 function App() {
   return (
@@ -19,6 +25,16 @@ function App() {
           <Route path="/boardwrite" element={<BoardWrite />} />
           <Route path="/boardEditePage/:postId" element={<BoardEditPage />} />
           <Route path="/about" element={<About />} />
+
+          {/* ✅ Admin (CSR) */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="members" element={<AdminMembers />} />
+            <Route path="posts" element={<AdminPosts />} />
+            <Route path="reports" element={<AdminReports />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
         </Routes>
       </main>
       <Footer></Footer>

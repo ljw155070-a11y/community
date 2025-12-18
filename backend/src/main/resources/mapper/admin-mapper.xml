@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.community.backend.admin.dao.AdminDao">
+
+  <!-- =========================
+       dashboard counts
+       ========================= -->
+  <select id="countMembers" resultType="int">
+    SELECT COUNT(*) FROM MEMBER
+  </select>
+
+  <select id="countPosts" resultType="int">
+    SELECT COUNT(*) FROM POST WHERE IS_DELETED = '0'
+  </select>
+
+  <select id="countComments" resultType="int">
+    SELECT COUNT(*) FROM COMMENTS
+  </select>
+
+  <select id="countPendingReports" resultType="int">
+    SELECT COUNT(*) FROM REPORT WHERE STATUS = 'PENDING'
+  </select>
+
+  <!-- 최근 활동: 최근 가입 5건 -->
+  <select id="selectRecentActivities" resultType="map">
+    SELECT *
+    FROM (
+      SELECT
+        '회원가입' AS type,
+        ('새로운 회원 가입: ' || NAME) AS text,
+        CREATED_AT AS createdAt
+      FROM MEMBER
+      ORDER BY CREATED_AT DESC
+    )
+    WHERE ROWNUM &lt;= 5
+  </select>
+
+  <!-- =========================
+       members
+       ========================= -->
+  <select id="countMembersFiltered" resultType="int">
+    SELECT COUNT(*)
+    FROM MEMBER
+    WHERE (#{status} = 'ALL' OR STATUS = #{status})
+      AND (
+        #{q} IS NULL OR #{q} = '' OR
+        (LOWER(NAME) LIKE '%' || LOWER(#{q}) || '%' OR LOWER(EMAIL) LIKE '%' || LOWER(#{q}) || '%')
+      )
+  </select>
+
+  <select id="selectMembers" resultType="kr.co.community.backend.admin.dto.AdminMemberDTO">
+    SELECT *
+    FROM (
+      SELECT
+        m.MEMBER_ID AS memberId,
+        m.NAME AS name,
+        m.EMAIL AS email,
+        m.STATUS AS status,
+        m.ROLE AS role,
+        m.CREATED_AT AS createdAt,
+        (SELECT COUNT(*) FROM POST p WHERE p.AUTHOR_ID = m.MEMBER_ID AND p.IS_DELETED = '0') AS postCount,
+        (SELECT COUNT(*) FROM COMMENTS c WHERE c.AUTHOR_ID = m.MEMBER_ID) AS commentCount,
+        ROW_NUMBER() OVER (ORDER BY m.CREATED_AT DESC) AS rn
+      FROM MEMBER m
+      WHERE (#{status} = 'ALL' OR m.STATUS = #{status})
+        AND (
+          #{q} IS NULL OR #{q} = '' OR
+          (LOWER(m.NAME) LIKE '%' || LOWER(#{q}) || '%' OR LOWER(m.EMAIL) LIKE '%' || LOWER(#{q}) || '%')
+        )
+    )
+    WHERE rn BETWEEN (#{offset} + 1) AND (#{offset} + #{size})
+  </select>
+
+  <!-- =========================
+       posts
+       ========================= -->
+  <select id="countPostsFiltered" resultType="int">
+    SELECT COUNT(*)
+    FROM POST p
+    WHERE p.IS_DELETED = '0'
+      AND (
+        #{q} IS NULL OR #{q} = '' OR
+        (LOWER(p.TITLE) LIKE '%' || LOWER(#{q}) || '%' OR LOWER(p.CONTENT) LIKE '%' || LOWER(#{q}) || '%')
+      )
+      AND (#{categoryId} = 'ALL' OR TO_CHAR(p.CATEGORY_ID) = #{categoryId})
+  </select>
+
+  <select id="selectPosts" resultType="kr.co.community.backend.admin.dto.AdminPostDTO">
+    SELECT *
+    FROM (
+      SELECT
+        p.POST_ID AS postId,
+        bc.CATEGORY_NAME AS categoryName,
+        p.TITLE AS title,
+        m.NAME AS authorName,
+        p.CREATED_AT AS createdAt,
+        p.VIEW_COUNT AS viewCount,
+        p.LIKE_COUNT AS likeCount,
+        p.COMMENT_COUNT AS commentCount,
+        ROW_NUMBER() OVER (ORDER BY p.CREATED_AT DESC) AS rn
+      FROM POST p
+      LEFT JOIN BOARD_CATEGORY bc ON bc.CATEGORY_ID = p.CATEGORY_ID
+      LEFT JOIN MEMBER m ON m.MEMBER_ID = p.AUTHOR_ID
+      WHERE p.IS_DELETED = '0'
+        AND (
+          #{q} IS NULL OR #{q} = '' OR
+          (LOWER(p.TITLE) LIKE '%' || LOWER(#{q}) || '%' OR LOWER(p.CONTENT) LIKE '%' || LOWER(#{q}) || '%')
+        )
+        AND (#{categoryId} = 'ALL' OR TO_CHAR(p.CATEGORY_ID) = #{categoryId})
+    )
+    WHERE rn BETWEEN (#{offset} + 1) AND (#{offset} + #{size})
+  </select>
+
+  <!-- =========================
+       reports
+       ========================= -->
+  <select id="countReportsFiltered" resultType="int">
+    SELECT COUNT(*)
+    FROM REPORT r
+    WHERE (#{status} = 'ALL' OR r.STATUS = #{status})
+  </select>
+
+  <select id="selectReports" resultType="kr.co.community.backend.admin.dto.AdminReportDTO">
+    SELECT *
+    FROM (
+      SELECT
+        r.REPORT_ID AS reportId,
+        r.TARGET_TYPE AS targetType,
+        r.TARGET_ID AS targetId,
+        m.NAME AS reporterName,
+        r.REASON AS reason,
+        r.STATUS AS status,
+        r.CREATED_AT AS createdAt,
+        ROW_NUMBER() OVER (ORDER BY r.CREATED_AT DESC) AS rn
+      FROM REPORT r
+      LEFT JOIN MEMBER m ON m.MEMBER_ID = r.REPORTER_ID
+      WHERE (#{status} = 'ALL' OR r.STATUS = #{status})
+    )
+    WHERE rn BETWEEN (#{offset} + 1) AND (#{offset} + #{size})
+  </select>
+
+</mapper>

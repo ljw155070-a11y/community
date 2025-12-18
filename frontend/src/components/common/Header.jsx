@@ -49,6 +49,9 @@ const Header = () => {
         </nav>
 
         <div className="header-right">
+          <Link className="btn-admin" to="/admin">
+            관리자
+          </Link>
           <Link className="btn-login" to="/login">
             로그인
           </Link>
