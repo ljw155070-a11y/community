@@ -407,16 +407,16 @@
         <div class="post-container">
             <!-- 게시글 헤더 -->
             <div class="post-header">
-                <span class="post-category" th:text="${post.category}">질문</span>
+                <span class="post-category" th:text="${post.categoryId}">질문</span>
                 <h1 class="post-title" th:text="${post.title}">주말에 뭐 하세요?</h1>
                 
                 <div class="post-meta">
                     <div class="author-info">
-                        <img th:src="${post.author.profileImage}" 
+                        <!-- <img th:src="${post.author.profileImage}" 
                              alt="작성자" 
                              class="author-avatar"
-                             onerror="this.src='/images/default-profile.png'">
-                        <span class="author-name" th:text="${post.author.name}">최여생</span>
+                             onerror="this.src='/images/default-profile.png'">  -->
+                        <span class="author-name" th:text="${post.authorId}">최여생</span>
                     </div>
                     <span class="post-date">
                         <span th:text="${#temporals.format(post.createdAt, 'yyyy. MM. dd.')}">2024. 12. 14.</span>
@@ -521,14 +521,14 @@
                                 <div class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy. MM. dd. HH:mm')}">2024. 12. 14. 16:30</div>
                             </div>
                         </div>
-                        <div class="comment-content" th:text="${comment.content}">
+                        <div class="comment-content" th:text="${comments.content}">
                             좋은 글 감사합니다!
                         </div>
                     </div>
                 </div>
                 
                 <!-- 댓글이 없을 때 -->
-                <div th:if="${post.comment == null or post.comment.isEmpty()}" class="empty-comments">
+                <div th:if="${post.comments == null or post.comments.isEmpty()}" class="empty-comments">
                     첫 번째 댓글을 작성해보세요!
                 </div>
             </div>
@@ -540,7 +540,7 @@
         function toggleLike() {
             const button = document.getElementById('likeButton');
             const countSpan = document.getElementById('likeCount');
-            const postId = /*[[${post.id}]]*/ 1;
+            const postId = /*[[${post.postId}]]*/ 1;
             
             fetch(`/posts/${postId}/like`, {
                 method: 'POST',
