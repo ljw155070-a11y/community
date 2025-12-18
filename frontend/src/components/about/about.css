@@ -1,0 +1,458 @@
+.about-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 0;
+}
+
+/* 상단 히어로(고정) */
+.hero {
+  background: linear-gradient(180deg, #1e6bff 0%, #1b5fe6 100%);
+  color: #fff;
+  border-radius: 16px;
+  padding: 30px 26px;
+  text-align: center;
+}
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 900;
+}
+.hero p {
+  margin: 0;
+  opacity: 0.9;
+}
+.hero-metrics {
+  display: flex;
+  gap: 22px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.m {
+  min-width: 160px;
+}
+.m-num {
+  font-size: 26px;
+  font-weight: 900;
+}
+.m-label {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* 공통 카드 */
+.card {
+  margin-top: 18px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 18px;
+}
+.card-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+/* 목적/성과 */
+.goal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.goal {
+  background: #f7f8fb;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+}
+.goal-head {
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+.goal p {
+  margin: 0;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.stack3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+.stackBox {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+}
+.stackBox ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: #374151;
+  font-size: 13px;
+}
+.stackTitle {
+  font-weight: 900;
+}
+.stackBox.ssr {
+  background: #f3f7ff;
+}
+.stackBox.csr {
+  background: #f2fbf7;
+}
+.stackBox.auth {
+  background: #fbf5ff;
+}
+
+/* 팀 포트폴리오 */
+.team-head {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.team-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #eef3ff;
+  display: grid;
+  place-items: center;
+}
+.muted {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.team-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 14px;
+}
+.team-left {
+  padding-right: 12px;
+  border-right: 1px solid #eee;
+}
+
+.member {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 10px;
+}
+.member.active {
+  border-color: #2b6cff;
+  background: #eef3ff;
+}
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.meta .name {
+  font-weight: 900;
+}
+.meta .role {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* 우측 상단 다크 프로필 */
+.profile {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 18px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #0b1324 0%, #0f203c 100%);
+  color: #fff;
+}
+.profile-avatar {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.25);
+}
+.profile-name {
+  font-size: 22px;
+  font-weight: 900;
+}
+.profile-intro {
+  margin-top: 4px;
+  opacity: 0.9;
+}
+.profile-links {
+  margin-top: 8px;
+  display: flex;
+  gap: 14px;
+  opacity: 0.85;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+/* 탭 */
+.tabs {
+  display: flex;
+  gap: 22px;
+  padding: 12px 6px 0;
+  border-bottom: 1px solid #eee;
+}
+.tab {
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  color: #111827;
+  position: relative;
+}
+.tab.active {
+  color: #2b6cff;
+}
+.tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: #2b6cff;
+  border-radius: 2px;
+}
+
+.tab-body {
+  padding: 14px 6px 6px;
+}
+.role-desc {
+  margin: 0 0 14px;
+  color: #374151;
+}
+
+/* 역할 탭 박스 */
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.role-box {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+}
+.role-box h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+.role-box ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #374151;
+  font-size: 13px;
+}
+.role-box.ssr {
+  background: #f3f7ff;
+}
+.role-box.csr {
+  background: #f2fbf7;
+}
+
+.stack-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+.stack-card {
+  border-radius: 14px;
+  padding: 14px;
+  background: #0b1324;
+  color: #fff;
+  border: 1px solid #1f2937;
+}
+.stack-card-title {
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+/* chips */
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+}
+.chips.light .chip {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #111827;
+}
+
+/* 기술 스택 탭 막대 */
+.sec-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 900;
+}
+.skill-section {
+  margin-bottom: 16px;
+}
+.skill-head {
+  font-weight: 900;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+.skill-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.skill-name {
+  font-weight: 800;
+}
+
+.bars {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.bar {
+  width: 28px;
+  height: 6px;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+.bar.on {
+  background: #2b6cff;
+}
+
+/* 프로젝트 탭 */
+.proj-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.proj-card {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+.proj-img {
+  height: 150px;
+  background: #f3f4f6;
+}
+.proj-body {
+  padding: 14px;
+}
+.proj-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.proj-title {
+  font-weight: 900;
+}
+.badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #eaf1ff;
+  color: #2563eb;
+  border: 1px solid #dbe6ff;
+  font-weight: 900;
+}
+.proj-desc {
+  margin: 10px 0 10px;
+  color: #374151;
+  font-size: 13px;
+}
+.proj-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: 900;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+/* 핵심 학습 내용(고정) */
+.learn-bg {
+  background: linear-gradient(180deg, #f4f8ff 0%, #ffffff 70%);
+}
+.learn-title {
+  margin: 0 0 12px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 18px;
+}
+.learn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.learn-box {
+  background: #fff;
+  border: 1px solid #e8eefc;
+  border-radius: 14px;
+  padding: 14px;
+}
+.learn-box h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 900;
+  color: #2563eb;
+}
+.learn-box p {
+  margin: 0;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* 반응형 */
+@media (max-width: 980px) {
+  .goal-grid,
+  .stack3,
+  .team-shell,
+  .role-grid,
+  .stack-cards,
+  .proj-grid,
+  .learn-grid {
+    grid-template-columns: 1fr;
+  }
+  .team-left {
+    border-right: none;
+    padding-right: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .member {
+    margin-bottom: 0;
+  }
+  .skill-row {
+    grid-template-columns: 120px 1fr;
+  }
+}
