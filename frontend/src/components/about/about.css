@@ -1,233 +1,278 @@
 :root {
-  --bg: #f5f7fb;
+  --bg: #f6f7fb;
   --card: #ffffff;
   --text: #0f172a;
   --muted: #64748b;
-  --line: rgba(15, 23, 42, 0.08);
-  --brand: #2563eb;
-  --brand2: #1d4ed8;
+  --muted2: #94a3b8;
+  --line: rgba(15, 23, 42, 0.1);
+
+  /* 포인트: 진하지 않은 블루 */
+  --accent: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, 0.12);
+
+  --radius: 16px;
+  --radius2: 12px;
+
   --shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
-  --radius: 18px;
+  --shadow2: 0 14px 38px rgba(15, 23, 42, 0.1);
 }
+
 body {
-  background: #f5f7fb;
+  background: var(--bg);
 }
 
 .about-wrap {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 18px 0 40px;
-  background: transparent;
+  padding: 18px 12px 48px;
+  color: var(--text);
 }
 
-/* ====== HERO (스샷 느낌: 파랑) ====== */
+/* =========================================================
+   HERO (플랫)
+   ========================================================= */
 .hero {
-  background: linear-gradient(180deg, #f4f8ff 0%, #ffffff 70%);
-  color: #0f172a;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 18px;
-  padding: 34px 26px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  box-shadow: var(--shadow);
   text-align: center;
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
 }
 
 .hero h1 {
-  margin: 0 0 8px;
-  font-size: 30px;
-  font-weight: 900;
-  letter-spacing: -0.2px;
+  margin: 0 0 10px;
+  font-size: 28px;
+  font-weight: 950;
+  letter-spacing: -0.3px;
 }
 
 .hero p {
   margin: 0;
-  color: #475569;
+  color: var(--muted);
   font-size: 14px;
+  line-height: 1.6;
 }
 
-/* 지표 박스(700%/4주→4일/4명) — 파란 배경 말고 "칩 카드"로 */
+/* 지표: 카드형 */
 .hero-metrics {
-  display: flex;
-  gap: 14px;
-  justify-content: center;
-  flex-wrap: wrap;
   margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .m {
-  min-width: 160px;
-  background: #ffffff;
-  border: 1px solid rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #fff;
   border-radius: 14px;
-  padding: 12px 14px;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+  padding: 14px 12px;
 }
 
 .m-num {
-  font-size: 26px;
-  font-weight: 900;
-  color: #2563eb;
+  font-size: 24px;
+  font-weight: 950;
+  color: var(--accent);
 }
 
 .m-label {
+  margin-top: 6px;
   font-size: 13px;
-  color: #64748b;
+  color: var(--muted);
 }
 
-/* ====== 공통 카드 ====== */
+/* =========================================================
+   CARD (공통)
+   ========================================================= */
 .card {
   margin-top: 18px;
-  background: #fff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--card);
+  box-shadow: var(--shadow);
   padding: 18px;
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
 }
+
 .card-title {
   margin: 0 0 12px;
   font-size: 18px;
-  font-weight: 900;
-  color: var(--text);
+  font-weight: 950;
+  letter-spacing: -0.2px;
 }
 
-/* ====== 목적/성과 ====== */
+/* =========================================================
+   GOAL / OUTCOME
+   ========================================================= */
 .goal-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 12px;
 }
+
 .goal {
-  background: #f8fafc;
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #fff;
   padding: 14px;
 }
+
 .goal-head {
-  font-weight: 900;
+  font-weight: 950;
   margin-bottom: 8px;
-  color: var(--text);
 }
+
 .goal p {
   margin: 0;
   color: #334155;
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.7;
 }
 
-/* 3개 스택 박스: 스샷처럼 은은한 색 */
+/* 3개 박스 */
 .stack3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
   margin-top: 12px;
 }
+
 .stackBox {
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
   padding: 14px;
+  background: #fff;
 }
+
+.stackTitle {
+  font-weight: 950;
+  margin-bottom: 8px;
+}
+
 .stackBox ul {
-  margin: 10px 0 0;
+  margin: 0;
   padding-left: 18px;
   color: #334155;
   font-size: 13px;
-}
-.stackTitle {
-  font-weight: 900;
-  color: var(--text);
-}
-.stackBox.ssr {
-  background: #eef4ff;
-}
-.stackBox.csr {
-  background: #ecfdf5;
-}
-.stackBox.auth {
-  background: #f5f3ff;
+  line-height: 1.7;
 }
 
-/* ====== 팀 포트폴리오 ====== */
+/* 색은 아주 “살짝만” */
+.stackBox.ssr {
+  border-left: 4px solid rgba(59, 130, 246, 0.55);
+}
+.stackBox.csr {
+  border-left: 4px solid rgba(34, 197, 94, 0.55);
+}
+.stackBox.auth {
+  border-left: 4px solid rgba(168, 85, 247, 0.55);
+}
+
+/* =========================================================
+   TEAM HEADER
+   ========================================================= */
 .team-head {
   display: flex;
   gap: 10px;
   align-items: flex-start;
   margin-bottom: 12px;
 }
+
 .team-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: #eaf1ff;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #fff;
   display: grid;
   place-items: center;
 }
+
 .muted {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   color: var(--muted);
   font-size: 13px;
 }
 
+/* =========================================================
+   TEAM SHELL
+   ========================================================= */
 .team-shell {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 290px 1fr;
   gap: 14px;
   align-items: start;
 }
+
+/* LEFT */
 .team-left {
   padding-right: 12px;
-  border-right: 1px solid var(--line);
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-/* 좌측 멤버 버튼: 가볍게 + active만 강조 */
+/* 멤버 버튼 */
 .member {
   width: 100%;
   display: flex;
   gap: 10px;
   align-items: center;
-  padding: 10px;
+  padding: 12px;
   background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 14px;
   cursor: pointer;
   text-align: left;
   margin-bottom: 10px;
   transition: transform 0.12s ease, box-shadow 0.12s ease,
     border-color 0.12s ease;
 }
+
 .member:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow2);
 }
+
 .member.active {
-  border-color: rgba(37, 99, 235, 0.45);
-  background: #eef4ff;
-  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.14);
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: 0 16px 44px rgba(59, 130, 246, 0.12);
 }
+
 .avatar {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid rgba(15, 23, 42, 0.1);
 }
+
 .meta .name {
-  font-weight: 900;
-  color: var(--text);
+  font-weight: 950;
+  letter-spacing: -0.2px;
 }
+
 .meta .role {
+  margin-top: 2px;
   font-size: 12px;
   color: var(--muted);
 }
 
-/* 우측 상단 프로필 배너: 여기만 다크로 포인트 */
+/* RIGHT */
+.team-right {
+  min-width: 0;
+}
+
+/* =========================================================
+   PROFILE (플랫)
+   ========================================================= */
 .profile {
   display: flex;
   gap: 14px;
   align-items: center;
-  padding: 18px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #f1f5ff 0%, #ffffff 80%);
-  color: #0f172a;
-  border: 1px solid rgba(37, 99, 235, 0.18);
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #fff;
+  box-shadow: var(--shadow);
+  color: var(--text);
 }
 
 .profile-avatar {
@@ -235,271 +280,407 @@ body {
   height: 74px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(15, 23, 42, 0.1);
 }
+
 .profile-name {
-  font-size: 22px;
-  font-weight: 900;
+  font-size: 20px;
+  font-weight: 950;
+  letter-spacing: -0.3px;
 }
+
 .profile-intro {
   margin-top: 4px;
-  opacity: 0.9;
-}
-.profile-links {
-  margin-top: 8px;
-  display: flex;
-  gap: 14px;
-  opacity: 0.88;
-  font-size: 13px;
-  flex-wrap: wrap;
-}
-
-/* 탭: 스샷처럼 밑줄만 깔끔하게 */
-.tabs {
-  display: flex;
-  gap: 18px;
-  padding: 10px 2px 0;
-  border-bottom: 1px solid var(--line);
-}
-.tab {
-  padding: 12px 6px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-weight: 900;
-  color: #111827;
-  position: relative;
-}
-.tab.active {
-  color: var(--brand);
-}
-.tab.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  background: var(--brand);
-  border-radius: 2px;
-}
-
-.tab-body {
-  padding: 14px 2px 6px;
-}
-.role-desc {
-  margin: 0 0 14px;
-  color: #334155;
-}
-
-/* 역할 탭 */
-.role-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.role-box {
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 14px;
-}
-.role-box h3 {
-  margin: 0 0 10px;
-  font-size: 15px;
-  font-weight: 900;
-}
-.role-box ul {
-  margin: 0;
-  padding-left: 18px;
-  color: #334155;
-  font-size: 13px;
-}
-.role-box.ssr {
-  background: #eef4ff;
-}
-.role-box.csr {
-  background: #ecfdf5;
-}
-
-/* 스택 카드: 다크 제거하고 밝게 */
-.stack-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 12px;
-}
-.stack-card {
-  border-radius: 16px;
-  padding: 14px;
-  background: #f8fafc;
-  color: var(--text);
-  border: 1px solid var(--line);
-}
-.stack-card-title {
-  font-weight: 900;
-  margin-bottom: 10px;
-}
-
-/* chips: 밝은 칩 기본 + 강조만 브랜드 */
-.chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.chip {
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 900;
-  border: 1px solid var(--line);
-  background: #fff;
-  color: #0f172a;
-}
-.chips.light .chip {
-  border: 1px solid var(--line);
-  background: #fff;
-  color: #0f172a;
-}
-
-/* 기술 스택 바 */
-.sec-title {
-  margin: 0 0 12px;
-  font-size: 18px;
-  font-weight: 900;
-}
-.skill-section {
-  margin-bottom: 16px;
-}
-.skill-head {
-  font-weight: 900;
-  color: var(--brand);
-  margin-bottom: 10px;
-}
-.skill-row {
-  display: grid;
-  grid-template-columns: 160px 1fr;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-.skill-name {
-  font-weight: 900;
-  color: #0f172a;
-}
-
-.bars {
-  display: flex;
-  justify-content: flex-end;
-  gap: 6px;
-}
-.bar {
-  width: 28px;
-  height: 6px;
-  border-radius: 999px;
-  background: #e2e8f0;
-}
-.bar.on {
-  background: var(--brand);
-}
-
-/* 프로젝트 탭 */
-.proj-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.proj-card {
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  overflow: hidden;
-  background: #fff;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-}
-.proj-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.1);
-}
-.proj-img {
-  height: 150px;
-  background: #f1f5f9;
-}
-.proj-body {
-  padding: 14px;
-}
-.proj-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-.proj-title {
-  font-weight: 900;
-  color: var(--text);
-}
-.badge {
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #eaf1ff;
-  color: var(--brand);
-  border: 1px solid rgba(37, 99, 235, 0.22);
-  font-weight: 900;
-}
-.proj-desc {
-  margin: 10px 0;
-  color: #334155;
-  font-size: 13px;
-}
-.proj-link {
-  display: inline-block;
-  margin-top: 10px;
-  font-weight: 900;
-  color: var(--brand);
-  text-decoration: none;
-}
-
-/* 핵심 학습 내용 */
-.learn-bg {
-  background: linear-gradient(180deg, #eef5ff 0%, #ffffff 70%);
-}
-.learn-title {
-  margin: 0 0 12px;
-  text-align: center;
-  font-weight: 900;
-  font-size: 18px;
-  color: var(--text);
-}
-.learn-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.learn-box {
-  background: #fff;
-  border: 1px solid rgba(37, 99, 235, 0.12);
-  border-radius: 16px;
-  padding: 14px;
-}
-.learn-box h3 {
-  margin: 0 0 8px;
-  font-size: 15px;
-  font-weight: 900;
-  color: var(--brand);
-}
-.learn-box p {
-  margin: 0;
   color: #334155;
   font-size: 13px;
   line-height: 1.6;
 }
 
-/* 반응형 */
+.profile-links {
+  margin-top: 8px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* =========================================================
+   TABS (pill)
+   ========================================================= */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #fff;
+}
+
+.tab {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 950;
+  color: #334155;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.tab:hover {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.tab.active {
+  background: var(--accent-soft);
+  border-color: rgba(59, 130, 246, 0.22);
+  color: #1d4ed8;
+}
+
+/* 콘텐츠 */
+.tab-body {
+  padding: 14px 2px 6px;
+}
+
+/* =========================================================
+   ROLE TAB
+   ========================================================= */
+.role-desc {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.role-box {
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  padding: 14px;
+  background: #fff;
+}
+
+.role-box h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.role-box ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.role-box.ssr {
+  border-left: 4px solid rgba(59, 130, 246, 0.55);
+}
+.role-box.csr {
+  border-left: 4px solid rgba(34, 197, 94, 0.55);
+}
+
+/* =========================================================
+   STACK TAB
+   ========================================================= */
+.sec-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 950;
+  letter-spacing: -0.2px;
+}
+
+.skill-section {
+  margin-bottom: 16px;
+}
+
+.skill-head {
+  font-weight: 950;
+  color: #1f2937;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #fff;
+}
+
+.skill-name {
+  font-weight: 900;
+}
+
+/* bars */
+.bars {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.bar {
+  width: 30px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.12);
+}
+
+.bar.on {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* =========================================================
+   PROJECTS TAB
+   ========================================================= */
+.proj-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.proj-card {
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #fff;
+  overflow: hidden;
+  transition: transform 0.14s ease, box-shadow 0.14s ease,
+    border-color 0.14s ease;
+}
+
+.proj-card.clickable {
+  cursor: pointer;
+}
+
+.proj-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow2);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.proj-img {
+  height: 120px;
+  background: #f1f5f9; /* 완전 플랫 */
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.proj-body {
+  padding: 14px;
+}
+
+.proj-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.proj-title {
+  font-weight: 950;
+  letter-spacing: -0.2px;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 950;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #fff;
+  color: #334155;
+}
+
+.proj-desc {
+  margin: 10px 0 12px;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #fff;
+  color: #0f172a;
+}
+
+.proj-link {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 950;
+  color: rgba(59, 130, 246, 0.95);
+  pointer-events: none; /* 카드 전체 클릭 유지 */
+}
+
+/* =========================================================
+   LEARN SECTION
+   ========================================================= */
+.learn-bg {
+  background: #fff;
+}
+
+.learn-title {
+  margin: 0 0 12px;
+  text-align: center;
+  font-weight: 950;
+  letter-spacing: -0.2px;
+}
+
+.learn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.learn-box {
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #fff;
+  padding: 14px;
+}
+
+.learn-box h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.learn-box p {
+  margin: 0;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+.pm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  z-index: 9999;
+}
+
+.pm {
+  width: min(860px, 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #fff;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.3);
+  padding: 18px;
+}
+
+.pm-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.pm-title {
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: -0.2px;
+}
+
+.pm-sub {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.pm-close {
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: #fff;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 8px 10px;
+  font-weight: 950;
+}
+
+.pm-chips {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pm-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.pm-section {
+  margin-top: 14px;
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
+  padding-top: 12px;
+}
+
+.pm-section h4 {
+  margin: 0 0 8px;
+  font-weight: 950;
+}
+
+.pm-section p {
+  margin: 0;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.pm-section ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
 @media (max-width: 980px) {
+  .hero-metrics {
+    grid-template-columns: 1fr;
+  }
   .goal-grid,
   .stack3,
   .team-shell,
   .role-grid,
-  .stack-cards,
   .proj-grid,
   .learn-grid {
     grid-template-columns: 1fr;
@@ -515,6 +696,20 @@ body {
     margin-bottom: 0;
   }
   .skill-row {
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 130px 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .team-left {
+    grid-template-columns: 1fr;
+  }
+  .profile {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .profile-avatar {
+    width: 84px;
+    height: 84px;
   }
 }
