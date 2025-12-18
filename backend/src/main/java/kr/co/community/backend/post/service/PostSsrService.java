@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
 import kr.co.community.backend.post.dao.PostSsrDao;
+import kr.co.community.backend.post.dto.CommentDTO;
 import kr.co.community.backend.post.dto.PostDTO;
 import kr.co.community.backend.post.dto.PostListDTO;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +54,57 @@ public class PostSsrService {
 
         return result;
     }
+    /**
+     * 게시글 상세 조회 (조회수 증가 포함)
+     */
+    @Transactional
+    public PostDTO getPostDetail(Long postId) {
+        // 1. 게시글 조회
+        PostDTO post = postSsrDao.selectPostById(postId);
+        
+        if (post == null) {
+            throw new RuntimeException("게시글을 찾을 수 없습니다.");
+        }
+        
+        // 2. 조회수 증가
+        postSsrDao.updateViewCount(postId);
+        post.setViewCount(post.getViewCount() + 1);
+        
+        // 3. 댓글 조회
+        List<CommentDTO> comments = postSsrDao.selectCommentsByPostId(postId);
+        post.setComments(comments);
+        
+        return post;
+    }
 
-
+    /**
+     * 게시글 좋아요 여부 확인
+     */
+    public boolean isPostLiked(Long postId, Long memberId) {
+        if (memberId == null) {
+            return false;
+        }
+        return postSsrDao.selectPostLikeExists(postId, memberId) > 0;
+    }
+    /**
+     * 좋아요 토글 (추가/취소)
+     */
+    @Transactional
+    public int toggleLike(Long postId, Long memberId) {
+        // 1. 좋아요 여부 확인
+        int likeExists = postSsrDao.selectPostLikeExists(postId, memberId);
+        
+        if (likeExists > 0) {
+            // 2-1. 이미 좋아요를 눌렀다면 → 취소
+            postSsrDao.deletePostLike(postId, memberId);
+            postSsrDao.decrementLikeCount(postId);
+        } else {
+            // 2-2. 좋아요를 안 눌렀다면 → 추가
+            postSsrDao.insertPostLike(postId, memberId);
+            postSsrDao.incrementLikeCount(postId);
+        }
+        
+        // 3. 변경된 좋아요 수 반환
+        return postSsrDao.selectLikeCount(postId);
+    }
 }

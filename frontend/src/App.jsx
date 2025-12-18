@@ -13,6 +13,7 @@ import AdminMembers from "./components/admin/AdminMembers";
 import AdminPosts from "./components/admin/AdminPosts";
 import AdminReports from "./components/admin/AdminReports";
 import AdminSettings from "./components/admin/AdminSettings";
+import Alert from "./components/alert/Alert";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="reports" element={<AdminReports />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
+          <Route path="/alert" element={<Alert />} />
         </Routes>
       </main>
       <Footer></Footer>

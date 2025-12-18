@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이용약관 - 커뮤니티</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+            'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        background-color: #f9fafb;
+        color: #374151;
+        line-height: 1.6;
+    }
+    
+    /* 컨테이너 */
+    .terms-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    /* 헤더 */
+    .terms-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .terms-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    
+    .terms-header .last-updated {
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+    
+    /* 탭 네비게이션 */
+    .tabs-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #e5e7eb;
+        overflow-x: auto;
+    }
+    
+    .tab-button {
+        padding: 1rem 1.5rem;
+        background: none;
+        border: none;
+        color: #6b7280;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+    }
+    
+    .tab-button:hover {
+        color: #2563eb;
+    }
+    
+    .tab-button.active {
+        color: #2563eb;
+        border-bottom-color: #2563eb;
+    }
+    
+    /* 컨텐츠 영역 */
+    .terms-content {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    /* 섹션 */
+    .terms-section {
+        margin-bottom: 2rem;
+    }
+    
+    .terms-section h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .terms-section h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 1.5rem 0 0.75rem;
+    }
+    
+    .terms-section p {
+        margin-bottom: 1rem;
+        line-height: 1.8;
+    }
+    
+    .terms-section ul,
+    .terms-section ol {
+        margin: 1rem 0;
+        padding-left: 2rem;
+    }
+    
+    .terms-section li {
+        margin-bottom: 0.5rem;
+        line-height: 1.8;
+    }
+    
+    /* 하이라이트 박스 */
+    .highlight-box {
+        background-color: #eff6ff;
+        border-left: 4px solid #2563eb;
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+    }
+    
+    .highlight-box strong {
+        color: #2563eb;
+    }
+    
+    /* 더보기 기능 */
+    .expandable-section {
+        max-height: 500px;
+        overflow: hidden;
+        position: relative;
+        transition: max-height 0.3s ease;
+    }
+    
+    .expandable-section.expanded {
+        max-height: none;
+    }
+    
+    .expand-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: linear-gradient(to bottom, transparent, white);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 1rem;
+    }
+    
+    .expandable-section.expanded .expand-overlay {
+        display: none;
+    }
+    
+    .expand-button {
+        padding: 0.75rem 2rem;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+    
+    .expand-button:hover {
+        background-color: #1d4ed8;
+    }
+    
+    .collapse-button {
+        display: none;
+        margin: 1rem auto;
+        padding: 0.75rem 2rem;
+        background-color: #6b7280;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .expandable-section.expanded .collapse-button {
+        display: block;
+    }
+    
+    .collapse-button:hover {
+        background-color: #4b5563;
+    }
+    
+    /* 동의 체크박스 영역 */
+    .agreement-section {
+        background-color: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+    
+    .agreement-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .agreement-item:hover {
+        background-color: #f3f4f6;
+    }
+    
+    .agreement-item input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.75rem;
+        cursor: pointer;
+    }
+    
+    .agreement-item label {
+        cursor: pointer;
+        font-weight: 500;
+    }
+    
+    .agreement-all {
+        border: 2px solid #2563eb;
+        font-weight: 600;
+    }
+    
+    /* 버튼 그룹 */
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        justify-content: center;
+    }
+    
+    .btn-primary {
+        padding: 1rem 2rem;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+    }
+    
+    .btn-primary:disabled {
+        background-color: #9ca3af;
+        cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+        padding: 1rem 2rem;
+        background-color: white;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .btn-secondary:hover {
+        border-color: #d1d5db;
+        background-color: #f9fafb;
+    }
+    
+    /* 목차 */
+    .table-of-contents {
+        background-color: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+    
+    .table-of-contents h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .table-of-contents ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .table-of-contents li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .table-of-contents a {
+        color: #2563eb;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .table-of-contents a:hover {
+        color: #1d4ed8;
+        text-decoration: underline;
+    }
+    
+    /* 인쇄 버튼 */
+    .print-button {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 56px;
+        height: 56px;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s;
+        z-index: 1000;
+    }
+    
+    .print-button:hover {
+        background-color: #1d4ed8;
+        transform: scale(1.1);
+    }
+    
+    /* 반응형 디자인 */
+    @media (max-width: 768px) {
+        .terms-container {
+            padding: 1rem 0.5rem;
+        }
+        
+        .terms-content {
+            padding: 1.5rem 1rem;
+        }
+        
+        .terms-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .tab-button {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .button-group {
+            flex-direction: column;
+        }
+        
+        .print-button {
+            bottom: 1rem;
+            right: 1rem;
+            width: 48px;
+            height: 48px;
+            font-size: 1.2rem;
+        }
+    }
+    
+    /* 인쇄 스타일 */
+    @media print {
+        body {
+            background: white;
+        }
+        
+        .tabs-container,
+        .agreement-section,
+        .button-group,
+        .print-button,
+        .expand-button,
+        .collapse-button,
+        .expand-overlay {
+            display: none !important;
+        }
+        
+        .expandable-section {
+            max-height: none !important;
+        }
+        
+        .terms-content {
+            box-shadow: none;
+            padding: 0;
+        }
+    }
+</style>
+</head>
+<body>
+    <th:block th:include="common/header"></th:block>
+    
+    <div class="terms-container">
+        <!-- 헤더 -->
+        <div class="terms-header">
+            <h1>이용약관 / 개인정보처리방침</h1>
+            <p class="last-updated">최종 수정일: 2024년 12월 15일</p>
+        </div>
+        
+        <!-- 탭 네비게이션 -->
+        <div class="tabs-container">
+    <button class="tab-button active" data-tab="service" onclick="switchTab('service')">서비스 이용약관</button>
+    <button class="tab-button" data-tab="privacy" onclick="switchTab('privacy')">개인정보 처리방침</button>
+    <button class="tab-button" data-tab="community" onclick="switchTab('community')">커뮤니티 가이드</button>
+        
+        <!-- 서비스 이용약관 -->
+        <div id="service" class="tab-content active">
+            <div class="terms-content">
+                <!-- 목차 -->
+                <div class="table-of-contents">
+                    <h3>📋 목차</h3>
+                    <ul>
+                        <li><a href="#service-1">제1조 (목적)</a></li>
+                        <li><a href="#service-2">제2조 (정의)</a></li>
+                        <li><a href="#service-3">제3조 (약관의 효력 및 변경)</a></li>
+                        <li><a href="#service-4">제4조 (회원가입)</a></li>
+                        <li><a href="#service-5">제5조 (서비스의 제공)</a></li>
+                        <li><a href="#service-6">제6조 (서비스의 중단)</a></li>
+                        <li><a href="#service-7">제7조 (회원의 의무)</a></li>
+                        <li><a href="#service-8">제8조 (개시물의 관리)</a></li>
+                        <li><a href="#service-9">제9조 (저작권의 귀속)</a></li>
+                        <li><a href="#service-10">제10조 (분쟁 해결)</a></li>
+                    </ul>
+                </div>
+                
+                <div class="expandable-section" id="serviceContent">
+                    <!-- 제1조 -->
+                    <div class="terms-section" id="service-1">
+                        <h2>제1조 (목적)</h2>
+                        <p>본 약관은 커뮤니티(이하 "회사")가 제공하는 온라인 커뮤니티 서비스(이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+                    </div>
+                    
+                    <!-- 제2조 -->
+                    <div class="terms-section" id="service-2">
+                        <h2>제2조 (정의)</h2>
+                        <p>"서비스"란 회사가 제공하는 게시판, 커뮤니티 등 모든 온라인 서비스를 의미합니다.</p>
+                        <ul>
+                            <li><strong>"회원"</strong>이란 회사와 서비스 이용계약을 체결하고 회사가 제공하는 서비스를 이용하는 자를 말합니다.</li>
+                            <li><strong>"콘텐츠"</strong>란 회사가 제공하는 서비스에 회원이 게재한 글, 사진 등을 포함한 모든 자료를 의미합니다.</li>
+                            <li><strong>"커뮤니티"</strong>란 회사가 제공하는 온라인 게시판 및 교류 공간을 말합니다.</li>
+                            <li><strong>"아이디"</strong>란 회원의 식별과 서비스 이용을 위해 회원이 정하고 회사가 승인하는 문자와 숫자의 조합을 말합니다.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 제3조 -->
+                    <div class="terms-section" id="service-3">
+                        <h2>제3조 (약관의 효력 및 변경)</h2>
+                        <p>회사는 이 약관의 내용을 회원이 쉽게 알 수 있도록 서비스 초기 화면에 게시합니다.</p>
+                        <div class="highlight-box">
+                            <strong>중요:</strong> 회사는 약관을 개정할 경우 적용일자 및 개정사유를 명시하여 현행약관과 함께 초기화면에 그 적용일자 7일 이전부터 적용일자 전일까지 공지합니다.
+                        </div>
+                        <p>회사가 약관을 개정할 경우에는 개정약관 공지 후 개정약관의 적용에 대한 회원의 동의 여부를 확인합니다. 회원이 개정약관에 동의하지 않을 경우 회사 또는 회원은 서비스 이용계약을 해지할 수 있습니다.</p>
+                    </div>
+                    
+                    <!-- 제4조 -->
+                    <div class="terms-section" id="service-4">
+                        <h2>제4조 (회원가입)</h2>
+                        <h3>가입신청 및 승낙</h3>
+                        <p>회원가입은 신청자가 온라인으로 회사가 정한 가입신청 양식을 작성하고, 이 약관에 동의한다는 의사표시를 함으로써 이루어집니다.</p>
+                        <ol>
+                            <li>회사는 위 신청에 대하여 승낙함을 원칙으로 합니다.</li>
+                            <li>다만 회사는 다음 각 호에 해당하는 경우에 대해서는 가입을 거절하거나 사후에 이용계약을 해지할 수 있습니다:
+                                <ul>
+                                    <li>다른 사람의 명의를 사용하여 신청한 경우</li>
+                                    <li>허위 정보를 기재하거나 회사가 요구하는 내용을 기재하지 않은 경우</li>
+                                    <li>만 14세 미만의 아동이 법정대리인의 동의를 얻지 않은 경우</li>
+                                    <li>이용자의 귀책사유로 인하여 승인이 불가능하거나 기타 규정한 제반 사항을 위반하며 신청한 경우</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <!-- 제5조 -->
+                    <div class="terms-section" id="service-5">
+                        <h2>제5조 (서비스의 제공)</h2>
+                        <p>회사는 다음과 같은 서비스를 제공합니다:</p>
+                        <ul>
+                            <li><strong>게시판 서비스:</strong> 자유로운 의견 교환을 위한 게시판 제공</li>
+                            <li><strong>댓글 서비스:</strong> 게시물에 대한 의견 작성 기능</li>
+                            <li><strong>알림 서비스:</strong> 게시물 알림 및 댓글 알림</li>
+                            <li><strong>검색 서비스:</strong> 게시물 및 회원 검색 기능</li>
+                            <li><strong>기타 서비스:</strong> 회사가 추가 개발하거나 제휴 계약 등을 통해 제공하는 서비스</li>
+                        </ul>
+                        <div class="highlight-box">
+                            서비스는 연중무휴 1일 24시간 제공함을 원칙으로 합니다. 다만, 회사는 시스템 정기점검, 증설 및 교체를 위해 회사가 정한 날이나 시간에 서비스를 일시 중단할 수 있으며, 예정된 작업으로 인한 서비스 일시 중단은 회사의 홈페이지에 사전에 공지합니다.
+                        </div>
+                    </div>
+                    
+                    <!-- 제6조 -->
+                    <div class="terms-section" id="service-6">
+                        <h2>제6조 (서비스의 중단)</h2>
+                        <p>회사는 다음 각 호에 해당하는 경우 서비스 제공을 중단할 수 있습니다:</p>
+                        <ol>
+                            <li>서비스용 설비의 보수 등 공사로 인한 부득이한 경우</li>
+                            <li>전기통신사업법에 규정된 기간통신사업자가 전기통신 서비스를 중지한 경우</li>
+                            <li>국가 비상사태, 정전, 서비스 설비의 장애 또는 서비스 이용의 폭주 등으로 정상적인 서비스 제공이 불가능할 경우</li>
+                            <li>기타 중대한 사유로 인하여 회사가 서비스 제공을 지속하는 것이 부적당하다고 인정하는 경우</li>
+                        </ol>
+                    </div>
+                    
+                    <!-- 제7조 -->
+                    <div class="terms-section" id="service-7">
+                        <h2>제7조 (회원의 의무)</h2>
+                        <p>회원은 다음 행위를 하여서는 안 됩니다:</p>
+                        <ul>
+                            <li>시스템 경유한 서비스 제공을 방해하는 일체의 행위</li>
+                            <li>허위 정보를 기재하거나 타인의 정보를 도용하는 행위</li>
+                            <li>회사의 저작권, 제3자의 저작권 등 기타 권리를 침해하는 행위</li>
+                            <li>공공질서 및 미풍양속에 위반되는 내용의 정보, 문장, 도형, 음성 등을 타인에게 유포하는 행위</li>
+                            <li>범죄와 결부된다고 객관적으로 판단되는 행위</li>
+                            <li>기타 관계법령에 위배되는 행위</li>
+                        </ul>
+                        <div class="highlight-box">
+                            <strong>주의:</strong> 회원은 이 약관 및 관계 법령에서 규정한 사항을 준수하여야 하며, 기타 회사의 업무에 방해가 되는 행위, 회사의 명예를 손상시키는 행위를 해서는 안 됩니다.
+                        </div>
+                    </div>
+                    
+                    <!-- 제8조 -->
+                    <div class="terms-section" id="service-8">
+                        <h2>제8조 (게시물의 관리)</h2>
+                        <p>회원의 게시물이 다음 각 호에 해당한다고 판단되는 경우, 회사는 사전 통지 없이 삭제하거나 이동 또는 등록 거부를 할 수 있습니다:</p>
+                        <ol>
+                            <li>다른 회원 또는 제3자를 비방하거나 명예를 손상시키는 내용인 경우</li>
+                            <li>공공질서 및 미풍양속에 위반되는 내용을 포함한 경우</li>
+                            <li>범죄적 행위에 결부된다고 인정되는 내용일 경우</li>
+                            <li>제3자의 저작권 등 기타 권리를 침해하는 내용인 경우</li>
+                            <li>회사에서 규정한 게시 기간을 초과한 경우</li>
+                            <li>회사에서 규정한 게시판 성격에 부합하지 않는 경우</li>
+                            <li>불법복제 또는 해킹을 조장하는 내용인 경우</li>
+                            <li>영리를 목적으로 하는 광고일 경우</li>
+                        </ol>
+                    </div>
+                    
+                    <!-- 제9조 -->
+                    <div class="terms-section" id="service-9">
+                        <h2>제9조 (저작권의 귀속)</h2>
+                        <p>서비스 내에 게시된 게시물의 저작권은 해당 게시물의 저작자에게 귀속됩니다.</p>
+                        <p>회원이 서비스 내에 게시하는 게시물은 검색결과 내지 서비스 및 관련 프로모션 등에 노출될 수 있으며, 해당 노출을 위해 필요한 범위 내에서는 일부 수정, 복제, 편집되어 게시될 수 있습니다.</p>
+                        <p>회사는 회원의 게시물을 소중히 보호하며, 회원의 동의 없이 상업적 목적으로 사용하지 않습니다.</p>
+                    </div>
+                    
+                    <!-- 제10조 -->
+                    <div class="terms-section" id="service-10">
+                        <h2>제10조 (분쟁 해결)</h2>
+                        <p>회사와 회원은 서비스와 관련하여 발생한 분쟁을 원만하게 해결하기 위하여 필요한 모든 노력을 하여야 합니다.</p>
+                        <p>본 약관은 대한민국 법령에 의하여 규정되고 이행되며, 서비스 이용과 관련하여 회사와 회원간에 발생한 분쟁에 대해서는 민사소송법상의 주소지를 관할하는 법원을 합의 관할로 합니다.</p>
+                    </div>
+                    
+                    <div class="expand-overlay">
+                        <button class="expand-button" onclick="expandSection('serviceContent')">
+                            전체 내용 보기 ▼
+                        </button>
+                    </div>
+                </div>
+                
+                <button class="collapse-button" onclick="collapseSection('serviceContent')">
+                    접기 ▲
+                </button>
+            </div>
+        </div>
+        
+        <!-- 개인정보 처리방침 -->
+        <div id="privacy" class="tab-content">
+            <div class="terms-content">
+                <div class="table-of-contents">
+                    <h3>📋 목차</h3>
+                    <ul>
+                        <li><a href="#privacy-1">제1조 (개인정보의 수집 및 이용목적)</a></li>
+                        <li><a href="#privacy-2">제2조 (수집하는 개인정보의 항목)</a></li>
+                        <li><a href="#privacy-3">제3조 (개인정보의 보유 및 이용기간)</a></li>
+                        <li><a href="#privacy-4">제4조 (개인정보의 파기절차 및 방법)</a></li>
+                        <li><a href="#privacy-5">제5조 (개인정보의 제3자 제공)</a></li>
+                        <li><a href="#privacy-6">제6조 (개인정보 처리의 위탁)</a></li>
+                        <li><a href="#privacy-7">제7조 (이용자의 권리와 의무)</a></li>
+                        <li><a href="#privacy-8">제8조 (개인정보 자동 수집 장치의 설치·운영 및 거부)</a></li>
+                        <li><a href="#privacy-9">제9조 (개인정보의 안전성 확보조치)</a></li>
+                        <li><a href="#privacy-10">제10조 (개인정보 보호책임자)</a></li>
+                    </ul>
+                </div>
+                
+                <div class="expandable-section" id="privacyContent">
+                    <div class="terms-section" id="privacy-1">
+                        <h2>제1조 (개인정보의 수집 및 이용목적)</h2>
+                        <p>회사는 다음과 같은 목적을 위하여 개인정보를 처리합니다:</p>
+                        <ul>
+                            <li><strong>회원 가입 및 관리:</strong> 회원 가입의사 확인, 회원제 서비스 제공, 본인 확인·인증</li>
+                            <li><strong>재화 또는 서비스 제공:</strong> 콘텐츠 제공, 맞춤 서비스 제공, 본인인증</li>
+                            <li><strong>마케팅 및 광고에 활용:</strong> 이벤트 및 광고성 정보 제공 및 참여기회 제공</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="terms-section" id="privacy-2">
+                        <h2>제2조 (수집하는 개인정보의 항목)</h2>
+                        <h3>필수 수집 항목</h3>
+                        <ul>
+                            <li>이메일 주소</li>
+                            <li>비밀번호 (암호화 저장)</li>
+                            <li>닉네임</li>
+                            <li>이름</li>
+                        </ul>
+                        <h3>선택 수집 항목</h3>
+                        <ul>
+                            <li>프로필 이미지</li>
+                            <li>자기소개</li>
+                        </ul>
+                        <h3>자동 수집 항목</h3>
+                        <ul>
+                            <li>접속 IP 정보</li>
+                            <li>쿠키</li>
+                            <li>서비스 이용 기록</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="terms-section" id="privacy-3">
+                        <h2>제3조 (개인정보의 보유 및 이용기간)</h2>
+                        <p>회사는 원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다.</p>
+                        <div class="highlight-box">
+                            <strong>보유기간:</strong> 회원 탈퇴 시까지 (단, 관계 법령에 의한 정보보유 사유가 발생할 경우 해당 기간 종료시까지 보유)
+                        </div>
+                    </div>
+                    
+                    <div class="terms-section" id="privacy-4">
+                        <h2>제4조 (개인정보의 파기절차 및 방법)</h2>
+                        <p>회사는 원칙적으로 개인정보 처리목적이 달성된 경우에는 지체없이 해당 개인정보를 파기합니다.</p>
+                        <h3>파기절차</h3>
+                        <ul>
+                            <li>회원이 입력한 정보는 목적 달성 후 별도의 DB에 옮겨져 내부 방침 및 기타 관련 법령에 따라 일정기간 저장된 후 혹은 즉시 파기됩니다.</li>
+                        </ul>
+                        <h3>파기방법</h3>
+                        <ul>
+                            <li>전자적 파일 형태: 복구 및 재생되지 않도록 안전하게 삭제</li>
+                            <li>종이에 출력된 개인정보: 분쇄기로 분쇄하거나 소각</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="terms-section" id="privacy-5">
+                        <h2>제5조 (개인정보의 제3자 제공)</h2>
+                        <p>회사는 원칙적으로 이용자의 개인정보를 제3자에게 제공하지 않습니다.</p>
+                        <p>다만, 다음의 경우에는 예외로 합니다:</p>
+                        <ul>
+                            <li>이용자가 사전에 동의한 경우</li>
+                            <li>법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="terms-section" id="privacy-6">
+                        <h2>제6조 (개인정보 처리의 위탁)</h2>
+                        <p>회사는 원활한 개인정보 업무처리를 위하여 다음과 같이 개인정보 처리업무를 위탁하고 있습니다:</p>
+                        <table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
+                            <tr style="background-color: #f3f4f6;">
+                                <th style="padding: 0.75rem; border: 1px solid #e5e7eb; text-align: left;">수탁업체</th>
+                                <th style="padding: 0.75rem; border: 1px solid #e5e7eb; text-align: left;">위탁업무</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border: 1px solid #e5e7eb;">-</td>
+                                <td style="padding: 0.75rem; border: 1px solid #e5e7eb;">-</td>
+                            </tr>
+                        </table>
+                        <p>※ 현재 제3자 위탁 없음</p>
+                    </div>
+                    
+                    <div class="terms-section" id="privacy-7">
+                        <h2>제7조 (이용자의 권리와 의무)</h2>
+                        <p>이용자는 언제든지 등록되어 있는 자신의 개인정보를 조회하거나 수정할 수 있으며 가입해지를 요청할 수도 있습니다.</p>
+                        <div class="highlight-box">
+                            <strong>권리 행사 방법:</strong> 설정 메뉴에서 '내 정보 수정' 또는 '회원 탈퇴'를 클릭하여 직접 열람, 정정 또는 탈퇴가 가능합니다.
+                        </div>
+                    </div>
+                    
+                    <div class="terms-section" id="privacy-8">
+                        <h2>제8조 (개인정보 자동 수집 장치의 설치·운영 및 거부)</h2>
+                        <p>회사는 이용자에게 개별적인 맞춤서비스를 제공하기 위해 이용정보를 저장하고 수시로 불러오는 '쿠키(cookie)'를 사용합니다.</p>
+                        <h3>쿠키 거부 방법</h3>
+                        <ul>
+                            <li>Chrome: 설정 > 개인정보 및 보안 > 쿠키 및 기타 사이트 데이터</li>
+                            <li>Edge: 설정 > 쿠키 및 사이트 권한 > 쿠키 및 사이트 데이터 관리</li>
+                            <li>Safari: 환경설정 > 개인정보 보호 > 쿠키 및 웹 사이트 데이터</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="terms-section" id="privacy-9">
+                        <h2>제9조 (개인정보의 안전성 확보조치)</h2>
+                        <p>회사는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다:</p>
+                        <ul>
+                            <li><strong>관리적 조치:</strong> 내부관리계획 수립·시행, 정기적 직원 교육</li>
+                            <li><strong>기술적 조치:</strong> 개인정보처리시스템 등의 접근권한 관리, 접근통제시스템 설치, 보안프로그램 설치</li>
+                            <li><strong>물리적 조치:</strong> 전산실, 자료보관실 등의 접근통제</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="terms-section" id="privacy-10">
+                        <h2>제10조 (개인정보 보호책임자)</h2>
+                        <p>회사는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+                        <div class="highlight-box">
+                            <strong>개인정보 보호책임자</strong><br>
+                            이름: [담당자명]<br>
+                            이메일: privacy@community.com<br>
+                            전화: 02-1234-5678
+                        </div>
+                    </div>
+                    
+                    <div class="expand-overlay">
+                        <button class="expand-button" onclick="expandSection('privacyContent')">
+                            전체 내용 보기 ▼
+                        </button>
+                    </div>
+                </div>
+                
+                <button class="collapse-button" onclick="collapseSection('privacyContent')">
+                    접기 ▲
+                </button>
+            </div>
+        </div>
+        
+        <!-- 커뮤니티 가이드 -->
+        <div id="community" class="tab-content">
+            <div class="terms-content">
+                <div class="terms-section">
+                    <h2>🌟 커뮤니티 가이드</h2>
+                    <p>우리 커뮤니티는 모든 회원이 서로 존중하고 안전하게 소통할 수 있는 공간을 만들기 위해 노력합니다.</p>
+                </div>
+                
+                <div class="terms-section">
+                    <h2>✅ 권장 행동</h2>
+                    <ul>
+                        <li>다른 회원을 존중하고 배려하는 태도</li>
+                        <li>건설적이고 유익한 콘텐츠 공유</li>
+                        <li>정확한 정보 제공 및 출처 명시</li>
+                        <li>타인의 의견에 대한 열린 마음</li>
+                        <li>커뮤니티 규칙 준수</li>
+                    </ul>
+                </div>
+                
+                <div class="terms-section">
+                    <h2>❌ 금지 행동</h2>
+                    <ul>
+                        <li><strong>혐오 발언:</strong> 인종, 성별, 종교, 성적 지향 등에 대한 차별적 발언</li>
+                        <li><strong>괴롭힘:</strong> 특정인을 대상으로 한 지속적인 비방이나 공격</li>
+                        <li><strong>스팸:</strong> 무분별한 광고나 도배</li>
+                        <li><strong>허위정보:</strong> 의도적인 거짓 정보 유포</li>
+                        <li><strong>불법 콘텐츠:</strong> 저작권 침해, 불법 복제물 공유</li>
+                        <li><strong>개인정보 침해:</strong> 타인의 개인정보 무단 공개</li>
+                    </ul>
+                </div>
+                
+                <div class="terms-section">
+                    <h2>🚨 신고 및 제재</h2>
+                    <p>규칙 위반 시 다음과 같은 조치가 취해질 수 있습니다:</p>
+                    <ol>
+                        <li><strong>1차 경고:</strong> 게시물 삭제 및 경고</li>
+                        <li><strong>2차 경고:</strong> 7일 활동 정지</li>
+                        <li><strong>3차 경고:</strong> 30일 활동 정지</li>
+                        <li><strong>영구 제재:</strong> 계정 영구 정지</li>
+                    </ol>
+                    <div class="highlight-box">
+                        <strong>신고 방법:</strong> 각 게시물의 '신고' 버튼을 클릭하거나 privacy@community.com으로 문의해주세요.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 동의 체크박스 (회원가입 시 사용) -->
+        <div class="agreement-section">
+            <div class="agreement-item agreement-all">
+                <input type="checkbox" id="agreeAll" onchange="toggleAllAgreements()">
+                <label for="agreeAll">전체 동의</label>
+            </div>
+            <div class="agreement-item">
+                <input type="checkbox" class="agreement-checkbox" id="agreeService" required>
+                <label for="agreeService">서비스 이용약관 동의 (필수)</label>
+            </div>
+            <div class="agreement-item">
+                <input type="checkbox" class="agreement-checkbox" id="agreePrivacy" required>
+                <label for="agreePrivacy">개인정보 처리방침 동의 (필수)</label>
+            </div>
+            <div class="agreement-item">
+                <input type="checkbox" class="agreement-checkbox" id="agreeCommunity" required>
+                <label for="agreeCommunity">커뮤니티 가이드 동의 (필수)</label>
+            </div>
+            <div class="agreement-item">
+                <input type="checkbox" class="agreement-checkbox" id="agreeMarketing">
+                <label for="agreeMarketing">마케팅 정보 수신 동의 (선택)</label>
+            </div>
+        </div>
+        
+        <!-- 버튼 그룹 -->
+        <div class="button-group">
+            <button class="btn-secondary" onclick="window.history.back()">이전으로</button>
+            <button class="btn-primary" id="confirmButton" onclick="confirmAgreement()" disabled>동의하고 계속하기</button>
+        </div>
+    </div>
+    
+    <!-- 인쇄 버튼 -->
+    <button class="print-button" onclick="window.print()" title="인쇄하기">
+        🖨️
+    </button>
+    
+    <th:block th:include="common/footer"></th:block>
+    
+    <script>
+    // 페이지 로드 시 URL에 따라 탭 자동 선택
+    window.addEventListener('DOMContentLoaded', function() {
+        const path = window.location.pathname;
+        
+        if (path.includes('/privacy')) {
+            openTab('privacy');
+        } else if (path.includes('/community')) {
+            openTab('community');
+        } else {
+            openTab('service');
+        }
+    });
+    
+    // 탭 열기 함수
+    function openTab(tabName) {
+        // 모든 탭 버튼과 컨텐츠 비활성화
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // 선택한 탭 활성화
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+    }
+    
+    // 탭 전환 (기존 함수 수정)
+    function switchTab(tabName) {
+        openTab(tabName);
+        // URL 변경 (히스토리 추가)
+        const newUrl = `/terms/${tabName === 'service' ? '' : tabName}`;
+        window.history.pushState({}, '', newUrl);
+    }
+    
+    // 섹션 펼치기
+    function expandSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        section.classList.add('expanded');
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    // 섹션 접기
+    function collapseSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        section.classList.remove('expanded');
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    // 전체 동의 토글
+    function toggleAllAgreements() {
+        const agreeAll = document.getElementById('agreeAll');
+        const checkboxes = document.querySelectorAll('.agreement-checkbox');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = agreeAll.checked;
+        });
+        
+        updateConfirmButton();
+    }
+    
+    // 개별 체크박스 변경 시
+    document.querySelectorAll('.agreement-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            // 필수 항목이 모두 체크되었는지 확인
+            const required = document.querySelectorAll('.agreement-checkbox[required]');
+            const allRequired = Array.from(required).every(cb => cb.checked);
+            
+            // 전체 동의 체크박스 업데이트
+            const all = document.querySelectorAll('.agreement-checkbox');
+            const allChecked = Array.from(all).every(cb => cb.checked);
+            document.getElementById('agreeAll').checked = allChecked;
+            
+            updateConfirmButton();
+        });
+    });
+    
+    // 확인 버튼 활성화/비활성화
+    function updateConfirmButton() {
+        const required = document.querySelectorAll('.agreement-checkbox[required]');
+        const allRequired = Array.from(required).every(cb => cb.checked);
+        document.getElementById('confirmButton').disabled = !allRequired;
+    }
+    
+    // 동의 확인
+    function confirmAgreement() {
+        const required = document.querySelectorAll('.agreement-checkbox[required]');
+        const allRequired = Array.from(required).every(cb => cb.checked);
+        
+        if (!allRequired) {
+            alert('필수 항목에 모두 동의해주세요.');
+            return;
+        }
+        
+        // 회원가입 페이지로 이동
+        alert('약관 동의가 완료되었습니다.');
+        window.location.href = '/register';
+    }
+    
+    // 부드러운 스크롤 (목차 클릭 시)
+    document.querySelectorAll('.table-of-contents a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                // 섹션이 접혀있으면 펼치기
+                const expandableSection = targetElement.closest('.expandable-section');
+                if (expandableSection && !expandableSection.classList.contains('expanded')) {
+                    expandableSection.classList.add('expanded');
+                }
+                
+                // 스크롤 이동
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -63,13 +63,10 @@ const Footer = () => {
                 <a href="/terms">이용약관</a>
               </li>
               <li>
-                <a href="/privacy">개인정보처리방침</a>
+                <a href="/terms/privacy">개인정보처리방침</a>
               </li>
               <li>
-                <a href="/rules">커뮤니티 규칙</a>
-              </li>
-              <li>
-                <a href="/report">신고 센터</a>
+                <a href="/terms/community">커뮤니티 가이드</a>
               </li>
             </ul>
           </div>

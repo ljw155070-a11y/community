@@ -407,21 +407,18 @@
         <div class="post-container">
             <!-- 게시글 헤더 -->
             <div class="post-header">
-                <span class="post-category" th:text="${post.categoryId}">질문</span>
-                <h1 class="post-title" th:text="${post.title}">주말에 뭐 하세요?</h1>
+                <span class="post-category" th:text="${post.category}"></span>
+                <h1 class="post-title" th:text="${post.title}"></h1>
                 
                 <div class="post-meta">
                     <div class="author-info">
-                        <!-- <img th:src="${post.author.profileImage}" 
-                             alt="작성자" 
-                             class="author-avatar"
-                             onerror="this.src='/images/default-profile.png'">  -->
-                        <span class="author-name" th:text="${post.authorId}">최여생</span>
+                        <span class="author-name" th:text="${post.authorName}"></span>
                     </div>
                     <span class="post-date">
-                        <span th:text="${#temporals.format(post.createdAt, 'yyyy. MM. dd.')}">2024. 12. 14.</span>
-                        오후
-                        <span th:text="${#temporals.format(post.createdAt, 'h:mm')}">4:30:00</span>
+                        <!-- ✅ 날짜 포맷 수정 -->
+                        <span th:text="${dateUtil.formatDate(post.createdAt)}"></span>
+                       
+                        <span th:text="${dateUtil.formatTime(post.createdAt)}"></span>
                     </span>
                     <div class="post-stats">
                         <span class="stat-item">
@@ -429,13 +426,13 @@
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg>
-                            <span th:text="${post.viewCount}">134</span>
+                            <span th:text="${post.viewCount}"></span>
                         </span>
                         <span class="stat-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                             </svg>
-                            <span th:text="${post.commentCount}">0</span>
+                            <span th:text="${post.commentCount}"></span>
                         </span>
                     </div>
                 </div>
@@ -443,7 +440,7 @@
             
             <!-- 게시글 본문 -->
             <div class="post-content">
-                <p th:utext="${post.content}">ex) 뭐먹지?</p>
+                <p th:utext="${post.content}"></p>
             </div>
             
             <!-- 게시글 액션 버튼 -->
@@ -454,7 +451,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                     </svg>
-                    <span id="likeCount" th:text="${post.likeCount}">18</span>
+                    <span id="likeCount" th:text="${post.likeCount != null ? post.likeCount : 0}">0</span>
                 </button>
                 
                 <button class="action-button share-button" onclick="sharePost()">
@@ -483,13 +480,13 @@
         <div class="comments-section">
             <div class="comments-header">
                 <h2 class="comments-title">
-                    댓글 <span class="comments-count" th:text="${post.commentCount}">0</span>
+                    댓글 <span class="comments-count" th:text="${post.commentCount}"></span>
                 </h2>
             </div>
             
             <!-- 댓글 작성 폼 (로그인 했을 때만) -->
             <div th:if="${session.member != null}" class="comment-form">
-                <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post">
+                <form th:action="@{/posts/{id}/comments(id=${post.postId})}" method="post">
                     <textarea 
                         name="content" 
                         class="comment-textarea" 
@@ -512,17 +509,14 @@
                 <div th:if="${post.comments != null and !post.comments.isEmpty()}">
                     <div class="comment-item" th:each="comment : ${post.comments}">
                         <div class="comment-author">
-                            <img th:src="${comment.author.profileImage}" 
-                                 alt="작성자" 
-                                 class="comment-avatar"
-                                 onerror="this.src='/images/default-profile.png'">
                             <div class="comment-author-info">
-                                <div class="comment-author-name" th:text="${comment.author.name}">홍길동</div>
-                                <div class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy. MM. dd. HH:mm')}">2024. 12. 14. 16:30</div>
+                                <div class="comment-author-name" th:text="${comment.authorName}">홍길동</div>
+                                <!-- ✅ 댓글 날짜 포맷 수정 -->
+                                <div class="comment-date" th:text="${dateUtil.formatDateTime(comment.createdAt)}">2024. 12. 14. 16:30</div>
                             </div>
                         </div>
-                        <div class="comment-content" th:text="${comments.content}">
-                            좋은 글 감사합니다!
+                        <div class="comment-content" th:text="${comment.content}">
+                            
                         </div>
                     </div>
                 </div>
@@ -536,47 +530,68 @@
     </main>
     <th:block th:include="common/footer"></th:block>
     <script>
-        // 좋아요 토글
-        function toggleLike() {
-            const button = document.getElementById('likeButton');
-            const countSpan = document.getElementById('likeCount');
-            const postId = /*[[${post.postId}]]*/ 1;
+    // 좋아요 토글
+    function toggleLike() {
+        const button = document.getElementById('likeButton');
+        const countSpan = document.getElementById('likeCount');
+        const postId = /*[[${post.postId}]]*/ 1;
+        
+        fetch(`/board/postDetail/${postId}/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('응답 데이터:', data); // 디버깅용
             
-            fetch(`/posts/${postId}/like`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
+            if (data.success) {
+                // 성공: 좋아요 수 업데이트
                 button.classList.toggle('liked');
                 countSpan.textContent = data.likeCount;
-            })
-            .catch(error => console.error('Error:', error));
-        }
-        
-        // 공유하기
-        function sharePost() {
-            if (navigator.share) {
-                navigator.share({
-                    title: /*[[${post.title}]]*/ '게시글',
-                    url: window.location.href
-                });
+                console.log('새로운 좋아요 수:', data.likeCount); // 디버깅용
             } else {
-                // 클립보드 복사
-                navigator.clipboard.writeText(window.location.href);
-                alert('링크가 복사되었습니다!');
+                // 실패: 에러 메시지 표시
+                alert(data.message || '좋아요 처리에 실패했습니다.');
+                if (data.message && data.message.includes('로그인')) {
+                    // 로그인 페이지로 이동
+                    window.location.href = '/login';
+                }
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('좋아요 처리 중 오류가 발생했습니다.');
+        });
+    }
+    
+    // 공유하기
+    function sharePost() {
+        if (navigator.share) {
+            navigator.share({
+                title: /*[[${post.title}]]*/ '게시글',
+                url: window.location.href
+            });
+        } else {
+            // 클립보드 복사
+            navigator.clipboard.writeText(window.location.href);
+            alert('링크가 복사되었습니다!');
         }
-        
-        // 신고하기
-        function reportPost() {
-            if (confirm('이 게시글을 신고하시겠습니까?')) {
-                // 신고 로직
-                alert('신고가 접수되었습니다.');
-            }
+    }
+    
+    // 신고하기
+    function reportPost() {
+        if (confirm('이 게시글을 신고하시겠습니까?')) {
+            // 신고 로직
+            alert('신고가 접수되었습니다.');
         }
-    </script>
+    }
+</script>
 </body>
 </html>
