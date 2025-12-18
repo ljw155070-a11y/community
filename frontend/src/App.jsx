@@ -7,6 +7,7 @@ import BoardEditPage from "./components/board/BoardEditPage";
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
 import About from "./components/about/About";
+import Alert from "./components/alert/Alert";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/boardwrite" element={<BoardWrite />} />
           <Route path="/boardEditePage/:postId" element={<BoardEditPage />} />
           <Route path="/about" element={<About />} />
+          <Route path="/alert" element={<Alert />} />
         </Routes>
       </main>
       <Footer></Footer>
