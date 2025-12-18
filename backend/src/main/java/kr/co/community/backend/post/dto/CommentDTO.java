@@ -18,14 +18,6 @@ public class CommentDTO {
     private Date createdAt;
     private Date updatedAt;
     
-    private AuthorInfo author;
-    
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AuthorInfo {
-        private Long id;
-        private String name;
-        //private String profileImage;
-    }
+    // ✅ 추가 필드
+    private String authorName;  // 작성자명 (JOIN - NVL(NICKNAME, NAME))
 }

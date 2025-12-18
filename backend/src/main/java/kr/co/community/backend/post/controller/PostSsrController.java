@@ -1,6 +1,7 @@
 package kr.co.community.backend.post.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
 import kr.co.community.backend.post.dto.PostDTO;
 import kr.co.community.backend.post.service.PostSsrService;
+import kr.co.community.backend.util.DateFormatUtil;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -73,18 +75,76 @@ public class PostSsrController {
 
         return "board/boardList";
     }
+    /**
+     * 게시글 상세 페이지
+     */
     @GetMapping("/postDetail/{postId}")
-    public String getPostDetail(@PathVariable Long postId, Model model, HttpSession session) {
-        // 더미 데이터
-        PostDTO dummyPost = new PostDTO();
-        dummyPost.setPostId(postId);
-        dummyPost.setTitle("테스트 제목");
-        dummyPost.setContent("테스트 내용입니다.");
-        dummyPost.setViewCount(100);
-        dummyPost.setCommentCount(5);
-        dummyPost.setLikeCount(10);
+    public String getPostDetail(
+            @PathVariable Long postId, 
+            Model model, 
+            HttpSession session
+    ) {
+        try {
+            // 게시글 조회 (조회수 증가 포함)
+            PostDTO post = postSsrService.getPostDetail(postId);
+            
+            System.out.println("postId: " + post.getPostId());
+            System.out.println("title: " + post.getTitle());
+            System.out.println("likeCount: " + post.getLikeCount());
+            System.out.println("viewCount: " + post.getViewCount());
+            System.out.println("commentCount: " + post.getCommentCount());
+            
+            // 로그인한 사용자의 좋아요 여부 확인
+            Long memberId = (Long) session.getAttribute("memberId");
+            if (memberId != null) {
+                boolean isLiked = postSsrService.isPostLiked(postId, memberId);
+                post.setIsLiked(isLiked);
+            } else {
+                post.setIsLiked(false);
+            }
+            
+            // ✅ Date 포맷 유틸리티를 Model에 추가
+            model.addAttribute("dateUtil", DateFormatUtil.class);
+            model.addAttribute("post", post);
+            
+            return "post/postDetail";
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "게시글을 불러오는데 실패했습니다.");
+            return "error/error";
+        }
+    }
+    //좋아요 토글 API
+    @PostMapping("/postDetail/{postId}/like")
+    @ResponseBody
+    public Map<String, Object> toggleLike(
+            @PathVariable Long postId,
+            HttpSession session
+    ) {
+        Map<String, Object> result = new HashMap<>();
         
-        model.addAttribute("post", dummyPost);
-        return "post/postDetail";
+        try {
+            Long memberId = (Long) session.getAttribute("memberId");
+            
+            if (memberId == null) {
+                result.put("success", false);
+                result.put("message", "로그인이 필요합니다.");
+                return result;
+            }
+            
+            // 좋아요 토글
+            int newLikeCount = postSsrService.toggleLike(postId, memberId);
+            
+            result.put("success", true);
+            result.put("likeCount", newLikeCount);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "좋아요 처리 중 오류가 발생했습니다.");
+        }
+        
+        return result;
     }
 }
