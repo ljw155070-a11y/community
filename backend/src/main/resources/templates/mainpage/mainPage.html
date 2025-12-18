@@ -54,70 +54,79 @@
       </div>
     </section>
 
-    <!-- 인기 게시글 영역 -->
-    <section class="mainpage-posts">
-      <div class="mainpage-posts-header">
-        <h2>인기 게시글</h2>
-        <a href="javascript:void(0);" class="mainpage-more-link" onclick="togglePosts()">더보기 ↓</a>
-      </div>
-      
-      <!-- 3개 칸으로 나눈 표 -->
-      <div class="mainpage-top-container">
-        <!-- 조회수 TOP -->
-        <div class="mainpage-top-section">
-          <h3 class="mainpage-section-title">👁 조회수 TOP</h3>
-          <div class="mainpage-top-list">
-            <div class="mainpage-top-item" th:each="post, stat : ${viewTopPosts}">
-              <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
-              <div class="mainpage-item-content">
-                <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
-                <h4 th:text="${post.title}">제목</h4>
-                <div class="mainpage-post-info">
-                  <span th:text="${post.nickname}">작성자</span>
-                  <span th:text="'👁 ' + ${post.viewCount}">조회수</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 좋아요 TOP -->
-        <div class="mainpage-top-section">
-          <h3 class="mainpage-section-title">❤ 좋아요 TOP</h3>
-          <div class="mainpage-top-list">
-            <div class="mainpage-top-item" th:each="post, stat : ${likeTopPosts}">
-              <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
-              <div class="mainpage-item-content">
-                <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
-                <h4 th:text="${post.title}">제목</h4>
-                <div class="mainpage-post-info">
-                  <span th:text="${post.nickname}">작성자</span>
-                  <span th:text="'❤ ' + ${post.likeCount}">좋아요</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 댓글 TOP -->
-        <div class="mainpage-top-section">
-          <h3 class="mainpage-section-title">💬 댓글 TOP</h3>
-          <div class="mainpage-top-list">
-            <div class="mainpage-top-item" th:each="post, stat : ${commentTopPosts}">
-              <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
-              <div class="mainpage-item-content">
-                <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
-                <h4 th:text="${post.title}">제목</h4>
-                <div class="mainpage-post-info">
-                  <span th:text="${post.nickname}">작성자</span>
-                  <span th:text="'💬 ' + ${post.commentCount}">댓글</span>
-                </div>
-              </div>
+ <!-- 인기 게시글 영역 -->
+<section class="mainpage-posts">
+  <div class="mainpage-posts-header">
+    <h2>인기 게시글</h2>
+    <a href="javascript:void(0);" class="mainpage-more-link" onclick="togglePosts()">더보기 ↓</a>
+  </div>
+  
+  <!-- 3개 칸으로 나눈 표 -->
+  <div class="mainpage-top-container">
+    <!-- 조회수 TOP -->
+    <div class="mainpage-top-section">
+      <h3 class="mainpage-section-title">👁 조회수 TOP</h3>
+      <div class="mainpage-top-list">
+        <div class="mainpage-top-item" 
+             th:each="post, stat : ${viewTopPosts}"
+             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+             style="cursor: pointer;">
+          <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
+          <div class="mainpage-item-content">
+            <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
+            <h4 th:text="${post.title}">제목</h4>
+            <div class="mainpage-post-info">
+              <span th:text="${post.nickname}">작성자</span>
+              <span th:text="'👁 ' + ${post.viewCount}">조회수</span>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+
+    <!-- 좋아요 TOP -->
+    <div class="mainpage-top-section">
+      <h3 class="mainpage-section-title">❤ 좋아요 TOP</h3>
+      <div class="mainpage-top-list">
+        <div class="mainpage-top-item" 
+             th:each="post, stat : ${likeTopPosts}"
+             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+             style="cursor: pointer;">
+          <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
+          <div class="mainpage-item-content">
+            <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
+            <h4 th:text="${post.title}">제목</h4>
+            <div class="mainpage-post-info">
+              <span th:text="${post.nickname}">작성자</span>
+              <span th:text="'❤ ' + ${post.likeCount}">좋아요</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 댓글 TOP -->
+    <div class="mainpage-top-section">
+      <h3 class="mainpage-section-title">💬 댓글 TOP</h3>
+      <div class="mainpage-top-list">
+        <div class="mainpage-top-item" 
+             th:each="post, stat : ${commentTopPosts}"
+             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+             style="cursor: pointer;">
+          <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
+          <div class="mainpage-item-content">
+            <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
+            <h4 th:text="${post.title}">제목</h4>
+            <div class="mainpage-post-info">
+              <span th:text="${post.nickname}">작성자</span>
+              <span th:text="'💬 ' + ${post.commentCount}">댓글</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
     <!-- 공지사항 영역 -->
     <section class="mainpage-notices">
