@@ -43,6 +43,9 @@ const Header = () => {
           <a href="/공지" className="nav-link">
             공지
           </a>
+          <a href="/about" className="nav-link">
+            사이트 소개 (임시)
+          </a>
         </nav>
 
         <div className="header-right">
