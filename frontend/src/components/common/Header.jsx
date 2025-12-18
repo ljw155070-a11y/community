@@ -75,12 +75,12 @@ const Header = () => {
           <a href="/about" className="nav-link">
             사이트 소개 (임시)
           </a>
+          <a href="/admin" className="nav-link">
+            관리자 (임시)
+          </a>
         </nav>
 
         <div className="header-right">
-          <Link className="btn-admin" to="/admin">
-            관리자
-          </Link>
           <Link className="btn-login" to="/login">
             로그인
           </Link>
