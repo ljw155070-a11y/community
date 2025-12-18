@@ -10,7 +10,11 @@ import kr.co.community.backend.main.vo.PostVo;
 @Mapper
 public interface MainDao {
 
-	List<PostVo> getPostList();
+	List<PostVo> getViewTopPosts();
+	
+	List<PostVo> getLikeTopPosts();
+	
+	List<PostVo> getCommentTopPosts();
 
 	List<NoticeVo> getNoticeList();
 
