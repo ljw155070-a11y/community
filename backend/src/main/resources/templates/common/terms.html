@@ -55,6 +55,12 @@
         border-bottom: 2px solid #e5e7eb;
         overflow-x: auto;
     }
+    .tabs-wrap {
+    	display: flex;
+    	justify-content: center;
+    	gap: 30px; 
+    	margin-bottom: 20px;
+    }
     
     .tab-button {
         padding: 1rem 1.5rem;
@@ -255,6 +261,7 @@
     /* 버튼 그룹 */
     .button-group {
         display: flex;
+        margin-bottom : 2rem;
         gap: 1rem;
         margin-top: 2rem;
         justify-content: center;
@@ -421,15 +428,16 @@
         <!-- 헤더 -->
         <div class="terms-header">
             <h1>이용약관 / 개인정보처리방침</h1>
-            <p class="last-updated">최종 수정일: 2024년 12월 15일</p>
+            <p class="last-updated">최종 수정일: 2025년 12월 15일</p>
         </div>
         
         <!-- 탭 네비게이션 -->
         <div class="tabs-container">
-    <button class="tab-button active" data-tab="service" onclick="switchTab('service')">서비스 이용약관</button>
-    <button class="tab-button" data-tab="privacy" onclick="switchTab('privacy')">개인정보 처리방침</button>
-    <button class="tab-button" data-tab="community" onclick="switchTab('community')">커뮤니티 가이드</button>
-        
+	        <div class="tabs-wrap">
+			    <button class="tab-button active" data-tab="service" onclick="switchTab('service')">서비스 이용약관</button>
+			    <button class="tab-button" data-tab="privacy" onclick="switchTab('privacy')">개인정보 처리방침</button>
+			    <button class="tab-button" data-tab="community" onclick="switchTab('community')">커뮤니티 가이드</button>
+	        </div>
         <!-- 서비스 이용약관 -->
         <div id="service" class="tab-content active">
             <div class="terms-content">
@@ -720,9 +728,9 @@
                         <p>회사는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
                         <div class="highlight-box">
                             <strong>개인정보 보호책임자</strong><br>
-                            이름: [담당자명]<br>
-                            이메일: privacy@community.com<br>
-                            전화: 02-1234-5678
+                            이름: 전현우<br>
+                            이메일: wjsgusdn@community.com<br>
+                            전화: 02-1577-0909
                         </div>
                     </div>
                     
@@ -786,7 +794,7 @@
             </div>
         </div>
         
-        <!-- 동의 체크박스 (회원가입 시 사용) -->
+        <!-- 동의 체크박스 (회원가입 시 사용) 
         <div class="agreement-section">
             <div class="agreement-item agreement-all">
                 <input type="checkbox" id="agreeAll" onchange="toggleAllAgreements()">
@@ -809,11 +817,11 @@
                 <label for="agreeMarketing">마케팅 정보 수신 동의 (선택)</label>
             </div>
         </div>
-        
+        -->
         <!-- 버튼 그룹 -->
         <div class="button-group">
             <button class="btn-secondary" onclick="window.history.back()">이전으로</button>
-            <button class="btn-primary" id="confirmButton" onclick="confirmAgreement()" disabled>동의하고 계속하기</button>
+           <!-- <button class="btn-primary" id="confirmButton" onclick="confirmAgreement()" disabled>동의하고 계속하기</button>  -->
         </div>
     </div>
     

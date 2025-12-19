@@ -45,9 +45,6 @@ const Footer = () => {
                 <a href="/about">커뮤니티 소개</a>
               </li>
               <li>
-                <a href="/guide">이용 가이드</a>
-              </li>
-              <li>
                 <a href="/faq">자주 묻는 질문</a>
               </li>
               <li>
