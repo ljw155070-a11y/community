@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>공지사항 작성</title>
+  <link rel="stylesheet" th:href="@{/communityCss/notice.css}" />
+</head>
+<body>
+	<th:block th:include="common/header"></th:block>
+  <div class="nw-wrap">
+    
+    <div class="nw-head">
+      <h1 class="nw-title">공지사항 작성</h1>
+      <p class="nw-sub">관리자 전용 공지사항 작성 페이지입니다</p>
+    </div>
+    
+    <form th:action="@{/notice/write}" method="post" class="nw-form">
+      
+      <div class="nw-form-group">
+        <label class="nw-label">제목</label>
+        <input 
+          type="text" 
+          name="title" 
+          class="nw-input" 
+          placeholder="공지사항 제목을 입력하세요"
+          required
+        >
+      </div>
+      
+      <div class="nw-form-group">
+        <label class="nw-label">내용</label>
+        <textarea 
+          name="content" 
+          class="nw-textarea" 
+          rows="15"
+          placeholder="공지사항 내용을 입력하세요"
+          required
+        ></textarea>
+      </div>
+      
+      <div class="nw-actions">
+        <a th:href="@{/notice}" class="nw-cancel-btn">취소</a>
+        <button type="submit" class="nw-submit-btn">작성완료</button>
+      </div>
+      
+    </form>
+    
+  </div>
+</body>
+<th:block th:include="common/footer"></th:block>
+</html>
