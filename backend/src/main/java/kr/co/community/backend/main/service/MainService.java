@@ -14,17 +14,23 @@ public class MainService {
 	@Autowired
 	private MainDao mainDao;
 
-	public List<PostVo> getPostList() {
-		
-		List<PostVo> postList = mainDao.getPostList();
-		
-		return postList;
+	public List<PostVo> getViewTopPosts() {
+		List<PostVo> viewTopPosts = mainDao.getViewTopPosts();
+		return viewTopPosts;
+	}
+	
+	public List<PostVo> getLikeTopPosts() {
+		List<PostVo> likeTopPosts = mainDao.getLikeTopPosts();
+		return likeTopPosts;
+	}
+	
+	public List<PostVo> getCommentTopPosts() {
+		List<PostVo> commentTopPosts = mainDao.getCommentTopPosts();
+		return commentTopPosts;
 	}
 
 	public List<NoticeVo> getNoticeList() {
-		
 		List<NoticeVo> noticeList = mainDao.getNoticeList();
-		
 		return noticeList;
 	}
 }

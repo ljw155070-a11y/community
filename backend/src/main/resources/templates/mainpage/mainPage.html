@@ -54,34 +54,79 @@
       </div>
     </section>
 
-    <!-- 인기 게시글 영역 -->
-    <section class="mainpage-posts">
-      <div class="mainpage-posts-header">
-        <h2>인기 게시글</h2>
-        <a href="javascript:void(0);" class="mainpage-more-link" onclick="togglePosts()">더보기 ↓</a>
+ <!-- 인기 게시글 영역 -->
+<section class="mainpage-posts">
+  <div class="mainpage-posts-header">
+    <h2>인기 게시글</h2>
+    <a href="javascript:void(0);" class="mainpage-more-link" onclick="togglePosts()">더보기 ↓</a>
+  </div>
+  
+  <!-- 3개 칸으로 나눈 표 -->
+  <div class="mainpage-top-container">
+    <!-- 조회수 TOP -->
+    <div class="mainpage-top-section">
+      <h3 class="mainpage-section-title">👁 조회수 TOP</h3>
+      <div class="mainpage-top-list">
+        <div class="mainpage-top-item" 
+             th:each="post, stat : ${viewTopPosts}"
+             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+             style="cursor: pointer;">
+          <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
+          <div class="mainpage-item-content">
+            <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
+            <h4 th:text="${post.title}">제목</h4>
+            <div class="mainpage-post-info">
+              <span th:text="${post.nickname}">작성자</span>
+              <span th:text="'👁 ' + ${post.viewCount}">조회수</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <!-- 게시글 목록 -->
-      <div class="mainpage-post-list" id="postList">
-        <!-- 타임리프로 반복 -->
-        <div class="mainpage-post-card" 
-		     th:each="post, stat : ${postList}" 
-		     th:classappend="${stat.index >= 3} ? 'mainpage-post-hidden' : ''">
-		  <!-- 조회수/좋아요/댓글 TOP 표시 -->
-		  <span class="mainpage-top-badge view-badge" th:if="${stat.index < 4}">👁 조회수 TOP</span>
-		  <span class="mainpage-top-badge like-badge" th:if="${stat.index >= 4 && stat.index < 8}">❤ 좋아요 TOP</span>
-		  <span class="mainpage-top-badge comment-badge" th:if="${stat.index >= 8}">💬 댓글 TOP</span>
-		  
-		  <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
-		  <h3 th:text="${post.title}">제목</h3>
-		  <div class="mainpage-post-info">
-		    <span th:text="${post.nickname}">작성자</span>
-		    <span th:text="'👁 ' + ${post.viewCount}">조회수</span>
-		    <span th:text="'❤ ' + ${post.likeCount}">좋아요</span>
-		    <span th:text="'💬 ' + ${post.commentCount}">댓글</span>
-		  </div>
-		</div>
+    </div>
+
+    <!-- 좋아요 TOP -->
+    <div class="mainpage-top-section">
+      <h3 class="mainpage-section-title">❤ 좋아요 TOP</h3>
+      <div class="mainpage-top-list">
+        <div class="mainpage-top-item" 
+             th:each="post, stat : ${likeTopPosts}"
+             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+             style="cursor: pointer;">
+          <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
+          <div class="mainpage-item-content">
+            <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
+            <h4 th:text="${post.title}">제목</h4>
+            <div class="mainpage-post-info">
+              <span th:text="${post.nickname}">작성자</span>
+              <span th:text="'❤ ' + ${post.likeCount}">좋아요</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
+
+    <!-- 댓글 TOP -->
+    <div class="mainpage-top-section">
+      <h3 class="mainpage-section-title">💬 댓글 TOP</h3>
+      <div class="mainpage-top-list">
+        <div class="mainpage-top-item" 
+             th:each="post, stat : ${commentTopPosts}"
+             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+             style="cursor: pointer;">
+          <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
+          <div class="mainpage-item-content">
+            <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
+            <h4 th:text="${post.title}">제목</h4>
+            <div class="mainpage-post-info">
+              <span th:text="${post.nickname}">작성자</span>
+              <span th:text="'💬 ' + ${post.commentCount}">댓글</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
     <!-- 공지사항 영역 -->
     <section class="mainpage-notices">
@@ -114,75 +159,69 @@
         </button>
       </div>
     </section>
-<th:block th:include="common/footer"></th:block>
+    <th:block th:include="common/footer"></th:block>
+    
     <!-- 자바스크립트 -->
     <script>
-      // 게시글 더보기 토글 (3개 <-> 12개)
-      function togglePosts() {
-        const hiddenPosts = document.querySelectorAll(".mainpage-post-hidden");
-        const moreLink = document.querySelector(
-          ".mainpage-posts .mainpage-more-link"
-        );
-
-        // 숨겨진 게시글이 있으면 모두 보여주기
-        if (
-          hiddenPosts[0].style.display === "none" ||
-          hiddenPosts[0].style.display === ""
-        ) {
-          hiddenPosts.forEach((post) => {
-            post.style.display = "block";
+ // 게시글 더보기 토글
+    function togglePosts() {
+      const sections = document.querySelectorAll('.mainpage-top-section');
+      const moreLink = document.querySelector('.mainpage-posts .mainpage-more-link');
+      
+      sections.forEach(section => {
+        const items = section.querySelectorAll('.mainpage-top-item');
+        
+        if (items[1] && (items[1].style.display === 'none' || items[1].style.display === '')) {
+          items.forEach(item => {
+            item.style.display = 'flex';
           });
-          moreLink.textContent = "접기 ↑";
+          moreLink.textContent = '접기 ↑';
         } else {
-          // 숨기기
-          hiddenPosts.forEach((post) => {
-            post.style.display = "none";
+          items.forEach((item, index) => {
+            if (index >= 1) {
+              item.style.display = 'none';
+            }
           });
-          moreLink.textContent = "더보기 ↓";
+          moreLink.textContent = '더보기 ↓';
         }
-      }
+      });
+    }
 
-      // 공지사항 더보기 토글 (3개 <-> 10개)
-      function toggleNotices() {
-        const hiddenNotices = document.querySelectorAll(
-          ".mainpage-notice-hidden"
-        );
-        const moreLink = document.querySelector(
-          ".mainpage-notices .mainpage-more-link"
-        );
+    // 공지사항 더보기 토글
+    function toggleNotices() {
+      const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
+      const moreLink = document.querySelector('.mainpage-notices .mainpage-more-link');
 
-        // 숨겨진 공지사항이 있으면 모두 보여주기
-        if (
-          hiddenNotices[0].style.display === "none" ||
-          hiddenNotices[0].style.display === ""
-        ) {
-          hiddenNotices.forEach((notice) => {
-            notice.style.display = "flex";
-          });
-          moreLink.textContent = "접기 ↑";
-        } else {
-          // 숨기기
-          hiddenNotices.forEach((notice) => {
-            notice.style.display = "none";
-          });
-          moreLink.textContent = "더보기 ↓";
-        }
-      }
-
-      // 페이지 로드시 숨김 처리
-      window.onload = function () {
-        const hiddenPosts = document.querySelectorAll(".mainpage-post-hidden");
-        hiddenPosts.forEach((post) => {
-          post.style.display = "none";
-        });
-
-        const hiddenNotices = document.querySelectorAll(
-          ".mainpage-notice-hidden"
-        );
+      if (hiddenNotices[0].style.display === 'none' || hiddenNotices[0].style.display === '') {
         hiddenNotices.forEach((notice) => {
-          notice.style.display = "none";
+          notice.style.display = 'flex';
         });
-      };
+        moreLink.textContent = '접기 ↑';
+      } else {
+        hiddenNotices.forEach((notice) => {
+          notice.style.display = 'none';
+        });
+        moreLink.textContent = '더보기 ↓';
+      }
+    }
+
+    // 페이지 로드시 숨김 처리
+    window.onload = function () {
+      const sections = document.querySelectorAll('.mainpage-top-section');
+      sections.forEach(section => {
+        const items = section.querySelectorAll('.mainpage-top-item');
+        items.forEach((item, index) => {
+          if (index >= 1) {
+            item.style.display = 'none';
+          }
+        });
+      });
+
+      const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
+      hiddenNotices.forEach((notice) => {
+        notice.style.display = 'none';
+      });
+    };
     </script>
   </body>
 </html>

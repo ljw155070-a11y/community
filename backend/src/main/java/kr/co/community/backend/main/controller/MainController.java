@@ -18,20 +18,26 @@ public class MainController {
 
 	@Autowired
 	private MainService mainService;
-	
-	
-	@GetMapping 
+
+
+	@GetMapping
 	public String showMain(Model model) {
-		
-		List<PostVo> postList = mainService.getPostList(); // 인기게시글 담아올 리스트 생성
-		List<NoticeVo> noticeList = mainService.getNoticeList(); // 공지사항 
-		
-		model.addAttribute("postList", postList); //모달 어트리뷰트로 페이지에 보내기
+
+		List<PostVo> viewTopPosts = mainService.getViewTopPosts();
+		List<PostVo> likeTopPosts = mainService.getLikeTopPosts();
+		List<PostVo> commentTopPosts = mainService.getCommentTopPosts();
+		List<NoticeVo> noticeList = mainService.getNoticeList();
+
+		model.addAttribute("viewTopPosts", viewTopPosts);
+		model.addAttribute("likeTopPosts", likeTopPosts);
+		model.addAttribute("commentTopPosts", commentTopPosts);
 		model.addAttribute("noticeList", noticeList);
-		
-		System.out.println(postList);
+
+		System.out.println(viewTopPosts);
+		System.out.println(likeTopPosts);
+		System.out.println(commentTopPosts);
 		System.out.println(noticeList);
-		
+
 		return "mainpage/mainpage";
 	}
 }

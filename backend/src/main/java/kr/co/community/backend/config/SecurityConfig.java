@@ -31,7 +31,7 @@ public class SecurityConfig {
       // ✅ 경로별 허용/차단
       .authorizeHttpRequests(auth -> auth
         // SSR 페이지 / 정적 리소스 허용
-        .requestMatchers("/", "/index", "/css/**", "/js/**", "/img/**", "/static/**").permitAll()
+        .requestMatchers("/", "/index", "/css/**", "/js/**", "/img/**", "/static/**",  "/board/**", "/terms/**").permitAll()
         
         // 회원가입/중복체크 API 허용 (만든 경로에 맞춰 열어주기)
         .requestMatchers("/member/**").permitAll()
@@ -65,4 +65,5 @@ public class SecurityConfig {
       source.registerCorsConfiguration("/**", configuration);
       return source;
   }
+
 }

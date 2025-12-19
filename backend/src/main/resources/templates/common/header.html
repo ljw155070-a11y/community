@@ -7,15 +7,15 @@
 <body>
     <header th:fragment="header" class="header">
         <div class="header-container">
-            <div class="logo">
+            <div class="logo" onClick="location.href='/mainpage'">
                 <span class="logo-icon">◀</span>
                 <span class="logo-text">커뮤니티</span>
             </div>
             
             <nav class="header-nav">
-                <a href="/" class="nav-link">홈</a>
+                <a href="/mainpage" class="nav-link">홈</a>
                 <a href="/board" class="nav-link">게시판</a>
-                <a href="/notice" class="nav-link">공지</a>
+                <a href="/notice" class="nav-link">공지사항</a>
             </nav>
             <div class="header-right">
             <th:block th:if="${session.member == null}">
