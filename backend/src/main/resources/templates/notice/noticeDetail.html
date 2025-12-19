@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${notice.title}">공지사항 상세</title>
+  <link rel="stylesheet" th:href="@{/communityCss/notice.css}">
+</head>
+<body>
+	<th:block th:include="common/header"></th:block>
+  <div class="nd-wrap">
+    
+    <!-- 뒤로가기 -->
+    <a th:href="@{/notice}" class="nd-back">← 목록으로</a>
+    
+    <!-- 헤더 -->
+    <div class="nd-head">
+      <div class="nd-badge-row">
+        <span 
+          class="nd-badge"
+          th:classappend="${notice.noticeType == 'IMPORTANT'} ? 'badge-important' : 'badge-normal'"
+          th:text="${notice.noticeType == 'IMPORTANT'} ? '중요' : '공지'"
+        ></span>
+        <span class="nd-date" th:text="${#dates.format(notice.createdAt, 'yyyy. MM. dd.')}"></span>
+      </div>
+      <h1 class="nd-title" th:text="${notice.title}"></h1>
+    </div>
+    
+    <!-- 본문 -->
+    <div class="nd-content" th:utext="${#strings.replace(notice.content, T(System).lineSeparator(), '<br>')}"></div>
+    
+    <!-- 하단 정보 -->
+    <div class="nd-bottom">
+      <span class="nd-author">
+        <em th:text="${notice.authorNickname}"></em>
+      </span>
+    </div>
+    
+    <!-- 목록으로 버튼 -->
+    <div class="nd-actions">
+      <a th:href="@{/notice}" class="nd-list-btn">목록으로</a>
+    </div>
+    
+  </div>
+</body>
+<th:block th:include="common/footer"></th:block>
+</html>

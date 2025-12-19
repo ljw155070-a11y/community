@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>공지사항</title>
+  <link rel="stylesheet" th:href="@{/communityCss/notice.css}">
+</head>
+<body>
+	<th:block th:include="common/header"></th:block>
+  <div class="nl-wrap">
+    
+    <!-- 헤더 -->
+    <div class="nl-head">
+      <h1 class="nl-title">공지사항</h1>
+      <p class="nl-sub">커뮤니티의 주요 소식과 안내사항을 확인하세요</p>
+    </div>
+    
+    <!-- 검색 & 글쓰기 툴바 -->
+    <div class="nl-toolbar">
+      <form th:action="@{/notice}" method="get" class="nl-search">
+        <input 
+          type="text" 
+          name="q" 
+          class="nl-search-input" 
+          placeholder="공지사항 검색..."
+          th:value="${q}"
+        >
+        <button type="submit" class="nl-search-btn">검색</button>
+      </form>
+      <a th:if="${isAdmin}" th:href="@{/notice/write}" class="nl-write-btn">글쓰기</a>
+    </div>
+    
+    <!-- 공지사항 카드 목록 -->
+    <div class="nl-list">
+      <!-- 목록이 비어있을 때 -->
+      <div th:if="${#lists.isEmpty(notices)}" class="nl-empty">
+        <div class="empty-icon">📢</div>
+        <div class="empty-text">공지사항이 없습니다.</div>
+      </div>
+      
+      <!-- 공지사항 카드 -->
+      <a 
+        th:each="notice : ${notices}"
+        th:href="@{/notice/{id}(id=${notice.noticeId})}"
+        class="nl-card"
+      >
+        <div class="nl-card-top">
+          <span 
+            class="nl-badge" 
+            th:classappend="${notice.noticeType == 'IMPORTANT'} ? 'badge-important' : 'badge-normal'"
+            th:text="${notice.noticeType == 'IMPORTANT'} ? '중요' : '공지'"
+          ></span>
+          <span class="nl-date" th:text="${#dates.format(notice.createdAt, 'yyyy. MM. dd.')}"></span>
+        </div>
+        
+        <h3 class="nl-card-title" th:text="${notice.title}"></h3>
+        
+        <div class="nl-card-bottom">
+          <span class="nl-author" th:text="${notice.authorNickname}"></span>
+        </div>
+      </a>
+    </div>
+    
+    <!-- 페이지네이션 -->
+    <div th:if="${totalPages > 0}" class="nl-pagination">
+      <!-- 이전 5페이지 -->
+      <a 
+        th:href="@{/notice(page=${prevPage}, type=${type}, q=${q})}"
+        class="nl-page-btn"
+        th:classappend="${page <= 5} ? 'is-disabled'"
+      >
+        ‹‹
+      </a>
+      
+      <!-- 페이지 번호 -->
+      <a 
+        th:each="i : ${#numbers.sequence(startPage, endPage)}"
+        th:href="@{/notice(page=${i}, type=${type}, q=${q})}"
+        th:text="${i}"
+        class="nl-page-num"
+        th:classappend="${i == page} ? 'is-active'"
+      ></a>
+      
+      <!-- 다음 5페이지 -->
+      <a 
+        th:href="@{/notice(page=${nextPage}, type=${type}, q=${q})}"
+        class="nl-page-btn"
+        th:classappend="${page >= totalPages - 4} ? 'is-disabled'"
+      >
+        ››
+      </a>
+    </div>
+    
+    <!-- 글쓰기 안내 (관리자만) -->
+    <div th:if="${isAdmin}" class="nl-info">
+      <svg class="info-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div class="info-text">
+        중요한 공지사항은 <a th:href="@{/notice/write}" class="info-link">글쓰기</a> 페이지에서 작성하실 수 있습니다.
+      </div>
+    </div>
+    
+  </div>
+  <th:block th:include="common/footer"></th:block>
+</body>
+</html>

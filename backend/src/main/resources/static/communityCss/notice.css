@@ -1,0 +1,657 @@
+@charset "UTF-8";
+
+/* ========== Reset & Base ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", sans-serif;
+  color: #1f2937;
+  background: #f9fafb;
+  line-height: 1.6;
+}
+
+/* ========== 공지사항 목록 ========== */
+.nl-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* 헤더 */
+.nl-head {
+  margin-bottom: 32px;
+}
+
+.nl-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.nl-sub {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* 검색 툴바 */
+.nl-toolbar {
+  margin-bottom: 24px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nl-search {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+
+.nl-search-input {
+  flex: 1;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 0 16px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+.nl-search-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.nl-search-btn {
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: none;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.nl-search-btn:hover {
+  background: #2563eb;
+}
+
+.nl-write-btn {
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: none;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.nl-write-btn:hover {
+  background: #2563eb;
+}
+
+/* 공지사항 목록 */
+.nl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 빈 목록 */
+.nl-empty {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 60px 20px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* 공지사항 카드 */
+.nl-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px 24px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.nl-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.nl-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* 배지 */
+.nl-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.nl-badge.badge-important,
+.badge-important {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.nl-badge.badge-normal,
+.badge-normal {
+  background: #eff6ff;
+  color: #3b82f6;
+  border: 1px solid #dbeafe;
+}
+
+.nl-date {
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* 카드 제목 */
+.nl-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+/* 카드 설명 (미리보기) */
+.nl-card-desc {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 카드 하단 */
+.nl-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.nl-author {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.nl-metrics {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.nl-metric em {
+  font-style: normal;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* 페이지네이션 */
+.nl-pagination {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 32px;
+  align-items: center;
+}
+
+.nl-page-btn,
+.nl-page-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.nl-page-btn:hover,
+.nl-page-num:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.nl-page-num.is-active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+}
+
+.nl-page-btn.is-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* 공지사항 알림 박스 */
+.nl-info {
+  margin-top: 24px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.info-icon {
+  flex-shrink: 0;
+  color: #3b82f6;
+  margin-top: 2px;
+}
+
+.info-text {
+  font-size: 14px;
+  color: #1e40af;
+  line-height: 1.6;
+}
+
+.info-link {
+  color: #2563eb;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.info-link:hover {
+  color: #1d4ed8;
+}
+
+/* ========== 공지사항 상세 ========== */
+.nd-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* 뒤로가기 */
+.nd-back {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 20px;
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nd-back:hover {
+  color: #374151;
+}
+
+/* 헤더 */
+.nd-head {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 16px;
+}
+
+.nd-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.nd-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nd-badge.badge-important {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.nd-badge.badge-normal {
+  background: #eff6ff;
+  color: #3b82f6;
+  border: 1px solid #dbeafe;
+}
+
+.nd-date {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.nd-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.4;
+}
+
+/* 본문 */
+.nd-content {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.8;
+  min-height: 200px;
+}
+
+/* 하단 정보 */
+.nd-bottom {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px 32px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nd-author {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.nd-author::before {
+  content: "작성자 · ";
+  color: #9ca3af;
+}
+
+.nd-author em {
+  font-style: normal;
+  font-weight: 600;
+  color: #374151;
+}
+
+.nd-metrics {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.nd-metric {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nd-metric em {
+  font-style: normal;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* 액션 버튼 */
+.nd-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.nd-list-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 24px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.nd-list-btn:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+/* ========== 공지사항 작성 ========== */
+.nw-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.nw-head {
+  margin-bottom: 32px;
+}
+
+.nw-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.nw-sub {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* 작성 폼 */
+.nw-form {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.nw-form-group {
+  margin-bottom: 24px;
+}
+
+.nw-form-group:last-of-type {
+  margin-bottom: 32px;
+}
+
+.nw-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.nw-input,
+.nw-textarea,
+.nw-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.nw-input:focus,
+.nw-textarea:focus,
+.nw-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.nw-textarea {
+  resize: vertical;
+  min-height: 200px;
+  line-height: 1.6;
+}
+
+/* 체크박스 */
+.nw-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nw-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.nw-checkbox-label {
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* 액션 버튼 */
+.nw-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 24px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.nw-cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 24px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nw-cancel-btn:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.nw-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 24px;
+  border-radius: 8px;
+  border: none;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nw-submit-btn:hover {
+  background: #2563eb;
+}
+
+/* ========== 반응형 ========== */
+@media (max-width: 768px) {
+  .nl-wrap,
+  .nd-wrap,
+  .nw-wrap {
+    padding: 24px 16px;
+  }
+  
+  .nl-title,
+  .nw-title {
+    font-size: 24px;
+  }
+  
+  .nl-toolbar {
+    flex-direction: column;
+  }
+  
+  .nl-search {
+    width: 100%;
+  }
+  
+  .nl-write-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .nd-head,
+  .nd-content,
+  .nw-form {
+    padding: 24px 20px;
+  }
+  
+  .nd-title {
+    font-size: 20px;
+  }
+  
+  .nd-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

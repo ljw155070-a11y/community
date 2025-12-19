@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.community.backend.notice.dao.NoticeDao">
+
+  <!-- 공지사항 목록 개수 -->
+  <select id="countNoticeList" resultType="int">
+    SELECT COUNT(*)
+    FROM NOTICE
+    WHERE 1=1
+    <if test="type != null and type != ''">
+      AND NOTICE_TYPE = #{type}
+    </if>
+    <if test="q != null and q != ''">
+      AND TITLE LIKE '%' || #{q} || '%'
+    </if>
+    AND (START_AT IS NULL OR START_AT &lt;= SYSDATE)
+    AND (END_AT IS NULL OR END_AT &gt;= SYSDATE)
+  </select>
+
+  <!-- 공지사항 목록 조회 -->
+  <select id="selectNoticeList" resultType="noticeDTO">
+    SELECT * FROM (
+      SELECT 
+        ROW_NUMBER() OVER (ORDER BY n.IS_PINNED DESC, n.CREATED_AT DESC) AS rnum,
+        n.NOTICE_ID AS noticeId,
+        n.NOTICE_TYPE AS noticeType,
+        n.TITLE AS title,
+        n.IS_PINNED AS isPinned,
+        n.CREATED_AT AS createdAt,
+        m.NAME AS authorName,
+        m.NICKNAME AS authorNickname
+      FROM NOTICE n
+      LEFT JOIN MEMBER m ON n.AUTHOR_ID = m.MEMBER_ID
+      WHERE 1=1
+      <if test="type != null and type != ''">
+        AND n.NOTICE_TYPE = #{type}
+      </if>
+      <if test="q != null and q != ''">
+        AND n.TITLE LIKE '%' || #{q} || '%'
+      </if>
+      AND (n.START_AT IS NULL OR n.START_AT &lt;= SYSDATE)
+      AND (n.END_AT IS NULL OR n.END_AT &gt;= SYSDATE)
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+
+  <!-- 공지사항 상세 조회 -->
+  <select id="selectNoticeDetail" resultType="noticeDTO">
+    SELECT 
+      n.NOTICE_ID AS noticeId,
+      n.AUTHOR_ID AS authorId,
+      n.NOTICE_TYPE AS noticeType,
+      n.TITLE AS title,
+      n.CONTENT AS content,
+      n.IS_PINNED AS isPinned,
+      n.START_AT AS startAt,
+      n.END_AT AS endAt,
+      n.CREATED_AT AS createdAt,
+      n.UPDATED_AT AS updatedAt,
+      m.NAME AS authorName,
+      m.NICKNAME AS authorNickname
+    FROM NOTICE n
+    LEFT JOIN MEMBER m ON n.AUTHOR_ID = m.MEMBER_ID
+    WHERE n.NOTICE_ID = #{noticeId}
+  </select>
+
+  <!-- 공지사항 작성 -->
+  <insert id="insertNotice">
+    INSERT INTO NOTICE (
+      NOTICE_ID,
+      AUTHOR_ID,
+      NOTICE_TYPE,
+      TITLE,
+      CONTENT,
+      IS_PINNED,
+      START_AT,
+      END_AT,
+      CREATED_AT
+    ) VALUES (
+      NOTICE_SEQ.NEXTVAL,
+      #{authorId},
+      #{noticeType},
+      #{title},
+      #{content},
+      #{isPinned},
+      #{startAt},
+      #{endAt},
+      SYSDATE
+    )
+  </insert>
+
+</mapper>
