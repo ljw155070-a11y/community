@@ -53,10 +53,19 @@ const Alert = () => {
     }
   };
 
+  // 화면에 보여줄 알림 목록 필터링
+  // activeTab이 "all"이면 전체 알림, "unread"면 안읽은 알림만
   const displayAlerts =
     activeTab === "all"
       ? alerts
       : alerts.filter((alert) => alert.isRead === "N");
+
+  // 게시글 상세페이지로 이동하는 함수
+  // postId를 받아서 해당 게시글 페이지로 이동
+  // 게시글 상세페이지로 이동하는 함수
+  const goToPost = (postId) => {
+    window.location.href = `http://localhost:9999/board/postDetail/${postId}`;
+  };
 
   if (loading) {
     return <div className="alert-page">로딩 중...</div>;
@@ -82,29 +91,48 @@ const Alert = () => {
             </button>
           </div>
         </div>
-
         <div className="alert-list">
+          {/* 알림이 없으면 "알림이 없습니다" 표시 */}
           {displayAlerts.length === 0 ? (
             <p className="alert-empty">알림이 없습니다</p>
           ) : (
+            // 알림이 있으면 각 알림을 화면에 표시
             displayAlerts.map((alert) => (
               <div
                 key={alert.alertId}
+                // 안읽은 알림이면 "unread" 클래스 추가
                 className={`alert-item ${alert.isRead === "N" ? "unread" : ""}`}
               >
+                {/* 알림 아이콘 (타입별로 다른 이모지) */}
                 <div className="alert-icon">
                   {alert.alertType === "COMMENT" && "💬"}
                   {alert.alertType === "LIKE" && "❤️"}
                   {alert.alertType === "REPLY" && "⚠️"}
                 </div>
+
+                {/* 알림 내용 */}
                 <div className="alert-content">
                   <p>{alert.content}</p>
                   <span className="alert-time">{alert.createdAt}</span>
-                  <a href="#" className="alert-link">
+
+                  {/* 자세히 보기 링크 */}
+                  <a
+                    href="#"
+                    className="alert-link"
+                    onClick={(e) => {
+                      e.preventDefault(); // 링크 기본 동작 막기
+                      markAsRead(alert.alertId); // 읽음 처리
+                      goToPost(alert.relatedPostId); // 게시글로 이동
+                    }}
+                  >
                     자세히 보기 →
                   </a>
                 </div>
+
+                {/* 읽은 알림이면 체크 표시 */}
                 {alert.isRead === "Y" && <span className="alert-check">✓</span>}
+
+                {/* 삭제 버튼 */}
                 <button
                   className="alert-delete"
                   onClick={() => deleteAlert(alert.alertId)}
@@ -115,7 +143,6 @@ const Alert = () => {
             ))
           )}
         </div>
-
         <div className="alert-footer">
           <p>알림 설정을 변경하고 싶으신가요?</p>
           <button className="alert-settings-btn">설정 페이지로 이동</button>
