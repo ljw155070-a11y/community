@@ -85,16 +85,10 @@ public class PostSsrController {
             HttpSession session
     ) {
         try {
-            // 게시글 조회 (조회수 증가 포함)
+            // 1. 게시글 조회 (조회수 증가 포함)
             PostDTO post = postSsrService.getPostDetail(postId);
             
-            System.out.println("postId: " + post.getPostId());
-            System.out.println("title: " + post.getTitle());
-            System.out.println("likeCount: " + post.getLikeCount());
-            System.out.println("viewCount: " + post.getViewCount());
-            System.out.println("commentCount: " + post.getCommentCount());
-            
-            // 로그인한 사용자의 좋아요 여부 확인
+            // 2. 로그인한 사용자의 좋아요 여부 확인
             Long memberId = (Long) session.getAttribute("memberId");
             if (memberId != null) {
                 boolean isLiked = postSsrService.isPostLiked(postId, memberId);
@@ -103,9 +97,19 @@ public class PostSsrController {
                 post.setIsLiked(false);
             }
             
-            // ✅ Date 포맷 유틸리티를 Model에 추가
+            // 3. 이전글/다음글 조회
+            PostDTO prevPost = postSsrService.getPrevPost(postId, post.getCategoryId());
+            PostDTO nextPost = postSsrService.getNextPost(postId, post.getCategoryId());
+            
+            // 4. 인기 게시글 조회 (우측 사이드바용)
+            List<PostDTO> popularPosts = postSsrService.getPopularPosts(4);
+            
+            // 5. Model에 데이터 추가
             model.addAttribute("dateUtil", DateFormatUtil.class);
             model.addAttribute("post", post);
+            model.addAttribute("prevPost", prevPost);
+            model.addAttribute("nextPost", nextPost);
+            model.addAttribute("popularPosts", popularPosts);
             
             return "post/postDetail";
             
@@ -115,7 +119,10 @@ public class PostSsrController {
             return "error/error";
         }
     }
-    //좋아요 토글 API
+
+    /**
+     * 좋아요 토글 API
+     */
     @PostMapping("/postDetail/{postId}/like")
     @ResponseBody
     public Map<String, Object> toggleLike(
@@ -143,6 +150,46 @@ public class PostSsrController {
             e.printStackTrace();
             result.put("success", false);
             result.put("message", "좋아요 처리 중 오류가 발생했습니다.");
+        }
+        
+        return result;
+    }
+
+    /**
+     * 게시글 삭제 API
+     */
+    @PostMapping("/delete/{postId}")
+    @ResponseBody
+    public Map<String, Object> deletePost(
+            @PathVariable Long postId,
+            HttpSession session
+    ) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            Long memberId = (Long) session.getAttribute("memberId");
+            
+            if (memberId == null) {
+                result.put("success", false);
+                result.put("message", "로그인이 필요합니다.");
+                return result;
+            }
+            
+            // 작성자 확인 및 삭제
+            boolean deleted = postSsrService.deletePost(postId, memberId);
+            
+            if (deleted) {
+                result.put("success", true);
+                result.put("message", "삭제되었습니다.");
+            } else {
+                result.put("success", false);
+                result.put("message", "삭제 권한이 없습니다.");
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "삭제 중 오류가 발생했습니다.");
         }
         
         return result;

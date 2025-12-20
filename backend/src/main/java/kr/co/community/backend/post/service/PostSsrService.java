@@ -86,6 +86,7 @@ public class PostSsrService {
         }
         return postSsrDao.selectPostLikeExists(postId, memberId) > 0;
     }
+
     /**
      * 좋아요 토글 (추가/취소)
      */
@@ -106,5 +107,43 @@ public class PostSsrService {
         
         // 3. 변경된 좋아요 수 반환
         return postSsrDao.selectLikeCount(postId);
+    }
+
+    /**
+     * 이전 게시글 조회
+     */
+    public PostDTO getPrevPost(Long currentPostId, Long categoryId) {
+        return postSsrDao.selectPrevPost(currentPostId, categoryId);
+    }
+
+    /**
+     * 다음 게시글 조회
+     */
+    public PostDTO getNextPost(Long currentPostId, Long categoryId) {
+        return postSsrDao.selectNextPost(currentPostId, categoryId);
+    }
+
+    /**
+     * 인기 게시글 조회 (조회수 기준)
+     */
+    public List<PostDTO> getPopularPosts(int limit) {
+        return postSsrDao.selectPopularPosts(limit);
+    }
+
+    /**
+     * 게시글 삭제 (작성자 확인 포함)
+     */
+    @Transactional
+    public boolean deletePost(Long postId, Long memberId) {
+        // 작성자 확인
+        PostDTO post = postSsrDao.selectPostById(postId);
+        
+        if (post == null || !post.getAuthorId().equals(memberId)) {
+            return false;
+        }
+        
+        // 소프트 삭제
+        postSsrDao.updateIsDeleted(postId);
+        return true;
     }
 }

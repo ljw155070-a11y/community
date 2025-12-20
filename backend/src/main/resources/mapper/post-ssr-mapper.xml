@@ -172,5 +172,59 @@
     FROM POST
     WHERE POST_ID = #{postId}
   </select>
-
+  <!-- 이전 게시글 조회 -->
+	<select id="selectPrevPost" resultType="kr.co.community.backend.post.dto.PostDTO">
+	    SELECT *
+	    FROM (
+	        SELECT
+	            POST_ID AS postId,
+	            TITLE   AS title
+	        FROM POST
+	        WHERE POST_ID <![CDATA[<]]> #{currentPostId}
+	          AND CATEGORY_ID = #{categoryId}
+	          AND IS_DELETED = 'N'
+	        ORDER BY POST_ID DESC
+	    )
+	    WHERE ROWNUM = 1
+	</select>
+	
+	<!-- 다음 게시글 조회 -->
+	<select id="selectNextPost" resultType="kr.co.community.backend.post.dto.PostDTO">
+	    SELECT *
+	    FROM (
+	        SELECT
+	            POST_ID AS postId,
+	            TITLE   AS title
+	        FROM POST
+	        WHERE POST_ID > #{currentPostId}
+	          AND CATEGORY_ID = #{categoryId}
+	          AND IS_DELETED = 'N'
+	        ORDER BY POST_ID ASC
+	    )
+	    WHERE ROWNUM = 1
+	</select>
+	
+	<!-- 인기 게시글 조회 (조회수 기준 상위 N개) -->
+	<select id="selectPopularPosts" resultType="kr.co.community.backend.post.dto.PostDTO">
+	    SELECT *
+	    FROM (
+	        SELECT
+	            P.POST_ID       AS postId,
+	            P.TITLE         AS title,
+	            P.VIEW_COUNT    AS viewCount,
+	            P.LIKE_COUNT    AS likeCount
+	        FROM POST P
+	        WHERE P.IS_DELETED = 'N'
+	        ORDER BY P.VIEW_COUNT DESC, P.LIKE_COUNT DESC, P.POST_ID DESC
+	    )
+	    WHERE ROWNUM <![CDATA[<=]]> #{limit}
+	</select>
+	
+	<!-- 게시글 삭제 (소프트 삭제) -->
+	<update id="updateIsDeleted">
+	    UPDATE POST
+	    SET IS_DELETED = 'Y',
+	        UPDATED_AT = SYSDATE
+	    WHERE POST_ID = #{postId}
+	</update>
 </mapper>

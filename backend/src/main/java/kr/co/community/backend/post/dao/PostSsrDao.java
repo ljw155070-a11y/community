@@ -72,6 +72,28 @@ public interface PostSsrDao {
      * 현재 좋아요 수 조회
      */
     int selectLikeCount(@Param("postId") Long postId);
-    
+
+    // ========== 이전/다음글 ==========
+    /**
+     * 이전 게시글 조회
+     */
+    PostDTO selectPrevPost(@Param("currentPostId") Long currentPostId, @Param("categoryId") Long categoryId);
+
+    /**
+     * 다음 게시글 조회
+     */
+    PostDTO selectNextPost(@Param("currentPostId") Long currentPostId, @Param("categoryId") Long categoryId);
+
+    // ========== 인기 게시글 ==========
+    /**
+     * 인기 게시글 조회 (조회수 기준)
+     */
+    List<PostDTO> selectPopularPosts(@Param("limit") int limit);
+
+    // ========== 게시글 삭제 ==========
+    /**
+     * 게시글 삭제 (소프트 삭제)
+     */
+    void updateIsDeleted(@Param("postId") Long postId);
     
 }
