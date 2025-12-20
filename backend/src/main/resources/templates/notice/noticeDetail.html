@@ -26,7 +26,7 @@
     </div>
     
     <!-- 본문 -->
-    <div class="nd-content" th:utext="${#strings.replace(notice.content, T(System).lineSeparator(), '<br>')}"></div>
+    <div class="nd-content" style="white-space: pre-wrap;" th:text="${notice.content}"></div>
     
     <!-- 하단 정보 -->
     <div class="nd-bottom">

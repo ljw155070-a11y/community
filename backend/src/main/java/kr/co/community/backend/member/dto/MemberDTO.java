@@ -19,8 +19,8 @@ public class MemberDTO {
 	  private String nickname;     // NICKNAME
 	  private String role;         // ROLE
 	  private String status;       // STATUS
-	  //private String createdAt;		//가입일
-	  //private String updatedAt;		//수정일
-	  //private String lastLoginAt;	//마지막 로그인 날짜
-	}
+	  private String createdAt;		//가입일
+	  private String updatedAt;		//수정일
+	  private String lastLoginAt;	//마지막 로그인 날짜
+}
 

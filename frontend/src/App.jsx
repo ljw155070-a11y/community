@@ -14,6 +14,7 @@ import AdminPosts from "./components/admin/AdminPosts";
 import AdminReports from "./components/admin/AdminReports";
 import AdminSettings from "./components/admin/AdminSettings";
 import Alert from "./components/alert/Alert";
+import MyPage from "./components/member/Mypage";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/boardwrite" element={<BoardWrite />} />
           <Route path="/boardEditePage/:postId" element={<BoardEditPage />} />
           <Route path="/about" element={<About />} />
+          <Route path="/profile" element={<MyPage />} />
 
           {/* ✅ Admin (CSR) */}
           <Route path="/admin" element={<AdminLayout />}>
