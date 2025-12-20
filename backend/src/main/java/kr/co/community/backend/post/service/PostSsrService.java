@@ -86,6 +86,7 @@ public class PostSsrService {
         }
         return postSsrDao.selectPostLikeExists(postId, memberId) > 0;
     }
+
     /**
      * 좋아요 토글 (추가/취소)
      */
@@ -106,5 +107,68 @@ public class PostSsrService {
         
         // 3. 변경된 좋아요 수 반환
         return postSsrDao.selectLikeCount(postId);
+    }
+
+    /**
+     * 이전 게시글 조회
+     */
+    public PostDTO getPrevPost(Long currentPostId, Long categoryId) {
+        return postSsrDao.selectPrevPost(currentPostId, categoryId);
+    }
+
+    /**
+     * 다음 게시글 조회
+     */
+    public PostDTO getNextPost(Long currentPostId, Long categoryId) {
+        return postSsrDao.selectNextPost(currentPostId, categoryId);
+    }
+
+    /**
+     * 인기 게시글 조회 (조회수 기준 TOP N)
+     */
+    public List<PostDTO> getViewTopPosts(int limit) {
+        return postSsrDao.selectViewTopPosts(limit);
+    }
+
+    /**
+     * 작성자의 다른 글 조회 (현재 글 제외)
+     */
+    public List<PostDTO> getAuthorOtherPosts(Long authorId, Long currentPostId, int limit) {
+        return postSsrDao.selectAuthorOtherPosts(authorId, currentPostId, limit);
+    }
+
+    /**
+     * 작성자 통계 조회 (게시글 수, 댓글 수)
+     */
+    public Map<String, Object> getAuthorStats(Long authorId) {
+        Map<String, Object> stats = new HashMap<>();
+        
+        // 작성자의 게시글 수
+        int postCount = postSsrDao.countAuthorPosts(authorId);
+        
+        // 작성자의 댓글 수
+        int commentCount = postSsrDao.countAuthorComments(authorId);
+        
+        stats.put("postCount", postCount);
+        stats.put("commentCount", commentCount);
+        
+        return stats;
+    }
+
+    /**
+     * 게시글 삭제 (작성자 확인 포함)
+     */
+    @Transactional
+    public boolean deletePost(Long postId, Long memberId) {
+        // 작성자 확인
+        PostDTO post = postSsrDao.selectPostById(postId);
+        
+        if (post == null || !post.getAuthorId().equals(memberId)) {
+            return false;
+        }
+        
+        // 소프트 삭제
+        postSsrDao.updateIsDeleted(postId);
+        return true;
     }
 }
