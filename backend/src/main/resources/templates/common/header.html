@@ -19,8 +19,8 @@
             </nav>
             <div class="header-right">
             <th:block th:if="${session.member == null}">
-                <button class="btn-login" onclick="location.href='/login'">로그인</button>
-                <button class="btn-signup" onclick="location.href='/signup'">회원가입</button>
+                <button class="btn-login" onclick="location.href='/app/login'">로그인</button>
+                <button class="btn-signup" onclick="location.href='/app/signup'">회원가입</button>
             </th:block>
             <th:block th:if="${session.member != null}">
                 <a href="/notifications" class="notification-link">
