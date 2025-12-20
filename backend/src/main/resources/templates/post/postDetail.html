@@ -783,32 +783,35 @@
     <!-- 좌측 사이드바 -->
     <aside class="sidebar-left">
         <!-- 작성자 카드 -->
-        <div class="author-card">
-            <div class="author-avatar-large" th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">김</div>
-            <h3 class="author-name-large" th:text="${post.authorName}">김개발</h3>
-            <p class="author-bio">개발을 사랑하는 풀스택 개발자입니다.</p>
-            <div class="author-stats">
-                <div class="stat-box">
-                    <span class="stat-value">42</span>
-                    <span class="stat-label">게시글</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-value">1.2K</span>
-                    <span class="stat-label">팔로워</span>
-                </div>
-            </div>
-            <button class="btn-follow" onclick="followAuthor()">팔로우</button>
-        </div>
-        
-        <!-- 작성자의 다른 글 -->
-        <div class="sidebar-section">
-            <h4 class="sidebar-title">✍️ 작성자의 다른 글</h4>
-            <ul class="related-list">
-                <li><a href="#">React 성능 최적화 완벽 가이드</a></li>
-                <li><a href="#">TypeScript 제대로 시작하기</a></li>
-                <li><a href="#">REST API 설계 베스트 프랙티스</a></li>
-            </ul>
-        </div>
+		<div class="author-card">
+		    <div class="author-avatar-large" th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">김</div>
+		    <h3 class="author-name-large" th:text="${post.authorName}"></h3>
+		    <p class="author-bio">개발을 사랑하는 풀스택 개발자입니다.</p>
+		    <div class="author-stats">
+		        <div class="stat-box">
+		            <span class="stat-value" th:text="${authorStats.postCount}">0</span>
+		            <span class="stat-label">게시글</span>
+		        </div>
+		        <div class="stat-box">
+		            <span class="stat-value" th:text="${authorStats.commentCount}">0</span>
+		            <span class="stat-label">댓글</span>
+		        </div>
+		    </div>
+		    <button class="btn-follow" onclick="followAuthor()">팔로우</button>
+		</div>
+		
+		<!-- 작성자의 다른 글 -->
+		<div class="sidebar-section">
+		    <h4 class="sidebar-title">✍️ 작성자의 다른 글</h4>
+		    <ul class="related-list">
+		        <li th:if="${authorOtherPosts == null or authorOtherPosts.isEmpty()}">
+		            <span style="color: #9ca3af; font-size: 0.85rem;">다른 글이 없습니다.</span>
+		        </li>
+		        <li th:each="otherPost : ${authorOtherPosts}">
+		            <a th:href="@{/board/postDetail/{id}(id=${otherPost.postId})}" th:text="${otherPost.title}">게시글 제목</a>
+		        </li>
+		    </ul>
+		</div>
     </aside>
     
     <!-- 메인 컨텐츠 -->
@@ -985,75 +988,56 @@
     
     <!-- 우측 사이드바 -->
     <aside class="sidebar-right">
-        <!-- 인기 게시글 -->
-        <div class="sidebar-section">
-            <h4 class="sidebar-title">🔥 인기 게시글</h4>
-            <ul class="popular-list">
-                <li class="popular-item">
-                    <span class="popular-rank top3">1</span>
-                    <div class="popular-content">
-                        <a href="#" class="popular-title">React Hooks 완벽 마스터하기</a>
-                        <div class="popular-stats">
-                            <span>👁 1,523</span>
-                            <span>❤ 89</span>
-                        </div>
-                    </div>
-                </li>
-                <li class="popular-item">
-                    <span class="popular-rank top3">2</span>
-                    <div class="popular-content">
-                        <a href="#" class="popular-title">Oracle DB 성능 튜닝 팁</a>
-                        <div class="popular-stats">
-                            <span>👁 987</span>
-                            <span>❤ 54</span>
-                        </div>
-                    </div>
-                </li>
-                <li class="popular-item">
-                    <span class="popular-rank top3">3</span>
-                    <div class="popular-content">
-                        <a href="#" class="popular-title">Node.js Express 기초부터</a>
-                        <div class="popular-stats">
-                            <span>👁 756</span>
-                            <span>❤ 42</span>
-                        </div>
-                    </div>
-                </li>
-                <li class="popular-item">
-                    <span class="popular-rank">4</span>
-                    <div class="popular-content">
-                        <a href="#" class="popular-title">CSS Flexbox vs Grid 비교</a>
-                        <div class="popular-stats">
-                            <span>👁 645</span>
-                            <span>❤ 38</span>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        
-        <!-- 실시간 태그 -->
-        <div class="sidebar-section">
-            <h4 class="sidebar-title">🏷 실시간 태그</h4>
-            <div class="tags-cloud">
-                <a href="#" class="tag-item">#React <span class="tag-count">234</span></a>
-                <a href="#" class="tag-item">#SpringBoot <span class="tag-count">198</span></a>
-                <a href="#" class="tag-item">#Node.js <span class="tag-count">156</span></a>
-                <a href="#" class="tag-item">#Oracle <span class="tag-count">142</span></a>
-                <a href="#" class="tag-item">#JavaScript <span class="tag-count">128</span></a>
-                <a href="#" class="tag-item">#CSS <span class="tag-count">95</span></a>
-            </div>
-        </div>
-        
-        <!-- 광고 배너 -->
-        <div class="sidebar-section">
-            <div class="ad-banner">
-                <p class="ad-label">Advertisement</p>
-                <h5>커뮤니티 프리미엄</h5>
-                <p>광고 없이 더 쾌적하게!</p>
-                <button class="ad-btn">자세히 보기</button>
-            </div>
-        </div>
+	    <!-- 인기 게시글 -->
+	    <div class="sidebar-section">
+	        <h4 class="sidebar-title">🔥 인기 게시글</h4>
+	        <ul class="popular-list">
+	            <!-- 데이터가 있을 때 -->
+	            <li class="popular-item" th:each="popular, iter : ${popularPosts}">
+	                <span class="popular-rank" 
+	                      th:classappend="${iter.index < 3} ? 'top3' : ''" 
+	                      th:text="${iter.index + 1}">1</span>
+	                <div class="popular-content">
+	                    <a th:href="@{/board/postDetail/{id}(id=${popular.postId})}" 
+	                       class="popular-title" 
+	                       th:text="${popular.title}">게시글 제목</a>
+	                    <div class="popular-stats">
+	                        <span th:text="'👁 ' + ${popular.viewCount}">👁 0</span>
+	                        <span th:text="'❤ ' + ${popular.likeCount}">❤ 0</span>
+	                    </div>
+	                </div>
+	            </li>
+	            
+	            <!-- 데이터가 없을 때 -->
+	            <li th:if="${popularPosts == null or popularPosts.isEmpty()}" 
+	                style="padding: 2rem; text-align: center; color: #9ca3af;">
+	                인기 게시글이 없습니다
+	            </li>
+	        </ul>
+	    </div>
+	    
+	    <!-- 실시간 태그 -->
+	    <div class="sidebar-section">
+	        <h4 class="sidebar-title">🏷 실시간 태그</h4>
+	        <div class="tags-cloud">
+	            <a href="#" class="tag-item">#React</a>
+	            <a href="#" class="tag-item">#SpringBoot</a>
+	            <a href="#" class="tag-item">#Node.js</a>
+	            <a href="#" class="tag-item">#Oracle</a>
+	            <a href="#" class="tag-item">#JavaScript</a>
+	            <a href="#" class="tag-item">#CSS</a>
+	        </div>
+	    </div>
+	    
+	    <!-- 광고 배너 -->
+	    <div class="sidebar-section">
+	        <div class="ad-banner">
+	            <p class="ad-label">Advertisement</p>
+	            <h5>커뮤니티 프리미엄</h5>
+	            <p>광고 없이 더 쾌적하게!</p>
+	            <button class="ad-btn">자세히 보기</button>
+	        </div>
+	    </div>
     </aside>
 </div>
 

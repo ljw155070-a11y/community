@@ -124,10 +124,35 @@ public class PostSsrService {
     }
 
     /**
-     * 인기 게시글 조회 (조회수 기준)
+     * 인기 게시글 조회 (조회수 기준 TOP N)
      */
-    public List<PostDTO> getPopularPosts(int limit) {
-        return postSsrDao.selectPopularPosts(limit);
+    public List<PostDTO> getViewTopPosts(int limit) {
+        return postSsrDao.selectViewTopPosts(limit);
+    }
+
+    /**
+     * 작성자의 다른 글 조회 (현재 글 제외)
+     */
+    public List<PostDTO> getAuthorOtherPosts(Long authorId, Long currentPostId, int limit) {
+        return postSsrDao.selectAuthorOtherPosts(authorId, currentPostId, limit);
+    }
+
+    /**
+     * 작성자 통계 조회 (게시글 수, 댓글 수)
+     */
+    public Map<String, Object> getAuthorStats(Long authorId) {
+        Map<String, Object> stats = new HashMap<>();
+        
+        // 작성자의 게시글 수
+        int postCount = postSsrDao.countAuthorPosts(authorId);
+        
+        // 작성자의 댓글 수
+        int commentCount = postSsrDao.countAuthorComments(authorId);
+        
+        stats.put("postCount", postCount);
+        stats.put("commentCount", commentCount);
+        
+        return stats;
     }
 
     /**

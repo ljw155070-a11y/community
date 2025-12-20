@@ -80,100 +80,101 @@
   ORDER BY RN
 </select>
 
- <!-- 게시글 단건 조회 -->
-  <select id="selectPostById" parameterType="long" resultType="kr.co.community.backend.post.dto.PostDTO">
-    SELECT
-      P.POST_ID       AS postId,
-      P.CATEGORY_ID   AS categoryId,
-      P.AUTHOR_ID     AS authorId,
-      P.TITLE         AS title,
-      P.CONTENT       AS content,
-      P.VIEW_COUNT    AS viewCount,
-      P.LIKE_COUNT    AS likeCount,
-      P.COMMENT_COUNT AS commentCount,
-      P.IS_DELETED    AS isDeleted,
-      P.CREATED_AT    AS createdAt,
-      P.UPDATED_AT    AS updatedAt,
-      C.CATEGORY_NAME AS category,
-      NVL(M.NICKNAME, M.NAME) AS authorName
-    FROM POST P
-    LEFT JOIN BOARD_CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
-    LEFT JOIN MEMBER M ON P.AUTHOR_ID = M.MEMBER_ID
-    WHERE P.POST_ID = #{postId}
-      AND P.IS_DELETED = 'N'
-  </select>
-
-  <!-- 조회수 증가 -->
-  <update id="updateViewCount" parameterType="long">
-    UPDATE POST
-    SET VIEW_COUNT = VIEW_COUNT + 1
-    WHERE POST_ID = #{postId}
-  </update>
-
-  <!-- 댓글 목록 조회 -->
-  <select id="selectCommentsByPostId" parameterType="long" resultType="kr.co.community.backend.post.dto.CommentDTO">
-    SELECT
-      C.COMMENT_ID        AS commentId,
-      C.POST_ID           AS postId,
-      C.AUTHOR_ID         AS authorId,
-      C.PARENT_COMMENT_ID AS parentCommentId,
-      C.CONTENT           AS content,
-      C.IS_DELETED        AS isDeleted,
-      C.CREATED_AT        AS createdAt,
-      C.UPDATED_AT        AS updatedAt,
-      NVL(M.NICKNAME, M.NAME) AS authorName
-    FROM COMMENTS C
-    LEFT JOIN MEMBER M ON C.AUTHOR_ID = M.MEMBER_ID
-    WHERE C.POST_ID = #{postId}
-      AND C.IS_DELETED = 'N'
-      AND C.PARENT_COMMENT_ID IS NULL
-    ORDER BY C.CREATED_AT ASC
-  </select>
-
-  <!-- 좋아요 여부 확인 -->
-  <select id="selectPostLikeExists" resultType="int">
-    SELECT COUNT(*)
-    FROM POST_LIKE
-    WHERE POST_ID = #{postId}
-      AND MEMBER_ID = #{memberId}
-  </select>
-
-  <!-- 좋아요 추가 -->
-  <insert id="insertPostLike">
-    INSERT INTO POST_LIKE (POST_ID, MEMBER_ID, CREATED_AT)
-    VALUES (#{postId}, #{memberId}, SYSDATE)
-  </insert>
-
-  <!-- 좋아요 취소 -->
-  <delete id="deletePostLike">
-    DELETE FROM POST_LIKE
-    WHERE POST_ID = #{postId}
-      AND MEMBER_ID = #{memberId}
-  </delete>
-
-  <!-- 좋아요 수 증가 -->
-  <update id="incrementLikeCount">
-    UPDATE POST
-    SET LIKE_COUNT = LIKE_COUNT + 1
-    WHERE POST_ID = #{postId}
-  </update>
-
-  <!-- 좋아요 수 감소 -->
-  <update id="decrementLikeCount">
-    UPDATE POST
-    SET LIKE_COUNT = LIKE_COUNT - 1
-    WHERE POST_ID = #{postId}
-      AND LIKE_COUNT > 0
-  </update>
-
-  <!-- 현재 좋아요 수 조회 -->
-  <select id="selectLikeCount" resultType="int">
-    SELECT LIKE_COUNT
-    FROM POST
-    WHERE POST_ID = #{postId}
-  </select>
-  <!-- 이전 게시글 조회 -->
-	<select id="selectPrevPost" resultType="kr.co.community.backend.post.dto.PostDTO">
+	 <!-- 게시글 단건 조회 -->
+	  <select id="selectPostById" parameterType="long" resultType="kr.co.community.backend.post.dto.PostDTO">
+	    SELECT
+	      P.POST_ID       AS postId,
+	      P.CATEGORY_ID   AS categoryId,
+	      P.AUTHOR_ID     AS authorId,
+	      P.TITLE         AS title,
+	      P.CONTENT       AS content,
+	      P.VIEW_COUNT    AS viewCount,
+	      P.LIKE_COUNT    AS likeCount,
+	      P.COMMENT_COUNT AS commentCount,
+	      P.IS_DELETED    AS isDeleted,
+	      P.CREATED_AT    AS createdAt,
+	      P.UPDATED_AT    AS updatedAt,
+	      C.CATEGORY_NAME AS category,
+	      NVL(M.NICKNAME, M.NAME) AS authorName
+	    FROM POST P
+	    LEFT JOIN BOARD_CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
+	    LEFT JOIN MEMBER M ON P.AUTHOR_ID = M.MEMBER_ID
+	    WHERE P.POST_ID = #{postId}
+	      AND P.IS_DELETED = 'N'
+	  </select>
+	
+	  <!-- 조회수 증가 -->
+	  <update id="updateViewCount" parameterType="long">
+	    UPDATE POST
+	    SET VIEW_COUNT = VIEW_COUNT + 1
+	    WHERE POST_ID = #{postId}
+	  </update>
+	
+	  <!-- 댓글 목록 조회 -->
+	  <select id="selectCommentsByPostId" parameterType="long" resultType="kr.co.community.backend.post.dto.CommentDTO">
+	    SELECT
+	      C.COMMENT_ID        AS commentId,
+	      C.POST_ID           AS postId,
+	      C.AUTHOR_ID         AS authorId,
+	      C.PARENT_COMMENT_ID AS parentCommentId,
+	      C.CONTENT           AS content,
+	      C.IS_DELETED        AS isDeleted,
+	      C.CREATED_AT        AS createdAt,
+	      C.UPDATED_AT        AS updatedAt,
+	      NVL(M.NICKNAME, M.NAME) AS authorName
+	    FROM COMMENTS C
+	    LEFT JOIN MEMBER M ON C.AUTHOR_ID = M.MEMBER_ID
+	    WHERE C.POST_ID = #{postId}
+	      AND C.IS_DELETED = 'N'
+	      AND C.PARENT_COMMENT_ID IS NULL
+	    ORDER BY C.CREATED_AT ASC
+	  </select>
+	
+	  <!-- 좋아요 여부 확인 -->
+	  <select id="selectPostLikeExists" resultType="int">
+	    SELECT COUNT(*)
+	    FROM POST_LIKE
+	    WHERE POST_ID = #{postId}
+	      AND MEMBER_ID = #{memberId}
+	  </select>
+	
+	  <!-- 좋아요 추가 -->
+	  <insert id="insertPostLike">
+	    INSERT INTO POST_LIKE (POST_ID, MEMBER_ID, CREATED_AT)
+	    VALUES (#{postId}, #{memberId}, SYSDATE)
+	  </insert>
+	
+	  <!-- 좋아요 취소 -->
+	  <delete id="deletePostLike">
+	    DELETE FROM POST_LIKE
+	    WHERE POST_ID = #{postId}
+	      AND MEMBER_ID = #{memberId}
+	  </delete>
+	
+	  <!-- 좋아요 수 증가 -->
+	  <update id="incrementLikeCount">
+	    UPDATE POST
+	    SET LIKE_COUNT = LIKE_COUNT + 1
+	    WHERE POST_ID = #{postId}
+	  </update>
+	
+	  <!-- 좋아요 수 감소 -->
+	  <update id="decrementLikeCount">
+	    UPDATE POST
+	    SET LIKE_COUNT = LIKE_COUNT - 1
+	    WHERE POST_ID = #{postId}
+	      AND LIKE_COUNT > 0
+	  </update>
+	
+	  <!-- 현재 좋아요 수 조회 -->
+	  <select id="selectLikeCount" resultType="int">
+	    SELECT LIKE_COUNT
+	    FROM POST
+	    WHERE POST_ID = #{postId}
+	  </select>
+	
+	  <!-- 이전 게시글 조회 -->
+	  <select id="selectPrevPost" resultType="kr.co.community.backend.post.dto.PostDTO">
 	    SELECT *
 	    FROM (
 	        SELECT
@@ -186,10 +187,10 @@
 	        ORDER BY POST_ID DESC
 	    )
 	    WHERE ROWNUM = 1
-	</select>
+	  </select>
 	
-	<!-- 다음 게시글 조회 -->
-	<select id="selectNextPost" resultType="kr.co.community.backend.post.dto.PostDTO">
+	  <!-- 다음 게시글 조회 -->
+	  <select id="selectNextPost" resultType="kr.co.community.backend.post.dto.PostDTO">
 	    SELECT *
 	    FROM (
 	        SELECT
@@ -202,29 +203,69 @@
 	        ORDER BY POST_ID ASC
 	    )
 	    WHERE ROWNUM = 1
-	</select>
+	  </select>
 	
-	<!-- 인기 게시글 조회 (조회수 기준 상위 N개) -->
-	<select id="selectPopularPosts" resultType="kr.co.community.backend.post.dto.PostDTO">
-	    SELECT *
-	    FROM (
-	        SELECT
+	  <!-- 인기 게시글 조회 (조회수 기준 TOP N) -->
+	  <select id="selectViewTopPosts" resultType="kr.co.community.backend.post.dto.PostDTO">
+	    SELECT * FROM (
+	        SELECT 
 	            P.POST_ID       AS postId,
 	            P.TITLE         AS title,
+	            NVL(M.NICKNAME, M.NAME) AS authorName,
+	            C.CATEGORY_NAME AS category,
 	            P.VIEW_COUNT    AS viewCount,
-	            P.LIKE_COUNT    AS likeCount
+	            P.LIKE_COUNT    AS likeCount,
+	            P.COMMENT_COUNT AS commentCount,
+	            P.CREATED_AT    AS createdAt
 	        FROM POST P
+	        JOIN MEMBER M ON P.AUTHOR_ID = M.MEMBER_ID
+	        JOIN BOARD_CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
 	        WHERE P.IS_DELETED = 'N'
 	        ORDER BY P.VIEW_COUNT DESC, P.LIKE_COUNT DESC, P.POST_ID DESC
 	    )
 	    WHERE ROWNUM <![CDATA[<=]]> #{limit}
-	</select>
+	  </select>
 	
-	<!-- 게시글 삭제 (소프트 삭제) -->
-	<update id="updateIsDeleted">
+	  <!-- 작성자의 다른 글 조회 (현재 글 제외, 최신순) -->
+	  <select id="selectAuthorOtherPosts" resultType="kr.co.community.backend.post.dto.PostDTO">
+	    SELECT * FROM (
+	        SELECT
+	            P.POST_ID       AS postId,
+	            P.TITLE         AS title,
+	            P.VIEW_COUNT    AS viewCount,
+	            P.LIKE_COUNT    AS likeCount,
+	            P.COMMENT_COUNT AS commentCount,
+	            P.CREATED_AT    AS createdAt
+	        FROM POST P
+	        WHERE P.AUTHOR_ID = #{authorId}
+	          AND P.POST_ID != #{currentPostId}
+	          AND P.IS_DELETED = 'N'
+	        ORDER BY P.CREATED_AT DESC, P.POST_ID DESC
+	    )
+	    WHERE ROWNUM <![CDATA[<=]]> #{limit}
+	  </select>
+	
+	  <!-- 작성자의 게시글 수 조회 -->
+	  <select id="countAuthorPosts" resultType="int">
+	    SELECT COUNT(*)
+	    FROM POST
+	    WHERE AUTHOR_ID = #{authorId}
+	      AND IS_DELETED = 'N'
+	  </select>
+	
+	  <!-- 작성자의 댓글 수 조회 -->
+	  <select id="countAuthorComments" resultType="int">
+	    SELECT COUNT(*)
+	    FROM COMMENTS
+	    WHERE AUTHOR_ID = #{authorId}
+	      AND IS_DELETED = 'N'
+	  </select>
+	
+	  <!-- 게시글 삭제 (소프트 삭제) -->
+	  <update id="updateIsDeleted">
 	    UPDATE POST
 	    SET IS_DELETED = 'Y',
 	        UPDATED_AT = SYSDATE
 	    WHERE POST_ID = #{postId}
-	</update>
+	  </update>
 </mapper>

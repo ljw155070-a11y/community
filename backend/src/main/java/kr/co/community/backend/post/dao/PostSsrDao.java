@@ -86,14 +86,33 @@ public interface PostSsrDao {
 
     // ========== 인기 게시글 ==========
     /**
-     * 인기 게시글 조회 (조회수 기준)
+     * 인기 게시글 조회 (조회수 기준 TOP N)
      */
-    List<PostDTO> selectPopularPosts(@Param("limit") int limit);
+    List<PostDTO> selectViewTopPosts(@Param("limit") int limit);
+
+    // ========== 작성자 관련 ==========
+    /**
+     * 작성자의 다른 글 조회 (현재 글 제외, 최신순)
+     */
+    List<PostDTO> selectAuthorOtherPosts(
+            @Param("authorId") Long authorId, 
+            @Param("currentPostId") Long currentPostId, 
+            @Param("limit") int limit
+    );
+
+    /**
+     * 작성자의 게시글 수 조회
+     */
+    int countAuthorPosts(@Param("authorId") Long authorId);
+
+    /**
+     * 작성자의 댓글 수 조회
+     */
+    int countAuthorComments(@Param("authorId") Long authorId);
 
     // ========== 게시글 삭제 ==========
     /**
      * 게시글 삭제 (소프트 삭제)
      */
     void updateIsDeleted(@Param("postId") Long postId);
-    
 }

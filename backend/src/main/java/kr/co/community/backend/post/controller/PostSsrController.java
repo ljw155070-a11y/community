@@ -101,15 +101,23 @@ public class PostSsrController {
             PostDTO prevPost = postSsrService.getPrevPost(postId, post.getCategoryId());
             PostDTO nextPost = postSsrService.getNextPost(postId, post.getCategoryId());
             
-            // 4. 인기 게시글 조회 (우측 사이드바용)
-            List<PostDTO> popularPosts = postSsrService.getPopularPosts(4);
+            // 4. 인기 게시글 조회 (조회수 기준 TOP 4)
+            List<PostDTO> popularPosts = postSsrService.getViewTopPosts(4);
             
-            // 5. Model에 데이터 추가
+            // 5. 작성자의 다른 글 조회 (현재 글 제외, 최신순 3개)
+            List<PostDTO> authorOtherPosts = postSsrService.getAuthorOtherPosts(post.getAuthorId(), postId, 3);
+            
+            // 6. 작성자 통계 조회 (게시글 수, 댓글 수)
+            Map<String, Object> authorStats = postSsrService.getAuthorStats(post.getAuthorId());
+            
+            // 7. Model에 데이터 추가
             model.addAttribute("dateUtil", DateFormatUtil.class);
             model.addAttribute("post", post);
             model.addAttribute("prevPost", prevPost);
             model.addAttribute("nextPost", nextPost);
             model.addAttribute("popularPosts", popularPosts);
+            model.addAttribute("authorOtherPosts", authorOtherPosts);
+            model.addAttribute("authorStats", authorStats);
             
             return "post/postDetail";
             
