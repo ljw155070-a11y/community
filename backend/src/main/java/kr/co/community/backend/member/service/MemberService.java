@@ -1,5 +1,9 @@
 package kr.co.community.backend.member.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -86,5 +90,65 @@ public class MemberService {
       }
       
       return null;
+  }
+//========== 마이페이지 기능 ==========
+  
+  /**
+   * 회원 정보 조회
+   * @param memberId 회원 ID
+   * @return MemberDTO
+   */
+  public MemberDTO getMemberInfo(Long memberId) {
+      return memberDao.selectMemberById(memberId);
+  }
+
+  /**
+   * 회원 활동 통계 조회
+   * @param memberId 회원 ID
+   * @return 통계 데이터 (작성한 글, 댓글, 받은 좋아요)
+   */
+  public Map<String, Object> getMemberStats(Long memberId) {
+      Map<String, Object> stats = new HashMap<>();
+      
+      // 작성한 글 개수
+      int postsCount = memberDao.countMemberPosts(memberId);
+      stats.put("postsWritten", postsCount);
+      
+      // 작성한 댓글 개수
+      int commentsCount = memberDao.countMemberComments(memberId);
+      stats.put("commentsWritten", commentsCount);
+      
+      // 받은 좋아요 개수
+      int likesCount = memberDao.countReceivedLikes(memberId);
+      stats.put("receivedLikes", likesCount);
+      
+      return stats;
+  }
+
+  /**
+   * 회원이 작성한 글 목록 조회
+   * @param memberId 회원 ID
+   * @return 작성한 글 목록
+   */
+  public List<Map<String, Object>> getMemberPosts(Long memberId) {
+      return memberDao.selectMemberPosts(memberId);
+  }
+
+  /**
+   * 회원이 작성한 댓글 목록 조회
+   * @param memberId 회원 ID
+   * @return 작성한 댓글 목록
+   */
+  public List<Map<String, Object>> getMemberComments(Long memberId) {
+      return memberDao.selectMemberComments(memberId);
+  }
+
+  /**
+   * 회원이 좋아요한 글 목록 조회
+   * @param memberId 회원 ID
+   * @return 좋아요한 글 목록
+   */
+  public List<Map<String, Object>> getMemberLikedPosts(Long memberId) {
+      return memberDao.selectMemberLikedPosts(memberId);
   }
 }
