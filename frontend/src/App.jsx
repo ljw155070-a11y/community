@@ -15,6 +15,7 @@ import AdminReports from "./components/admin/AdminReports";
 import AdminSettings from "./components/admin/AdminSettings";
 import Alert from "./components/alert/Alert";
 import MyPage from "./components/member/Mypage";
+import Settings from "./components/settings/Settings";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="settings" element={<AdminSettings />} />
           </Route>
           <Route path="/alert" element={<Alert />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
       <Footer></Footer>
