@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.community.backend.settings.dao.SettingsDao">
+
+    <!-- 회원 설정 정보 조회 -->
+    <select id="findById" resultType="settings">
+        SELECT MEMBER_ID as memberId,
+               NAME as name,
+               EMAIL as email,
+               BIO as bio
+        FROM MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <!-- 프로필 업데이트 -->
+    <update id="updateProfile">
+        UPDATE MEMBER
+        SET NAME = #{name},
+            EMAIL = #{email},
+            BIO = #{bio},
+            UPDATED_AT = SYSDATE
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <!-- 비밀번호 업데이트 -->
+    <update id="updatePassword">
+        UPDATE MEMBER
+        SET PASSWORD_HASH = #{newPasswordHash},
+            UPDATED_AT = SYSDATE
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <!-- 현재 비밀번호 조회 -->
+    <select id="findPasswordById" resultType="String">
+        SELECT PASSWORD_HASH
+        FROM MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+</mapper>
