@@ -1,7 +1,7 @@
 // Header.jsx
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
 import { logout } from "../utils/authUtils";
@@ -13,7 +13,7 @@ const Header = () => {
   const dropdownRef = useRef(null);
   const loginUser = useRecoilValue(loginUserState);
   const setLoginUser = useSetRecoilState(loginUserState);
-
+  const navigate = useNavigate();
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -27,7 +27,7 @@ const Header = () => {
     try {
       const memberId = loginUser.memberId;
       const response = await axios.get(
-        `http://localhost:9999/alert/list/${memberId}`
+        `${import.meta.env.VITE_BACK_SERVER}/alert/list/${memberId}`
       );
       const count = response.data.filter((a) => a.isRead === "N").length;
       setUnreadCount(count);
@@ -57,7 +57,12 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-container">
-        <div className="logo">
+        <div
+          className="logo"
+          onClick={() => {
+            navigate(`/mainpage`);
+          }}
+        >
           <span className="logo-icon">◀</span>
           <span className="logo-text">커뮤니티</span>
         </div>
@@ -66,16 +71,16 @@ const Header = () => {
           <a href="/mainpage" className="nav-link">
             홈
           </a>
-          <a href="/게시판" className="nav-link">
+          <a href="/board" className="nav-link">
             게시판
           </a>
-          <a href="/공지" className="nav-link">
-            공지
+          <a href="/notice" className="nav-link">
+            공지사항
           </a>
           <a href="/about" className="nav-link">
             사이트 소개 (임시)
           </a>
-          <a href="/admin" className="nav-link">
+          <a href="/app/admin" className="nav-link">
             관리자 (임시)
           </a>
         </nav>
@@ -83,10 +88,10 @@ const Header = () => {
         <div className="header-right">
           {!loginUser ? (
             <>
-              <Link className="btn-login" to="/login">
+              <Link className="btn-login" to="/app/login">
                 로그인
               </Link>
-              <Link className="btn-signup" to="/signup">
+              <Link className="btn-signup" to="/app/signup">
                 회원가입
               </Link>
             </>
@@ -118,7 +123,7 @@ const Header = () => {
                 <div
                   className={`dropdown-menu ${isDropdownOpen ? "active" : ""}`}
                 >
-                  <a href="/profile" className="dropdown-item">
+                  <a href="/app/profile" className="dropdown-item">
                     <svg
                       width="16"
                       height="16"
@@ -132,7 +137,7 @@ const Header = () => {
                     </svg>
                     <span>내 프로필</span>
                   </a>
-                  <a href="/settings" className="dropdown-item">
+                  <a href="/app/settings" className="dropdown-item">
                     <svg
                       width="16"
                       height="16"

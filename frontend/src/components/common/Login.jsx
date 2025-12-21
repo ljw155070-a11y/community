@@ -40,7 +40,7 @@ const Login = () => {
       if (data.success) {
         setLoginUser(data.member);
         alert("로그인 성공!");
-        window.location.href = "/";
+        window.location.href = "/mainpage";
       } else {
         setErrors({ general: data.message });
       }

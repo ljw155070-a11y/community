@@ -186,7 +186,7 @@ export default function Signup() {
       if (res.data?.success) {
         alert("회원가입 성공!");
         // TODO: 가입 후 로그인 페이지로 이동
-        navigate("/login");
+        navigate("/app/login");
       } else {
         alert("회원가입 실패(서버 응답)");
       }
@@ -327,13 +327,13 @@ export default function Signup() {
             </button>
 
             <div className="auth-footer">
-              이미 회원이신가요? <Link to="/login">로그인</Link>
+              이미 회원이신가요? <Link to="/app/login">로그인</Link>
             </div>
           </form>
         </div>
 
         <div className="back-home">
-          <Link to="/">← 홈으로 돌아가기</Link>
+          <Link to="/mainpage">← 홈으로 돌아가기</Link>
         </div>
       </div>
     </div>

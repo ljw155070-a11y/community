@@ -39,7 +39,9 @@ const MyPage = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(
-          `http://localhost:9999/member/mypage/profile/${memberId}`
+          `${
+            import.meta.env.VITE_BACK_SERVER
+          }/member/mypage/profile/${memberId}`
         );
 
         // 응답 상태 확인
@@ -101,7 +103,7 @@ const MyPage = () => {
     const fetchPosts = async () => {
       try {
         const response = await fetch(
-          `http://localhost:9999/member/mypage/posts/${memberId}`
+          `${import.meta.env.VITE_BACK_SERVER}/member/mypage/posts/${memberId}`
         );
         const data = await response.json();
 
@@ -123,7 +125,9 @@ const MyPage = () => {
     const fetchComments = async () => {
       try {
         const response = await fetch(
-          `http://localhost:9999/member/mypage/comments/${memberId}`
+          `${
+            import.meta.env.VITE_BACK_SERVER
+          }/member/mypage/comments/${memberId}`
         );
         const data = await response.json();
 
@@ -145,7 +149,9 @@ const MyPage = () => {
     const fetchLikedPosts = async () => {
       try {
         const response = await fetch(
-          `http://localhost:9999/member/mypage/liked-posts/${memberId}`
+          `${
+            import.meta.env.VITE_BACK_SERVER
+          }/member/mypage/liked-posts/${memberId}`
         );
         const data = await response.json();
 
