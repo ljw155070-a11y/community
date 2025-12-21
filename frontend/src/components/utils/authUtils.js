@@ -1,9 +1,12 @@
 export const loginAPI = async (email, password, rememberMe = false) => {
-  const response = await fetch("http://localhost:9999/member/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password, rememberMe }),
-  });
+  const response = await fetch(
+    `${import.meta.env.VITE_BACK_SERVER}/member/login`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, rememberMe }),
+    }
+  );
   return await response.json();
 };
 
