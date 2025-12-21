@@ -24,16 +24,16 @@ const Footer = () => {
             <h4 className="footer-heading">서비스</h4>
             <ul className="footer-links">
               <li>
-                <a href="/게시판">게시판</a>
+                <a href="/board">게시판</a>
               </li>
               <li>
-                <a href="/공지사항">공지사항</a>
+                <a href="/notice">공지사항</a>
               </li>
               <li>
-                <a href="/인기글">인기 게시글</a>
+                <a href="/mainpage">인기 게시글</a>
               </li>
               <li>
-                <a href="/최근활동">최근 활동</a>
+                <a href="/board">최근 활동</a>
               </li>
             </ul>
           </div>
@@ -42,13 +42,7 @@ const Footer = () => {
             <h4 className="footer-heading">정보</h4>
             <ul className="footer-links">
               <li>
-                <a href="/about">커뮤니티 소개</a>
-              </li>
-              <li>
-                <a href="/faq">자주 묻는 질문</a>
-              </li>
-              <li>
-                <a href="/contact">문의하기</a>
+                <a href="/app/about">커뮤니티 소개</a>
               </li>
             </ul>
           </div>

@@ -18,7 +18,7 @@ const Alert = () => {
       setLoading(true);
       const memberId = 1;
       const response = await axios.get(
-        `http://localhost:9999/alert/list/${memberId}`
+        `${import.meta.env.VITE_BACK_SERVER}/app/alert/list/${memberId}`
       );
       setAlerts(response.data);
       setUnreadCount(response.data.filter((a) => a.isRead === "N").length);
@@ -32,7 +32,9 @@ const Alert = () => {
 
   const markAsRead = async (alertId) => {
     try {
-      await axios.put(`http://localhost:9999/alert/read/${alertId}`);
+      await axios.put(
+        `${import.meta.env.VITE_BACK_SERVER}/app/alert/read/${alertId}`
+      );
       setAlerts(
         alerts.map((alert) =>
           alert.alertId === alertId ? { ...alert, isRead: "Y" } : alert
@@ -46,7 +48,9 @@ const Alert = () => {
 
   const deleteAlert = async (alertId) => {
     try {
-      await axios.delete(`http://localhost:9999/alert/delete/${alertId}`);
+      await axios.delete(
+        `${import.meta.env.VITE_BACK_SERVER}/app/alert/delete/${alertId}`
+      );
       setAlerts(alerts.filter((alert) => alert.alertId !== alertId));
     } catch (error) {
       console.error("알림 삭제 실패:", error);
@@ -64,7 +68,9 @@ const Alert = () => {
   // postId를 받아서 해당 게시글 페이지로 이동
   // 게시글 상세페이지로 이동하는 함수
   const goToPost = (postId) => {
-    window.location.href = `http://localhost:9999/board/postDetail/${postId}`;
+    window.location.href = `${
+      import.meta.env.VITE_BACK_SERVER
+    }/board/postDetail/${postId}`;
   };
 
   if (loading) {
