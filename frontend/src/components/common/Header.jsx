@@ -63,7 +63,7 @@ const Header = () => {
         </div>
 
         <nav className="header-nav">
-          <a href="/" className="nav-link">
+          <a href="/mainpage" className="nav-link">
             홈
           </a>
           <a href="/게시판" className="nav-link">

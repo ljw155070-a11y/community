@@ -23,7 +23,7 @@
                 <button class="btn-signup" onclick="location.href='/app/signup'">회원가입</button>
             </th:block>
             <th:block th:if="${session.member != null}">
-                <a href="/notifications" class="notification-link">
+                <a href="/app/alert" class="notification-link">
                     <svg class="notification-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -41,13 +41,14 @@
                     </button>
                     
                     <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="/profile" class="dropdown-item">
+                        <a href="/app/profile" class="dropdown-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                             <span>내 프로필</span>
                         </a>
+                        <!-- 설정과 내 게시글 뺼지 고민 -->
                         <a href="/settings" class="dropdown-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="3"></circle>

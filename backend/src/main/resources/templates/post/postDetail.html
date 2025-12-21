@@ -831,12 +831,12 @@
                 
                 <div class="post-meta">
                     <div class="author-info">
-                        <div class="author-avatar" th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">김</div>
-                        <span class="author-name" th:text="${post.authorName}">김개발</span>
+                        <div class="author-avatar" th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}"></div>
+                        <span class="author-name" th:text="${post.authorName}"></span>
                     </div>
                     <span class="post-date">
-                        <span th:text="${dateUtil != null ? dateUtil.formatDate(post.createdAt) : '2024.12.20'}">2024.12.20</span>
-                        <span th:text="${dateUtil != null ? dateUtil.formatTime(post.createdAt) : '14:30'}">14:30</span>
+                        <span th:text="${dateUtil != null ? dateUtil.formatDate(post.createdAt) : '0000.00.00'}"></span>
+                        <span th:text="${dateUtil != null ? dateUtil.formatTime(post.createdAt) : '00:00'}"></span>
                     </span>
                     <div class="post-stats">
                         <span class="stat-item">
@@ -951,9 +951,9 @@
                     </div>
                 </form>
             </div>
-            
+            <!-- SSR -> CSR -->
             <div th:if="${session.member == null}" class="comment-notice">
-                댓글을 작성하려면 <a href="/login">로그인</a>이 필요합니다.
+                댓글을 작성하려면 <a href="/app/login">로그인</a>이 필요합니다.
             </div>
             
             <div class="comments-list">
@@ -963,7 +963,7 @@
                             <div class="comment-avatar" th:text="${comment.authorName != null ? comment.authorName.substring(0, 1) : 'U'}">홍</div>
                             <div class="comment-author-info">
                                 <div class="comment-author-name" th:text="${comment.authorName}">홍길동</div>
-                                <div class="comment-date" th:text="${dateUtil != null ? dateUtil.formatDateTime(comment.createdAt) : '2024.12.20 14:30'}">2024.12.20 14:30</div>
+                                <div class="comment-date" th:text="${dateUtil != null ? dateUtil.formatDateTime(comment.createdAt) : '0000.00.00 00:00'}"></div>
                             </div>
                         </div>
                         <div class="comment-content" th:text="${comment.content}">댓글 내용</div>
