@@ -57,15 +57,10 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-container">
-        <div
-          className="logo"
-          onClick={() => {
-            navigate(`/mainpage`);
-          }}
-        >
+        <a href="/mainpage" className="logo">
           <span className="logo-icon">◀</span>
           <span className="logo-text">커뮤니티</span>
-        </div>
+        </a>
 
         <nav className="header-nav">
           <a href="/mainpage" className="nav-link">
@@ -77,7 +72,7 @@ const Header = () => {
           <a href="/notice" className="nav-link">
             공지사항
           </a>
-          <a href="/about" className="nav-link">
+          <a href="/app/about" className="nav-link">
             사이트 소개 (임시)
           </a>
           <a href="/app/admin" className="nav-link">
