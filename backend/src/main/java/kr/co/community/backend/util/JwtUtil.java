@@ -14,10 +14,10 @@ public class JwtUtil {
     private final SecretKey secretKey;
     private final long accessTokenValidityMs = 1000L * 60 * 60 * 24; // 24시간
 
-    public JwtUtil(@Value("${jwt.secret}") String secret) {
+    public JwtUtil(@Value("${jwt.secret-key}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
-
+    
     /**
      * JWT 토큰 생성
      */
@@ -83,10 +83,14 @@ public class JwtUtil {
      * JWT 토큰 유효성 검증
      */
     public boolean validateToken(String token) {
-        try {
+    	try {
             parseToken(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            // 토큰 만료
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
+            // 유효하지 않은 토큰
             return false;
         }
     }
