@@ -49,24 +49,44 @@ public class SecurityConfig {
     return http.build();
   }
 
-  @Bean
-  public CorsConfigurationSource corsConfigurationSource() {
-      CorsConfiguration configuration = new CorsConfiguration();
+	  // ============================================
+	  // CORS 설정 - 개발용
+	  // ============================================
+	  @Bean
+	  public CorsConfigurationSource corsConfigurationSource() {
+	      CorsConfiguration configuration = new CorsConfiguration();
+	
+	      configuration.setAllowedOriginPatterns(List.of("*"));  // 모든 출처 허용
+	      configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	      configuration.setAllowedHeaders(Arrays.asList("*"));
+	      configuration.setAllowCredentials(false);  // 인증 정보 OFF
+	
+	      // 설정을 Spring Security에 등록
+	      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	      source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 적용
+	      return source;
+	  }
 
-      configuration.setAllowedOrigins(List.of(
-          "http://localhost:3000",
-          "http://localhost:5173",
-          "http://54.206.33.199:9999"
-      ));
-
-      configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-      configuration.setAllowedHeaders(Arrays.asList("*"));
-      configuration.setAllowCredentials(true);
-
-      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-      source.registerCorsConfiguration("/**", configuration);
-      return source;
-  }
+	  // ============================================
+	  // CORS 설정 - 배포용 (주석)
+	  // ============================================
+	  // 배포시: 위 개발용 주석처리, 아래 주석 해제
+		//  @Bean
+		//  public CorsConfigurationSource corsConfigurationSource() {
+		//      CorsConfiguration configuration = new CorsConfiguration();
+		//
+		//      configuration.setAllowedOrigins(List.of(
+		//          "http://54.206.33.199:5173",  // 배포 서버만 허용
+		//          "http://54.206.33.199:9999"
+		//      ));
+		//      configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		//      configuration.setAllowedHeaders(Arrays.asList("*"));
+		//      configuration.setAllowCredentials(true);  // 인증 정보 ON
+		//
+		//      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		//      source.registerCorsConfiguration("/**", configuration);
+		//      return source;
+		//  }
 
   @Bean
   public BCryptPasswordEncoder passwordEncoder() {
