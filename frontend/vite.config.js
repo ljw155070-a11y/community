@@ -8,4 +8,15 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
   },
+  //리엑트에서 개인 개발할때 메인페이지 ssr 이므로 csr 과 연동로직
+  //npm run dev 하면 페이지가 바로 로딩됨
+  server: {
+    open: "http://localhost:9999/mainpage",
+    proxy: {
+      "/mainpage": {
+        target: "http://localhost:9999",
+        changeOrigin: true,
+      },
+    },
+  },
 });
