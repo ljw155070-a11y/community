@@ -149,10 +149,6 @@ const Alert = () => {
             ))
           )}
         </div>
-        <div className="alert-footer">
-          <p>알림 설정을 변경하고 싶으신가요?</p>
-          <button className="alert-settings-btn">설정 페이지로 이동</button>
-        </div>
       </div>
     </div>
   );

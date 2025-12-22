@@ -70,3 +70,11 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+    return http.build();
+  }
+
+  @Bean
+  public BCryptPasswordEncoder passwordEncoder() {
+      return new BCryptPasswordEncoder();
+  }
+}

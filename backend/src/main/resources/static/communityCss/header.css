@@ -23,18 +23,19 @@
     gap: 0.5rem;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #1f2937;
+    color: #1f2937 !important;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .logo-icon {
-    color: #2563eb;
+    color: #2563eb !important;
     font-size: 1.3rem;
     font-weight: bold;
 }
 
 .logo-text {
-    color: #1f2937;
+    color: #1f2937 !important;
 }
 
 .header-nav {
