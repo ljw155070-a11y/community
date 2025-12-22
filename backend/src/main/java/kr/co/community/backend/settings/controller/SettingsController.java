@@ -3,6 +3,10 @@ package kr.co.community.backend.settings.controller;
 import kr.co.community.backend.settings.dto.PasswordChangeDTO;
 import kr.co.community.backend.settings.dto.SettingsDTO;
 import kr.co.community.backend.settings.service.SettingsService;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +36,20 @@ public class SettingsController {
         settingsService.updateProfile(settings);
         
         return ResponseEntity.ok("프로필이 수정되었습니다.");
+    }
+    // 비밀번호 확인
+    @PostMapping("/check-password/{memberId}")
+    public ResponseEntity<Map<String, Boolean>> checkPassword(
+            @PathVariable Long memberId,
+            @RequestBody Map<String, String> data) {
+        
+        String password = data.get("password");
+        boolean isValid = settingsService.checkPassword(memberId, password);
+        
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("isValid", isValid);
+        
+        return ResponseEntity.ok(result);
     }
 
     // 비밀번호 변경
