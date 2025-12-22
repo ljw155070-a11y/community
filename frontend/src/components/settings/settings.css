@@ -147,3 +147,28 @@
     padding: 20px;
   }
 }
+.password-message {
+  font-size: 14px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.password-message.success {
+  color: green;
+}
+
+.password-message.error {
+  color: red;
+}
+.pw-rules {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.pw-rules .ok {
+  color: green;
+}
+
+.pw-rules .err {
+  color: #999;
+}

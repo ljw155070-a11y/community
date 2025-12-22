@@ -25,6 +25,13 @@ public class SettingsService {
     public void updateProfile(SettingsDTO settings) {
         settingsDao.updateProfile(settings);
     }
+    
+ // 비밀번호 확인
+    public boolean checkPassword(Long memberId, String password) {
+        String storedPassword = settingsDao.findPasswordById(memberId);
+        return passwordEncoder.matches(password, storedPassword);
+    }
+
 
     // 비밀번호 변경
     public boolean updatePassword(Long memberId, String currentPassword, String newPassword) {
