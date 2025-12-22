@@ -65,14 +65,6 @@ public class SecurityConfig {
     }
 
     // ✅ MemberService에서 PasswordEncoder로 주입받기 좋게 타입 통일
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-}
-    return http.build();
-  }
-
   @Bean
   public BCryptPasswordEncoder passwordEncoder() {
       return new BCryptPasswordEncoder();
