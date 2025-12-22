@@ -23,22 +23,22 @@
             <div class="header-right">
                 <!-- ✅ (추가) 로그인 상태 표시 -->
                 <div class="user-section">
-                    <div th:if="${session.member != null}">
-                        <span th:text="${session.member.nickname}">사용자</span>님
+                    <div th:if="${isAuthenticated}">
+                        <span th:text="${nickname}">사용자</span>님
                         <a href="#" onclick="logout(); return false;">로그아웃</a>
                     </div>
-                    <div th:if="${session.member == null}">
+                    <div th:if="${isAuthenticated}">
                         <a href="/app/login">로그인</a>
                     </div>
                 </div>
 
                 <!-- ✅ 기존 UI 유지 -->
-                <th:block th:if="${session.member == null}">
+                <th:block th:if="${isAuthenticated}">
                     <button class="btn-login" onclick="location.href='/app/login'">로그인</button>
                     <button class="btn-signup" onclick="location.href='/app/signup'">회원가입</button>
                 </th:block>
 
-                <th:block th:if="${session.member != null}">
+                <th:block th:if="${isAuthenticated}">
                     <a href="/app/alert" class="notification-link">
                         <svg class="notification-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
