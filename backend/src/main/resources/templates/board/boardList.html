@@ -1,122 +1,247 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>게시판</title>
-<link rel="stylesheet" th:href="@{/communityCss/boardList.css}" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>게시판</title>
+  <link rel="stylesheet" th:href="@{/communityCss/boardList.css}" />
 </head>
+
 <body>
-	<th:block th:include="common/header"></th:block>
-	<!-- 프로젝트에서 header fragment 쓰는 중이면 이걸로 교체 -->
-	<!-- <div th:replace="fragments/header :: headerFrag"></div> -->
+  <th:block th:include="common/header"></th:block>
 
-	<main class="bl-wrap">
-		<section class="bl-head">
-			<h1 class="bl-title">게시판</h1>
-			<p class="bl-sub">다양한 주제로 자유롭게 소통해보세요</p>
-		</section>
+  <main class="bl-wrap">
+    <section class="bl-head">
+      <h1 class="bl-title">게시판</h1>
+      <p class="bl-sub">다양한 주제로 자유롭게 소통해보세요</p>
+    </section>
 
-		<section class="bl-toolbar">
-			<form class="bl-search" method="get" th:action="@{/board}">
-				<input type="hidden" name="categoryId"
-					th:value="${selectedCategoryId}" /> <input class="bl-search-input"
-					type="text" name="q" placeholder="검색어를 입력하세요" th:value="${q}" /> <select
-					class="bl-sort-select" name="sort">
-					<option value="LATEST" th:selected="${sort=='LATEST'}">최신순</option>
-					<option value="VIEWS" th:selected="${sort=='VIEWS'}">조회순</option>
-					<option value="LIKES" th:selected="${sort=='LIKES'}">좋아요순</option>
-				</select>
+    <!-- ✅ 툴바: 검색 + 정렬 + 보기방식 + 글쓰기 -->
+    <section class="bl-toolbar">
+      <form class="bl-search" method="get" th:action="@{/board}" id="boardSearchForm">
+        <input type="hidden" name="categoryId" th:value="${selectedCategoryId}" />
+        <input type="hidden" name="page" value="1" />
 
-				<button class="bl-search-btn" type="submit">검색</button>
-			</form>
-		</section>
+        <div class="bl-searchbox">
+          <input class="bl-search-input"
+                 type="text"
+                 name="q"
+                 placeholder="검색어를 입력하세요"
+                 th:value="${q}" />
+          <button class="bl-search-btn" type="submit">검색</button>
+        </div>
 
-		<section class="bl-tabs">
-			<a class="bl-tab"
-				th:classappend="${selectedCategoryId == null} ? ' is-active' : ''"
-				th:href="@{/board(sort=${sort}, q=${q})}"> 전체 </a> <a class="bl-tab"
-				th:each="c : ${categories}" th:text="${c.categoryName}"
-				th:classappend="${selectedCategoryId != null and selectedCategoryId == c.categoryId} ? ' is-active' : ''"
-				th:href="@{/board(categoryId=${c.categoryId}, sort=${sort}, q=${q})}">
-			</a>
-		</section>
+        <div class="bl-sort" role="radiogroup" aria-label="정렬">
+          <label class="bl-pill">
+            <input type="radio" name="sort" value="LATEST"
+                   th:checked="${sort == 'LATEST'}"
+                   onchange="document.getElementById('boardSearchForm').submit()" />
+            <span>최신순</span>
+          </label>
 
-		<section class="bl-list">
-			<div class="bl-empty" th:if="${#lists.isEmpty(posts)}">검색 결과가
-				없습니다.</div>
+          <label class="bl-pill">
+            <input type="radio" name="sort" value="VIEWS"
+                   th:checked="${sort == 'VIEWS'}"
+                   onchange="document.getElementById('boardSearchForm').submit()" />
+            <span>조회순</span>
+          </label>
 
-			<article class="bl-card" th:each="p : ${posts}">
-				<div class="bl-card-top">
-					<span class="bl-badge" th:text="${p.categoryName}">카테고리</span> <span
-						class="bl-date"
-						th:text="${#dates.format(p.createdAt, 'yyyy. MM. dd.')}">2024.
-						12. 14.</span>
-				</div>
+          <label class="bl-pill">
+            <input type="radio" name="sort" value="LIKES"
+                   th:checked="${sort == 'LIKES'}"
+                   onchange="document.getElementById('boardSearchForm').submit()" />
+            <span>좋아요순</span>
+          </label>
+        </div>
+      </form>
 
-				<!-- ✅ 상세로 이동하는 링크 추가 -->
-				<a class="bl-card-link"
-					th:href="@{/board/postDetail/{postId}(postId=${p.postId})}">
+      <div class="bl-toolbar-right">
+        <div class="bl-view-toggle" role="radiogroup" aria-label="보기 방식">
+          <label class="bl-pill bl-pill--sm">
+            <input type="radio" name="viewMode" value="card" checked />
+            <span>카드</span>
+          </label>
+          <label class="bl-pill bl-pill--sm">
+            <input type="radio" name="viewMode" value="compact" />
+            <span>리스트</span>
+          </label>
+        </div>
 
-					<h2 class="bl-card-title" th:text="${p.title}">제목</h2>
+        <div class="bl-write" th:if="${isAuthenticated}">
+          <a class="bl-write-btn" href="/app/boardwrite">✏ 글쓰기</a>
+        </div>
+      </div>
+    </section>
 
-					<p class="bl-card-desc" th:text="${p.contentPreview}">본문 미리보기</p>
+    <!-- 카테고리 탭 -->
+    <section class="bl-tabs">
+      <a class="bl-tab"
+         th:classappend="${selectedCategoryId == null} ? ' is-active' : ''"
+         th:href="@{/board(sort=${sort}, q=${q})}">
+        전체
+      </a>
 
-					<div class="bl-card-bottom">
-						<span class="bl-author" th:text="${p.authorName}">작성자</span>
+      <a class="bl-tab"
+         th:each="c : ${categories}"
+         th:text="${c.categoryName}"
+         th:classappend="${selectedCategoryId != null and selectedCategoryId == c.categoryId} ? ' is-active' : ''"
+         th:href="@{/board(categoryId=${c.categoryId}, sort=${sort}, q=${q})}">
+      </a>
+    </section>
 
-						<div class="bl-metrics">
-							<span class="bl-metric">👁 <em th:text="${p.viewCount}">0</em></span>
-							<span class="bl-metric">♡ <em th:text="${p.likeCount}">0</em></span>
-							<span class="bl-metric">💬 <em th:text="${p.commentCount}">0</em></span>
-						</div>
-					</div>
-				</a>
+    <!-- 목록 -->
+    <section class="bl-list" id="boardListRoot">
+      <div class="bl-empty" th:if="${#lists.isEmpty(posts)}">
+        검색 결과가 없습니다.
+      </div>
 
-				<!-- ✅ hover 시 뜨는 수정 버튼 (CSR로 이동) -->
-				<div class="bl-card-actions">
-					<a class="bl-edit-btn"
-						th:href="@{/app/boardEditePage/{postId}(postId=${p.postId})}"> 수정
-					</a>
-				</div>
-			</article>
-		</section>
+      <!-- 1) 카드 뷰 -->
+      <div class="bl-view bl-view-card" data-view="card" th:if="${not #lists.isEmpty(posts)}">
+        <article class="bl-card" th:each="p : ${posts}">
+          <div class="bl-card-top">
+            <span class="bl-badge" th:text="${p.categoryName}">카테고리</span>
 
-		<!-- ✅ pagination (5개만 노출 + 현재 페이지 중앙 느낌 + 이전/다음 = -5/+5 + 처음/끝) -->
-		<section class="bl-pagination" th:if="${totalPages > 1}">
-			<!-- 처음 -->
-			<a class="bl-page-btn"
-				th:classappend="${page == 1} ? ' is-disabled' : ''"
-				th:href="${page == 1} ? '#' : @{/board(page=1, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
-				처음 </a>
+            <!-- ✅ 날짜 + NEW (오늘 글이면) -->
+            <span class="bl-datebox">
+              <span class="bl-date" th:text="${#dates.format(p.createdAt, 'yyyy. MM. dd.')}">2024. 12. 14.</span>
+              <span class="bl-new"
+                    th:if="${#dates.format(p.createdAt,'yyyyMMdd') == #dates.format(#dates.createNow(),'yyyyMMdd')}">
+                NEW
+              </span>
+            </span>
+          </div>
 
-			<!-- 이전(-5) -->
-			<a class="bl-page-btn"
-				th:classappend="${page == 1} ? ' is-disabled' : ''"
-				th:href="${page == 1} ? '#' : @{/board(page=${prevPage}, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
-				이전 </a>
+          <a class="bl-card-link"
+             th:href="@{/board/postDetail/{postId}(postId=${p.postId})}">
+            <div class="bl-card-title" th:text="${p.title}">제목</div>
 
-			<!-- 페이지 번호(6개) -->
-			<a class="bl-page-num"
-				th:each="i : ${#numbers.sequence(startPage, endPage)}"
-				th:text="${i}" th:classappend="${i == page} ? ' is-active' : ''"
-				th:href="@{/board(page=${i}, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
-			</a>
+            <!-- 필요하면 이 줄 삭제해서 더 촘촘하게 가능 -->
+            <p class="bl-card-desc" th:text="${p.contentPreview}">본문 미리보기</p>
 
-			<!-- 다음(+5) -->
-			<a class="bl-page-btn"
-				th:classappend="${page == totalPages} ? ' is-disabled' : ''"
-				th:href="${page == totalPages} ? '#' : @{/board(page=${nextPage}, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
-				다음 </a>
+            <div class="bl-card-bottom">
+              <span class="bl-author" th:text="${p.authorName}">작성자</span>
+              <div class="bl-metrics">
+                <span class="bl-metric">👁 <em th:text="${p.viewCount}">0</em></span>
+                <span class="bl-metric">♡ <em th:text="${p.likeCount}">0</em></span>
+                <span class="bl-metric">💬 <em th:text="${p.commentCount}">0</em></span>
+              </div>
+            </div>
+          </a>
 
-			<!-- 끝 -->
-			<a class="bl-page-btn"
-				th:classappend="${page == totalPages} ? ' is-disabled' : ''"
-				th:href="${page == totalPages} ? '#' : @{/board(page=${totalPages}, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
-				끝 </a>
-		</section>
+          <div class="bl-card-actions"
+               th:if="${isAuthenticated and loginMemberId != null and loginMemberId == p.authorId}">
+            <a class="bl-edit-btn"
+               th:href="@{/app/boardEditePage/{postId}(postId=${p.postId})}">수정</a>
+          </div>
+        </article>
+      </div>
 
-	</main>
-	<th:block th:include="common/footer"></th:block>
+      <!-- 2) 리스트 뷰 -->
+      <div class="bl-view bl-view-compact" data-view="compact" th:if="${not #lists.isEmpty(posts)}">
+        <article class="bl-row" th:each="p : ${posts}">
+          <a class="bl-row-link"
+             th:href="@{/board/postDetail/{postId}(postId=${p.postId})}">
+            <div class="bl-col-title">
+              <span class="bl-badge" th:text="${p.categoryName}">카테고리</span>
+              <span class="bl-title-text" th:text="${p.title}">제목</span>
+            </div>
+
+            <div class="bl-col-meta">
+              <span class="bl-author-plain" th:text="${p.authorName}">작성자</span>
+              <span class="bl-dot">·</span>
+
+              <!-- ✅ 날짜 + NEW -->
+              <span class="bl-datebox">
+                <span class="bl-date" th:text="${#dates.format(p.createdAt, 'yyyy.MM.dd')}">2024.12.14</span>
+                <span class="bl-new bl-new--sm"
+                      th:if="${#dates.format(p.createdAt,'yyyyMMdd') == #dates.format(#dates.createNow(),'yyyyMMdd')}">
+                  NEW
+                </span>
+              </span>
+            </div>
+
+            <div class="bl-col-metrics">
+              <span class="bl-metric">👁 <em th:text="${p.viewCount}">0</em></span>
+              <span class="bl-metric">♡ <em th:text="${p.likeCount}">0</em></span>
+              <span class="bl-metric">💬 <em th:text="${p.commentCount}">0</em></span>
+            </div>
+          </a>
+
+          <div class="bl-col-actions"
+               th:if="${isAuthenticated and loginMemberId != null and loginMemberId == p.authorId}">
+            <a class="bl-edit-btn"
+               th:href="@{/app/boardEditePage/{postId}(postId=${p.postId})}">수정</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 페이지네이션 -->
+    <section class="bl-pagination" th:if="${totalPages > 1}">
+      <a class="bl-page-btn"
+         th:classappend="${page == 1} ? ' is-disabled' : ''"
+         th:href="${page == 1} ? '#' : @{/board(page=1, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
+        처음
+      </a>
+
+      <a class="bl-page-btn"
+         th:classappend="${page == 1} ? ' is-disabled' : ''"
+         th:href="${page == 1} ? '#' : @{/board(page=${prevPage}, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
+        이전
+      </a>
+
+      <a class="bl-page-num"
+         th:each="i : ${#numbers.sequence(startPage, endPage)}"
+         th:text="${i}"
+         th:classappend="${i == page} ? ' is-active' : ''"
+         th:href="@{/board(page=${i}, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
+      </a>
+
+      <a class="bl-page-btn"
+         th:classappend="${page == totalPages} ? ' is-disabled' : ''"
+         th:href="${page == totalPages} ? '#' : @{/board(page=${nextPage}, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
+        다음
+      </a>
+
+      <a class="bl-page-btn"
+         th:classappend="${page == totalPages} ? ' is-disabled' : ''"
+         th:href="${page == totalPages} ? '#' : @{/board(page=${totalPages}, categoryId=${selectedCategoryId}, q=${q}, sort=${sort})}">
+        끝
+      </a>
+    </section>
+  </main>
+
+  <th:block th:include="common/footer"></th:block>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = "board_view_mode";
+      const root = document.getElementById("boardListRoot");
+      if (!root) return;
+
+      const radios = document.querySelectorAll('input[name="viewMode"]');
+      const views = root.querySelectorAll(".bl-view");
+
+      function normalize(mode) {
+        return (mode === "compact" || mode === "card") ? mode : "card";
+      }
+
+      function apply(modeRaw) {
+        const mode = normalize(modeRaw);
+        views.forEach(v => {
+          const vMode = v.getAttribute("data-view");
+          v.style.display = (vMode === mode) ? "block" : "none";
+        });
+        radios.forEach(r => (r.checked = (r.value === mode)));
+        localStorage.setItem(STORAGE_KEY, mode);
+      }
+
+      apply(normalize(localStorage.getItem(STORAGE_KEY)));
+
+      radios.forEach(r => {
+        r.addEventListener("change", () => apply(r.value));
+      });
+    })();
+  </script>
 </body>
 </html>

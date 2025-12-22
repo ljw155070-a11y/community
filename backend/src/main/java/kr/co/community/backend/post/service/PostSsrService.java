@@ -20,12 +20,10 @@ public class PostSsrService {
 
     private final PostSsrDao postSsrDao;
 
-    // ✅ 활성 카테고리
     public List<BoardCategoryDTO> getActiveCategories() {
         return postSsrDao.selectActiveCategories();
     }
 
-    // ✅ SSR 게시판 목록
     public Map<String, Object> getPostList(
             Long categoryId,
             String q,
@@ -35,53 +33,56 @@ public class PostSsrService {
     ) {
         if (page < 1) page = 1;
 
+        // ✅ sort가 null로 들어오는 케이스 방어(컨트롤러 defaultValue가 있어서 보통 필요 없지만 안전용)
+        if (sort == null || sort.isBlank()) sort = "LATEST";
+
         int total = postSsrDao.countPostList(categoryId, q);
 
         int offset = (page - 1) * size;
         int startRow = offset + 1;
         int endRow = offset + size;
 
+        // ✅ sort 전달
         List<PostListDTO> posts =
-                postSsrDao.selectPostList(categoryId, q, startRow, endRow);
+                postSsrDao.selectPostList(categoryId, q, sort, startRow, endRow);
 
         int totalPages = (int) Math.ceil((double) total / size);
 
         Map<String, Object> result = new HashMap<>();
-        result.put("posts", posts);      // ✅ 컨트롤러에서 기대하는 이름
+        result.put("posts", posts);
         result.put("page", page);
         result.put("totalPages", totalPages);
         result.put("total", total);
 
         return result;
     }
+
     @Transactional
     public PostDTO getPostDetail(Long postId) {
         PostDTO post = postSsrDao.selectPostById(postId);
-        
+
         if (post == null) {
             throw new RuntimeException("게시글을 찾을 수 없습니다.");
         }
-        
+
         postSsrDao.updateViewCount(postId);
         post.setViewCount(post.getViewCount() + 1);
-        
+
         List<CommentDTO> comments = postSsrDao.selectCommentsByPostId(postId);
         post.setComments(comments);
-        
+
         return post;
     }
 
     public boolean isPostLiked(Long postId, Long memberId) {
-        if (memberId == null) {
-            return false;
-        }
+        if (memberId == null) return false;
         return postSsrDao.selectPostLikeExists(postId, memberId) > 0;
     }
 
     @Transactional
     public int toggleLike(Long postId, Long memberId) {
         int likeExists = postSsrDao.selectPostLikeExists(postId, memberId);
-        
+
         if (likeExists > 0) {
             postSsrDao.deletePostLike(postId, memberId);
             postSsrDao.decrementLikeCount(postId);
@@ -89,35 +90,25 @@ public class PostSsrService {
             postSsrDao.insertPostLike(postId, memberId);
             postSsrDao.incrementLikeCount(postId);
         }
-        
+
         return postSsrDao.selectLikeCount(postId);
     }
 
-    /**
-     * 북마크 여부 확인
-     */
     public boolean isBookmarked(Long postId, Long memberId) {
-        if (memberId == null) {
-            return false;
-        }
+        if (memberId == null) return false;
         return postSsrDao.selectBookmarkExists(postId, memberId) > 0;
     }
 
-    /**
-     * 북마크 토글 (추가/취소)
-     */
     @Transactional
     public boolean toggleBookmark(Long postId, Long memberId) {
         int bookmarkExists = postSsrDao.selectBookmarkExists(postId, memberId);
-        
+
         if (bookmarkExists > 0) {
-            // 이미 북마크했다면 → 취소
             postSsrDao.deleteBookmark(postId, memberId);
-            return false; // 북마크 해제됨
+            return false;
         } else {
-            // 북마크 안 했다면 → 추가
             postSsrDao.insertBookmark(postId, memberId);
-            return true; // 북마크 추가됨
+            return true;
         }
     }
 
@@ -139,24 +130,24 @@ public class PostSsrService {
 
     public Map<String, Object> getAuthorStats(Long authorId) {
         Map<String, Object> stats = new HashMap<>();
-        
+
         int postCount = postSsrDao.countAuthorPosts(authorId);
         int commentCount = postSsrDao.countAuthorComments(authorId);
-        
+
         stats.put("postCount", postCount);
         stats.put("commentCount", commentCount);
-        
+
         return stats;
     }
 
     @Transactional
     public boolean deletePost(Long postId, Long memberId) {
         PostDTO post = postSsrDao.selectPostById(postId);
-        
+
         if (post == null || !post.getAuthorId().equals(memberId)) {
             return false;
         }
-        
+
         postSsrDao.updateIsDeleted(postId);
         return true;
     }

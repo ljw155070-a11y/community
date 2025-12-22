@@ -20,13 +20,15 @@ public interface PostSsrDao {
             @Param("q") String q
     );
 
+    // ✅ sort 파라미터 추가
     List<PostListDTO> selectPostList(
             @Param("categoryId") Long categoryId,
             @Param("q") String q,
+            @Param("sort") String sort,
             @Param("startRow") int startRow,
             @Param("endRow") int endRow
     );
-    
+
     PostDTO selectPostById(@Param("postId") Long postId);
 
     void updateViewCount(@Param("postId") Long postId);
@@ -47,19 +49,10 @@ public interface PostSsrDao {
     int selectLikeCount(@Param("postId") Long postId);
 
     // ========== 북마크 관련 ==========
-    /**
-     * 북마크 여부 확인
-     */
     int selectBookmarkExists(@Param("postId") Long postId, @Param("memberId") Long memberId);
 
-    /**
-     * 북마크 추가
-     */
     void insertBookmark(@Param("postId") Long postId, @Param("memberId") Long memberId);
 
-    /**
-     * 북마크 취소
-     */
     void deleteBookmark(@Param("postId") Long postId, @Param("memberId") Long memberId);
 
     // ========== 이전/다음글 ==========
@@ -72,8 +65,8 @@ public interface PostSsrDao {
 
     // ========== 작성자 관련 ==========
     List<PostDTO> selectAuthorOtherPosts(
-            @Param("authorId") Long authorId, 
-            @Param("currentPostId") Long currentPostId, 
+            @Param("authorId") Long authorId,
+            @Param("currentPostId") Long currentPostId,
             @Param("limit") int limit
     );
 

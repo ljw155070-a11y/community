@@ -1,3 +1,6 @@
+/* =========================
+   Global
+========================= */
 body {
   margin: 0;
   color: #111827;
@@ -21,33 +24,72 @@ body {
   padding: 28px 18px 80px;
 }
 
-.bl-head { margin: 8px 0 18px; }
-.bl-title { margin: 0 0 6px; font-size: 34px; font-weight: 900; letter-spacing: -0.02em; }
-.bl-sub { margin: 0; color: #6b7280; font-weight: 600; }
+/* =========================
+   Header
+========================= */
+.bl-head {
+  margin: 8px 0 18px;
+}
 
+.bl-title {
+  margin: 0 0 6px;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.bl-sub {
+  margin: 0;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* =========================
+   Toolbar
+========================= */
 .bl-toolbar {
   margin-top: 18px;
   background: #fff;
   border: 1px solid #e9eef6;
   border-radius: 14px;
-  padding: 16px;
+  padding: 14px;
   box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .bl-search {
+  flex: 1;
   display: grid;
-  grid-template-columns: 1fr 120px 92px;
+  grid-template-columns: minmax(280px, 1fr) auto;
   gap: 12px;
   align-items: center;
 }
 
+/* 검색바 */
+.bl-searchbox{
+  display: grid;
+  grid-template-columns: 1fr 96px;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid #e9eef6;
+  background: rgba(245, 247, 251, 0.65);
+}
+
 .bl-search-input {
-  height: 44px;
+  height: 42px;
   border-radius: 12px;
   border: 1px solid #d7dfec;
   padding: 0 14px;
   outline: none;
   font-size: 14px;
+  background: #fff;
 }
 
 .bl-search-input:focus {
@@ -55,27 +97,122 @@ body {
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
 }
 
-.bl-sort-select {
-  width: 100%;
-  height: 44px;
-  border-radius: 12px;
-  border: 1px solid #d7dfec;
-  padding: 0 12px;
-  background: #fff;
-}
-
 .bl-search-btn {
-  height: 44px;
+  height: 42px;
   border-radius: 12px;
   border: 1px solid #2563eb;
   background: #2563eb;
   color: #fff;
-  font-weight: 800;
+  font-weight: 900;
   cursor: pointer;
 }
 
-.bl-search-btn:hover { background: #1e4fd6; border-color: #1e4fd6; }
+.bl-search-btn:hover {
+  background: #1e4fd6;
+  border-color: #1e4fd6;
+}
 
+.bl-toolbar-right{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =========================
+   Pills (radio UI)
+========================= */
+.bl-pill{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid #e5eaf3;
+  background: #f8fafc;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 900;
+  font-size: 14px;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.bl-pill input{
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bl-pill:has(input:checked){
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
+}
+
+.bl-pill--sm{
+  height: 34px;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.bl-sort{
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.bl-view-toggle{
+  display: inline-flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid #e9eef6;
+  background: rgba(255,255,255,0.75);
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.05);
+}
+
+/* =========================
+   Write Button
+========================= */
+.bl-write {
+  display: flex;
+  align-items: center;
+}
+
+.bl-write-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.95),
+    rgba(37, 99, 235, 0.95)
+  );
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.bl-write-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.26);
+}
+
+/* =========================
+   Category Tabs
+========================= */
 .bl-tabs {
   display: flex;
   gap: 10px;
@@ -104,7 +241,14 @@ body {
   color: #fff;
 }
 
-.bl-list { display: flex; flex-direction: column; gap: 14px; }
+/* =========================
+   List Root
+========================= */
+.bl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
 .bl-empty {
   background: #fff;
@@ -115,22 +259,13 @@ body {
   font-weight: 700;
 }
 
-.bl-card {
-  position: relative; /* ✅ hover 버튼 띄우기 위해 필요 */
-  overflow: hidden;
-  background: #fff;
-  border: 1px solid #e9eef6;
-  border-radius: 14px;
-  padding: 18px 18px 16px;
-  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
-}
-
-.bl-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-
+/* =========================
+   Common: badge/date/new
+========================= */
 .bl-badge {
   display: inline-flex;
-  height: 26px;
   align-items: center;
+  height: 26px;
   padding: 0 10px;
   border-radius: 999px;
   background: #eef6ff;
@@ -138,40 +273,126 @@ body {
   color: #2563eb;
   font-weight: 900;
   font-size: 12px;
+  white-space: nowrap;
 }
 
-.bl-date { color: #6b7280; font-weight: 700; font-size: 13px; }
+.bl-date {
+  color: #6b7280;
+  font-weight: 800;
+  font-size: 13px;
+  white-space: nowrap;
+}
 
-.bl-card-title { margin: 0 0 8px; font-size: 18px; font-weight: 900; letter-spacing: -0.01em; }
-.bl-card-desc { margin: 0 0 14px; color: #6b7280; font-weight: 600; line-height: 1.5; }
+/* ✅ 날짜 옆에 NEW 붙이기 위한 래퍼 */
+.bl-datebox{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
 
-/* ✅ 작성자 라인 */
-.bl-card-bottom{
+/* ✅ NEW 뱃지 */
+.bl-new{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.10);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #ef4444;
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.bl-new--sm{
+  height: 16px;
+  padding: 0 7px;
+  font-size: 10px;
+}
+
+/* =========================
+   Card View
+========================= */
+.bl-view-compact{ display: none; }
+
+.bl-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e9eef6;
+  border-radius: 14px;
+  padding: 16px 18px 16px;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+}
+
+.bl-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(0,0,0,0.06);
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.bl-author{
+.bl-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 제목 굵기 낮춤 */
+.bl-card-title {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.bl-card-desc {
+  margin: 0 0 14px;
+  color: #6b7280;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.bl-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.bl-author {
   font-size: 13px;
   font-weight: 600;
   color: #475569;
 }
 
-.bl-author::before{
+.bl-author::before {
   content: "작성자 · ";
-  font-weight: 500;
   color: #94a3b8;
+  font-weight: 500;
 }
 
-.bl-metrics { display: flex; gap: 14px; color: #6b7280; font-weight: 800; }
-.bl-metric em { font-style: normal; margin-left: 6px; color: #111827; }
+.bl-metrics {
+  display: flex;
+  gap: 14px;
+  font-weight: 800;
+  color: #6b7280;
+  white-space: nowrap;
+}
 
-/* ✅ hover 시 뜨는 수정 버튼 */
-.bl-card-actions{
+.bl-metric em {
+  margin-left: 6px;
+  color: #111827;
+  font-style: normal;
+}
+
+/* edit */
+.bl-card-actions {
   position: absolute;
   top: 14px;
   right: 14px;
@@ -181,13 +402,13 @@ body {
   pointer-events: none;
 }
 
-.bl-card:hover .bl-card-actions{
+.bl-card:hover .bl-card-actions {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-.bl-edit-btn{
+.bl-edit-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -195,19 +416,99 @@ body {
   padding: 0 12px;
   border-radius: 12px;
   border: 1px solid rgba(37, 99, 235, 0.25);
-  background: rgba(37, 99, 235, 0.10);
+  background: rgba(37, 99, 235, 0.1);
   color: #1d4ed8;
   font-weight: 900;
   text-decoration: none;
   box-shadow: 0 10px 22px rgba(37, 99, 235, 0.10);
 }
 
-.bl-edit-btn:hover{
-  background: rgba(37, 99, 235, 0.16);
-  border-color: rgba(37, 99, 235, 0.35);
+/* =========================
+   Compact View
+========================= */
+.bl-row{
+  display: grid;
+  grid-template-columns: 1fr 220px 190px auto;
+  gap: 12px;
+  align-items: center;
+
+  background: rgba(255,255,255,0.90);
+  border: 1px solid #e9eef6;
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.05);
 }
 
-/* ✅ pagination 디자인 업그레이드 */
+.bl-row:hover{
+  background: #fff;
+  border-color: rgba(37, 99, 235, 0.25);
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.08);
+}
+
+.bl-row-link{
+  grid-column: 1 / 4;
+  display: grid;
+  grid-template-columns: 1fr 220px 190px;
+  gap: 12px;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.bl-col-title{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.bl-title-text{
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bl-col-meta{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  color: #475569;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.bl-author-plain{ font-weight: 700; color: #475569; }
+.bl-dot{ color: #cbd5e1; }
+
+.bl-col-metrics{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end;
+  white-space: nowrap;
+  color: #6b7280;
+  font-weight: 900;
+}
+
+.bl-col-actions{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.bl-view-compact .bl-badge{
+  height: 22px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+/* =========================
+   Pagination
+========================= */
 .bl-pagination {
   display: flex;
   gap: 10px;
@@ -216,7 +517,8 @@ body {
   flex-wrap: wrap;
 }
 
-.bl-page-btn, .bl-page-num {
+.bl-page-btn,
+.bl-page-num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -224,39 +526,47 @@ body {
   min-width: 46px;
   padding: 0 14px;
   border-radius: 14px;
-  border: 1px solid rgba(15, 23, 42, 0.10);
-  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.85);
   color: #0f172a;
-  text-decoration: none;
   font-weight: 900;
-  letter-spacing: -0.01em;
+  text-decoration: none;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
-}
-
-.bl-page-btn:hover, .bl-page-num:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.10);
-  background: #fff;
 }
 
 .bl-page-num.is-active {
   background: #2563eb;
   border-color: #2563eb;
   color: #fff;
-  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.30);
 }
 
-.bl-page-btn.is-disabled {
-  opacity: 0.45;
-  pointer-events: none;
-  box-shadow: none;
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 900px){
+  .bl-search{ grid-template-columns: 1fr; }
 }
-.bl-card-link{
-  display:block;
-  color:inherit;
-  text-decoration:none;
-}
+
 @media (max-width: 720px) {
-  .bl-search { grid-template-columns: 1fr; }
+  .bl-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bl-toolbar-right{
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .bl-write-btn { width: 100%; }
+
+  .bl-searchbox{ grid-template-columns: 1fr 86px; }
+
+  .bl-row{ grid-template-columns: 1fr auto; gap: 8px; }
+  .bl-row-link{
+    grid-column: 1 / 2;
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .bl-col-metrics{ justify-content: flex-start; font-size: 12px; }
 }

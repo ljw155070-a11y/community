@@ -44,7 +44,17 @@
     SELECT
       T.*,
       ROW_NUMBER() OVER (
-        ORDER BY T.createdAt DESC, T.postId DESC
+        <choose>
+          <when test="sort == 'VIEWS'">
+            ORDER BY T.viewCount DESC, T.createdAt DESC, T.postId DESC
+          </when>
+          <when test="sort == 'LIKES'">
+            ORDER BY T.likeCount DESC, T.createdAt DESC, T.postId DESC
+          </when>
+          <otherwise>
+            ORDER BY T.createdAt DESC, T.postId DESC
+          </otherwise>
+        </choose>
       ) AS RN
     FROM (
       SELECT

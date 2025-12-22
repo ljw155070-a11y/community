@@ -1,32 +1,41 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { loginUserState } from "../utils/authState";
 import "./boardwrite.css";
 
 const BoardWrite = () => {
   const navigate = useNavigate();
+  const loginUser = useRecoilValue(loginUserState);
 
   const [categories, setCategories] = useState([]);
-  const [categoryId, setCategoryId] = useState(""); // 처음엔 비워두고 API로 채움
+  const [categoryId, setCategoryId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ 카테고리 목록 불러오기
+  // ✅ 로그인 체크
+  useEffect(() => {
+    if (!loginUser) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+    }
+  }, [loginUser, navigate]);
+
+  // ✅ 카테고리 목록
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACK_SERVER}/category/list`
+          `${import.meta.env.VITE_BACK_SERVER}/category/list`,
+          { withCredentials: true }
         );
 
         const list = res?.data?.list ?? [];
         setCategories(list);
 
-        // 기본 선택값: 첫 번째 카테고리
-        if (list.length > 0) {
-          setCategoryId(list[0].categoryId);
-        }
+        if (list.length > 0) setCategoryId(list[0].categoryId);
       } catch (e) {
         console.error(e);
         alert("카테고리 목록을 불러오지 못했습니다.");
@@ -37,6 +46,7 @@ const BoardWrite = () => {
   }, []);
 
   const submitPost = async () => {
+    if (!loginUser) return;
     if (!categoryId) return alert("카테고리를 선택해주세요.");
     if (!title.trim()) return alert("제목을 입력해주세요.");
     if (!content.trim()) return alert("내용을 입력해주세요.");
@@ -44,30 +54,42 @@ const BoardWrite = () => {
     try {
       setLoading(true);
 
-      // ✅ JWT 완료 전 임시 authorId
-      //    JWT 완료되면 이 필드 자체를 보내지 않는 게 정석이고,
-      //    백엔드에서 토큰으로 authorId를 세팅하도록 바꿔.
-      const authorId = 1;
-
       const res = await axios.post(
         `${import.meta.env.VITE_BACK_SERVER}/post/write`,
         {
           categoryId: Number(categoryId),
-          authorId,
+          authorId: loginUser.memberId, // ✅ 로그인 사용자
           title,
           content,
+        },
+        {
+          withCredentials: true,
         }
       );
 
       if (res?.data?.success) {
+        // ✅ postId 꺼내기 (백엔드 응답 구조가 달라도 대응)
+        const postId =
+          res?.data?.postId ??
+          res?.data?.data?.postId ??
+          res?.data?.result?.postId;
+
         alert("글이 등록되었습니다.");
+
+        if (postId) {
+          // ✅ SSR 페이지로 이동은 window.location이 안전함
+          window.location.href = `/board/postDetail/${postId}`;
+          return;
+        }
+
+        // postId가 없으면 일단 목록으로 (백엔드 수정 필요)
         navigate("/board");
       } else {
-        alert("글 등록에 실패했습니다.");
+        alert(res?.data?.message || "글 등록에 실패했습니다.");
       }
     } catch (e) {
       console.error(e);
-      alert("글 등록에 실패했습니다.");
+      alert("글 등록 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
@@ -77,15 +99,8 @@ const BoardWrite = () => {
     <div className="bw-wrap">
       <div className="bw-page">
         <div className="bw-top">
-          <button
-            className="bw-back"
-            type="button"
-            onClick={() => navigate(-1)}
-          >
-            <span className="bw-back-icon" aria-hidden="true">
-              ←
-            </span>
-            <span>뒤로가기</span>
+          <button className="bw-back" onClick={() => navigate(-1)}>
+            ← 뒤로가기
           </button>
         </div>
 
@@ -116,8 +131,6 @@ const BoardWrite = () => {
             <label className="bw-label">제목</label>
             <input
               className="bw-control"
-              type="text"
-              placeholder="제목을 입력하세요"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -127,48 +140,23 @@ const BoardWrite = () => {
             <label className="bw-label">내용</label>
             <textarea
               className="bw-control bw-textarea"
-              placeholder="내용을 입력하세요"
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
           </div>
 
-          <div
-            className="bw-guide"
-            role="note"
-            aria-label="커뮤니티 가이드 안내"
-          >
-            <span className="bw-guide-icon" aria-hidden="true">
-              💡
-            </span>
-            <p className="bw-guide-text">
-              <span className="bw-guide-strong">
-                커뮤니티 가이드를 준수하여 작성해주세요.
-              </span>
-              <span className="bw-guide-sub">
-                타인을 비방하거나 불쾌감을 주는 내용은 삭제될 수 있습니다.
-              </span>
-            </p>
-          </div>
-
           <div className="bw-actions">
             <button
               className="bw-btn bw-btn-ghost"
-              type="button"
               onClick={() => navigate(-1)}
             >
               취소
             </button>
-
             <button
               className="bw-btn bw-btn-primary"
-              type="button"
               onClick={submitPost}
               disabled={loading}
             >
-              <span className="bw-btn-icon" aria-hidden="true">
-                📝
-              </span>
               {loading ? "작성 중..." : "작성하기"}
             </button>
           </div>
