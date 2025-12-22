@@ -36,4 +36,5 @@ public class PostDTO {
     
     private List<CommentDTO> comments;  // 댓글 리스트
     private Boolean isLiked;            // 좋아요 여부
+    private Boolean isBookmarked;
 }

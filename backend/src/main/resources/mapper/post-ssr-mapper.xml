@@ -172,7 +172,26 @@
 	    FROM POST
 	    WHERE POST_ID = #{postId}
 	  </select>
-	
+      <!-- 북마크 여부 확인 -->
+		<select id="selectBookmarkExists" resultType="int">
+		    SELECT COUNT(*)
+		    FROM POST_BOOKMARK
+		    WHERE POST_ID = #{postId}
+		      AND MEMBER_ID = #{memberId}
+		</select>
+		
+		<!-- 북마크 추가 -->
+		<insert id="insertBookmark">
+		    INSERT INTO POST_BOOKMARK (BOOKMARK_ID, POST_ID, MEMBER_ID, CREATED_AT)
+		    VALUES (POST_BOOKMARK_SEQ.NEXTVAL, #{postId}, #{memberId}, SYSDATE)
+		</insert>
+		
+		<!-- 북마크 취소 -->
+		<delete id="deleteBookmark">
+		    DELETE FROM POST_BOOKMARK
+		    WHERE POST_ID = #{postId}
+		      AND MEMBER_ID = #{memberId}
+		</delete>	
 	  <!-- 이전 게시글 조회 -->
 	  <select id="selectPrevPost" resultType="kr.co.community.backend.post.dto.PostDTO">
 	    SELECT *

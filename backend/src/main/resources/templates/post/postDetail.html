@@ -888,7 +888,7 @@
                     <span id="likeCount" th:text="${post.likeCount != null ? post.likeCount : 0}">0</span>
                 </button>
                 
-                <button class="action-button" id="bookmarkButton" onclick="toggleBookmark()">
+                <button class="action-button" id="bookmarkButton" th:classappend="${post.isBookmarked != null and post.isBookmarked} ? 'bookmarked' : ''" onclick="toggleBookmark()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
                     </svg>
@@ -1044,124 +1044,125 @@
 <th:block th:include="common/footer"></th:block>
 
 <script>
-    // 좋아요 토글
-    function toggleLike() {
-        const button = document.getElementById('likeButton');
-        const countSpan = document.getElementById('likeCount');
-        const postId = /*[[${post.postId}]]*/ 1;
-        
-        fetch(`/board/postDetail/${postId}/like`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                button.classList.toggle('liked');
-                countSpan.textContent = data.likeCount;
-            } else {
-                alert(data.message || '좋아요 처리에 실패했습니다.');
-                if (data.message && data.message.includes('로그인')) {
-                    window.location.href = '/app/login';
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('좋아요 처리 중 오류가 발생했습니다.');
-        });
-    }
-    
-    // 북마크 토글
-    function toggleBookmark() {
-        const button = document.getElementById('bookmarkButton');
-        const postId = /*[[${post.postId}]]*/ 1;
-        
-        // TODO: 북마크 API 연동
-        button.classList.toggle('bookmarked');
-        
-        if (button.classList.contains('bookmarked')) {
-            alert('북마크에 추가되었습니다!');
-        } else {
-            alert('북마크가 해제되었습니다.');
-        }
-    }
-    
-    // 공유하기
-    function sharePost() {
-        if (navigator.share) {
-            navigator.share({
-                title: /*[[${post.title}]]*/ '게시글',
-                url: window.location.href
-            });
-        } else {
-            navigator.clipboard.writeText(window.location.href);
-            alert('링크가 복사되었습니다!');
-        }
-    }
-    
-    // 신고하기
-    function reportPost() {
-        if (confirm('이 게시글을 신고하시겠습니까?')) {
-            alert('신고가 접수되었습니다.');
-        }
-    }
-    
-    // 팔로우
-    function followAuthor() {
-        // TODO: 팔로우 API 연동
-        alert('팔로우 되었습니다!');
-    }
-    
-    // 게시글 수정
-    function editPost() {
-        const postId = /*[[${post.postId}]]*/ 1;
-        window.location.href = `/board/edit/${postId}`;
-    }
-    
-    // 게시글 삭제
-    function deletePost() {
-        if (confirm('정말 삭제하시겠습니까?')) {
-            const postId = /*[[${post.postId}]]*/ 1;
-            
-            fetch(`/board/delete/${postId}`, {
-                method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('삭제되었습니다.');
-                    window.location.href = '/board';
-                } else {
-                    alert('삭제 실패');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('삭제 중 오류가 발생했습니다.');
-            });
-        }
-    }
-    
-    // 댓글 좋아요
-    function toggleCommentLike(button) {
-        button.classList.toggle('liked');
-        const countSpan = button.querySelector('span');
-        const currentCount = parseInt(countSpan.textContent);
-        
-        if (button.classList.contains('liked')) {
-            countSpan.textContent = currentCount + 1;
-        } else {
-            countSpan.textContent = currentCount - 1;
-        }
-    }
-    
-    // 답글
-    function replyComment() {
-        alert('답글 기능은 준비 중입니다!');
-    }
+		const postId = /*[[${post.postId}]]*/ 1;
+		
+		// 좋아요 토글
+		function toggleLike() {
+		    const button = document.getElementById('likeButton');
+		    const countSpan = document.getElementById('likeCount');
+		    
+		    fetch(`/board/postDetail/${postId}/like`, {
+		        method: 'POST',
+		        headers: { 'Content-Type': 'application/json' }
+		    })
+		    .then(response => response.json())
+		    .then(data => {
+		        if (data.success) {
+		            button.classList.toggle('liked');
+		            countSpan.textContent = data.likeCount;
+		        } else {
+		            alert(data.message || '좋아요 처리에 실패했습니다.');
+		            if (data.message && data.message.includes('로그인')) {
+		                window.location.href = '/app/login';
+		            }
+		        }
+		    })
+		    .catch(error => {
+		        console.error('Error:', error);
+		        alert('좋아요 처리 중 오류가 발생했습니다.');
+		    });
+		}
+		
+		// 북마크 토글
+		function toggleBookmark() {
+		    const button = document.getElementById('bookmarkButton');
+		    
+		    fetch(`/board/postDetail/${postId}/bookmark`, {
+		        method: 'POST',
+		        headers: { 'Content-Type': 'application/json' }
+		    })
+		    .then(response => response.json())
+		    .then(data => {
+		        if (data.success) {
+		            button.classList.toggle('bookmarked');
+		            alert(data.message);
+		        } else {
+		            alert(data.message || '북마크 처리에 실패했습니다.');
+		            if (data.message && data.message.includes('로그인')) {
+		                window.location.href = '/app/login';
+		            }
+		        }
+		    })
+		    .catch(error => {
+		        console.error('Error:', error);
+		        alert('북마크 처리 중 오류가 발생했습니다.');
+		    });
+		}
+		
+		// 공유하기
+		function sharePost() {
+		    if (navigator.share) {
+		        navigator.share({
+		            title: /*[[${post.title}]]*/ '게시글',
+		            url: window.location.href
+		        });
+		    } else {
+		        navigator.clipboard.writeText(window.location.href);
+		        alert('링크가 복사되었습니다!');
+		    }
+		}
+		
+		// 신고하기
+		function reportPost() {
+		    if (confirm('이 게시글을 신고하시겠습니까?')) {
+		        alert('신고가 접수되었습니다.');
+		    }
+		}
+		
+		// 팔로우
+		function followAuthor() {
+		    alert('팔로우 되었습니다!');
+		}
+		
+		// 게시글 수정
+		function editPost() {
+		    window.location.href = `/board/edit/${postId}`;
+		}
+		
+		// 게시글 삭제
+		function deletePost() {
+		    if (confirm('정말 삭제하시겠습니까?')) {
+		        fetch(`/board/delete/${postId}`, {
+		            method: 'POST'
+		        })
+		        .then(response => response.json())
+		        .then(data => {
+		            if (data.success) {
+		                alert('삭제되었습니다.');
+		                window.location.href = '/board';
+		            } else {
+		                alert(data.message || '삭제 실패');
+		            }
+		        })
+		        .catch(error => {
+		            console.error('Error:', error);
+		            alert('삭제 중 오류가 발생했습니다.');
+		        });
+		    }
+		}
+		
+		// 댓글 좋아요
+		function toggleCommentLike(button) {
+		    button.classList.toggle('liked');
+		    const countSpan = button.querySelector('span');
+		    const currentCount = parseInt(countSpan.textContent);
+		    countSpan.textContent = button.classList.contains('liked') ? currentCount + 1 : currentCount - 1;
+		}
+		
+		// 답글
+		function replyComment() {
+		    alert('답글 기능은 준비 중입니다!');
+		}
 </script>
 </body>
 </html>

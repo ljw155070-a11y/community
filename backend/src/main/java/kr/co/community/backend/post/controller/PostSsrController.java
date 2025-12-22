@@ -88,13 +88,22 @@ public class PostSsrController {
             // 1. 게시글 조회 (조회수 증가 포함)
             PostDTO post = postSsrService.getPostDetail(postId);
             
-            // 2. 로그인한 사용자의 좋아요 여부 확인
+            // 2. 로그인한 사용자의 좋아요/북마크 여부 확인
             Long memberId = (Long) session.getAttribute("memberId");
             if (memberId != null) {
                 boolean isLiked = postSsrService.isPostLiked(postId, memberId);
+                boolean isBookmarked = postSsrService.isBookmarked(postId, memberId);
+                // ✅ 디버깅 로그 추가
+                System.out.println("========== 북마크 상태 확인 ==========");
+                System.out.println("postId: " + postId);
+                System.out.println("memberId: " + memberId);
+                System.out.println("isBookmarked: " + isBookmarked);
+                System.out.println("====================================");
                 post.setIsLiked(isLiked);
+                post.setIsBookmarked(isBookmarked);
             } else {
                 post.setIsLiked(false);
+                post.setIsBookmarked(false);
             }
             
             // 3. 이전글/다음글 조회
@@ -148,7 +157,6 @@ public class PostSsrController {
                 return result;
             }
             
-            // 좋아요 토글
             int newLikeCount = postSsrService.toggleLike(postId, memberId);
             
             result.put("success", true);
@@ -158,6 +166,42 @@ public class PostSsrController {
             e.printStackTrace();
             result.put("success", false);
             result.put("message", "좋아요 처리 중 오류가 발생했습니다.");
+        }
+        
+        return result;
+    }
+
+    /**
+     * 북마크 토글 API
+     */
+    @PostMapping("/postDetail/{postId}/bookmark")
+    @ResponseBody
+    public Map<String, Object> toggleBookmark(
+            @PathVariable Long postId,
+            HttpSession session
+    ) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            Long memberId = (Long) session.getAttribute("memberId");
+            
+            if (memberId == null) {
+                result.put("success", false);
+                result.put("message", "로그인이 필요합니다.");
+                return result;
+            }
+            
+            // 북마크 토글
+            boolean isBookmarked = postSsrService.toggleBookmark(postId, memberId);
+            
+            result.put("success", true);
+            result.put("isBookmarked", isBookmarked);
+            result.put("message", isBookmarked ? "북마크에 추가되었습니다." : "북마크가 해제되었습니다.");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "북마크 처리 중 오류가 발생했습니다.");
         }
         
         return result;
@@ -183,7 +227,6 @@ public class PostSsrController {
                 return result;
             }
             
-            // 작성자 확인 및 삭제
             boolean deleted = postSsrService.deletePost(postId, memberId);
             
             if (deleted) {
