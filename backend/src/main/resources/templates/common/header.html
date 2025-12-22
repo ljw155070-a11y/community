@@ -10,8 +10,6 @@
             <a href="/mainpage" class="logo">
                 <span class="logo-icon">◀</span>
                 <span class="logo-text">커뮤니티</span>
-            </div>
-
             </a>
             
             <nav class="header-nav">
@@ -21,41 +19,32 @@
             </nav>
 
             <div class="header-right">
-                <!-- ✅ (추가) 로그인 상태 표시 -->
-                <div class="user-section">
-                    <div th:if="${isAuthenticated}">
-                        <span th:text="${nickname}">사용자</span>님
-                        <a href="#" onclick="logout(); return false;">로그아웃</a>
-                    </div>
-                    <div th:if="${isAuthenticated}">
-                        <a href="/app/login">로그인</a>
-                    </div>
-                </div>
-
-                <!-- ✅ 기존 UI 유지 -->
-                <th:block th:if="${isAuthenticated}">
+                <!-- ✅ 비로그인 상태: 로그인/회원가입 버튼 -->
+                <th:block th:unless="${isAuthenticated}">
                     <button class="btn-login" onclick="location.href='/app/login'">로그인</button>
                     <button class="btn-signup" onclick="location.href='/app/signup'">회원가입</button>
                 </th:block>
 
+                <!-- ✅ 로그인 상태: 알림 + 프로필 드롭다운 -->
                 <th:block th:if="${isAuthenticated}">
+                    <!-- 알림 아이콘 -->
                     <a href="/app/alert" class="notification-link">
                         <svg class="notification-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
-                        <span class="notification-badge" th:if="${unreadCount > 0}"></span>
+                        <span class="notification-badge" th:if="${unreadCount != null and unreadCount > 0}"></span>
                     </a>
 
+                    <!-- 프로필 드롭다운 -->
                     <div class="profile-dropdown">
                         <button class="profile-button" onclick="toggleDropdown()">
-                        <!-- 
-                            <img th:src="${session.member.profileImage}"
-                                 alt="프로필"
-                                 class="profile-image"
-                                 onerror="this.src='/images/default-profile.png'">
-                         -->
-                            <span class="profile-name" th:text="${nickname}">홍길동</span>
+                            <!-- 프로필 이미지 (선택사항) -->
+                            <!-- <img th:src="${profileImage}" alt="프로필" class="profile-image" onerror="this.src='/images/default-profile.png'"> -->
+                            <span class="profile-name" th:text="${nickname}">사용자</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
                         </button>
 
                         <div class="dropdown-menu" id="dropdownMenu">
@@ -69,7 +58,7 @@
                             <a href="/app/settings" class="dropdown-item">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="12" cy="12" r="3"></circle>
-                                    <path d="M12 1v6m0 6v6m-6-6H0m12 0h6"></path>
+                                    <path d="M12 1v6m0 6v6"></path>
                                 </svg>
                                 <span>설정</span>
                             </a>
@@ -81,8 +70,6 @@
                                 <span>내 게시글</span>
                             </a>
                             <div class="dropdown-divider"></div>
-
-                            <!-- ✅ 기존 /logout 링크 대신 fetch 로그아웃 적용 -->
                             <a href="#" class="dropdown-item logout" onclick="logout(); return false;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -109,27 +96,32 @@
             const profileDropdown = document.querySelector('.profile-dropdown');
             const dropdown = document.getElementById('dropdownMenu');
 
-            if (profileDropdown && !profileDropdown.contains(e.target)) {
+            if (profileDropdown && dropdown && !profileDropdown.contains(e.target)) {
                 dropdown.classList.remove('active');
             }
         });
 
-        // ✅ (추가) fetch 로그아웃
+        // 로그아웃
         function logout() {
-            fetch('/api/member/logout', {
-                method: 'POST',
-                credentials: 'include'
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.success) {
-                    // 세션 기반 SSR 페이지를 쓰는 중이면 /mainpage or / 로 보내도 됨
-                    window.location.href = '/mainpage';
-                } else {
-                    alert('로그아웃 실패');
-                }
-            })
-            .catch(() => alert('로그아웃 중 오류가 발생했습니다.'));
+            if (confirm('로그아웃 하시겠습니까?')) {
+                fetch('/api/member/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.success) {
+                        alert('로그아웃 되었습니다.');
+                        window.location.href = '/mainpage';
+                    } else {
+                        alert('로그아웃에 실패했습니다.');
+                    }
+                })
+                .catch(err => {
+                    console.error('로그아웃 오류:', err);
+                    alert('로그아웃 중 오류가 발생했습니다.');
+                });
+            }
         }
     </script>
 </body>
