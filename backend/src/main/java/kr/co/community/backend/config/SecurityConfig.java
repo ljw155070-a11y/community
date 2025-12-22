@@ -21,7 +21,6 @@ public class SecurityConfig {
       .csrf(csrf -> csrf.disable())
       .formLogin(form -> form.disable())
       .httpBasic(basic -> basic.disable())
-      .cors(cors -> cors.configurationSource(corsConfigurationSource()))
       .authorizeHttpRequests(auth -> auth
 
         // ✅ 정적 리소스 전체 허용 (Boot 기본 static 위치 포함)
@@ -48,7 +47,7 @@ public class SecurityConfig {
 
     return http.build();
   }
-
+  	/*
 	  // ============================================
 	  // CORS 설정 - 개발용
 	  // ============================================
@@ -87,7 +86,7 @@ public class SecurityConfig {
 		//      source.registerCorsConfiguration("/**", configuration);
 		//      return source;
 		//  }
-
+/*/
   @Bean
   public BCryptPasswordEncoder passwordEncoder() {
       return new BCryptPasswordEncoder();
