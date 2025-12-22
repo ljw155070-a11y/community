@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSetRecoilState } from "recoil";
+import { Link } from "react-router-dom";
 import { loginUserState } from "../utils/authState";
 import { loginAPI } from "../utils/authUtils";
 import "./Login.css";
@@ -8,7 +9,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // (프론트 표시용 유지)
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,16 +17,19 @@ const Login = () => {
 
   const validateForm = () => {
     const newErrors = {};
+
     if (!email.trim()) {
       newErrors.email = "이메일을 입력해주세요";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = "올바른 이메일 형식이 아닙니다";
     }
+
     if (!password) {
       newErrors.password = "비밀번호를 입력해주세요";
     } else if (password.length < 6) {
       newErrors.password = "비밀번호는 최소 6자 이상이어야 합니다";
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -35,17 +39,22 @@ const Login = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
+
     try {
-      const data = await loginAPI(email, password, rememberMe);
-      if (data.success) {
-        setLoginUser(data.member);
-        alert("로그인 성공!");
-        window.location.href = "/mainpage";
-      } else {
-        setErrors({ general: data.message });
-      }
+      const data = await loginAPI(email, password);
+
+      // ✅ 서버 응답 user 저장
+      setLoginUser(data.user);
+
+      // (선택) rememberMe는 지금 UI만. 진짜 자동로그인은 서버 쿠키/리프레시로 설계
+      // localStorage.setItem("rememberMe", rememberMe ? "true" : "false");
+
+      alert("로그인 성공!");
+
+      // ✅ SSR 페이지로 이동
+      window.location.href = "/mainpage";
     } catch (error) {
-      setErrors({ general: "서버 연결에 실패했습니다" });
+      setErrors({ general: error?.message || "서버 연결에 실패했습니다" });
     } finally {
       setIsLoading(false);
     }
@@ -146,10 +155,10 @@ const Login = () => {
         </div>
 
         <div className="signup-section">
-          계정이 없으신가요?{" "}
-          <a href="/signup" className="signup-link">
+          계정이 없으신가요? {/* ✅ 라우팅 통일: /signup */}
+          <Link to="/signup" className="signup-link">
             회원가입
-          </a>
+          </Link>
         </div>
       </div>
     </div>

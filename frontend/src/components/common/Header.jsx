@@ -1,34 +1,36 @@
-// Header.jsx
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
-import { logout } from "../utils/authUtils";
+import { logoutAPI } from "../utils/authUtils";
 import axios from "axios";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
+
   const loginUser = useRecoilValue(loginUserState);
   const setLoginUser = useSetRecoilState(loginUserState);
-  const navigate = useNavigate();
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+
+  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
 
   const handleLogout = (e) => {
     e.preventDefault();
-    logout(setLoginUser);
+    logoutAPI(setLoginUser);
   };
 
   const loadUnreadCount = async () => {
     try {
-      const memberId = loginUser.memberId;
+      const memberId = loginUser?.memberId;
+      if (!memberId) return;
+
       const response = await axios.get(
-        `${import.meta.env.VITE_BACK_SERVER}/alert/list/${memberId}`
+        `${import.meta.env.VITE_BACK_SERVER}/alert/list/${memberId}`,
+        { withCredentials: true } // 쿠키 기반이면 axios도 넣어주는 게 안전
       );
+
       const count = response.data.filter((a) => a.isRead === "N").length;
       setUnreadCount(count);
     } catch (error) {
@@ -37,9 +39,7 @@ const Header = () => {
   };
 
   useEffect(() => {
-    if (loginUser) {
-      loadUnreadCount();
-    }
+    if (loginUser) loadUnreadCount();
   }, [loginUser]);
 
   useEffect(() => {
@@ -49,14 +49,13 @@ const Header = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <header className="header">
       <div className="header-container">
+        {/* SSR로 가는 링크면 <a href>를 유지하는 것도 OK */}
         <a href="/mainpage" className="logo">
           <span className="logo-icon">◀</span>
           <span className="logo-text">커뮤니티</span>
@@ -72,21 +71,23 @@ const Header = () => {
           <a href="/notice" className="nav-link">
             공지사항
           </a>
-          <a href="/app/about" className="nav-link">
+
+          {/* CSR 페이지들 */}
+          <Link to="/about" className="nav-link">
             사이트 소개 (임시)
-          </a>
-          <a href="/app/admin" className="nav-link">
+          </Link>
+          <Link to="/admin" className="nav-link">
             관리자 (임시)
-          </a>
+          </Link>
         </nav>
 
         <div className="header-right">
           {!loginUser ? (
             <>
-              <Link className="btn-login" to="/app/login">
+              <Link className="btn-login" to="/login">
                 로그인
               </Link>
-              <Link className="btn-signup" to="/app/signup">
+              <Link className="btn-signup" to="/signup">
                 회원가입
               </Link>
             </>
@@ -112,72 +113,28 @@ const Header = () => {
 
               <div className="profile-dropdown" ref={dropdownRef}>
                 <button className="profile-button" onClick={toggleDropdown}>
-                  <span className="profile-name">{loginUser.name}</span>
+                  <span className="profile-name">
+                    {loginUser.nickname || loginUser.name}
+                  </span>
                 </button>
 
                 <div
                   className={`dropdown-menu ${isDropdownOpen ? "active" : ""}`}
                 >
-                  <a href="/app/profile" className="dropdown-item">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+                  <Link to="/profile" className="dropdown-item">
                     <span>내 프로필</span>
-                  </a>
-                  <a href="/app/settings" className="dropdown-item">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <circle cx="12" cy="12" r="3"></circle>
-                      <path d="M12 1v6m0 6v6"></path>
-                    </svg>
+                  </Link>
+                  <Link to="/settings" className="dropdown-item">
                     <span>설정</span>
-                  </a>
-                  <a href="/my-posts" className="dropdown-item">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                    </svg>
-                    <span>내 게시글</span>
-                  </a>
+                  </Link>
+
                   <div className="dropdown-divider"></div>
+
                   <a
                     href="#"
                     className="dropdown-item logout"
                     onClick={handleLogout}
                   >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                      <polyline points="16 17 21 12 16 7"></polyline>
-                      <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
                     <span>로그아웃</span>
                   </a>
                 </div>

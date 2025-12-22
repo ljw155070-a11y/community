@@ -29,21 +29,33 @@ public class MemberController {
 	
 	// ✅ 로그인
 	@PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
-        
-        LoginResponseDTO response = new LoginResponseDTO();
-        MemberDTO member = memberService.login(loginRequest.getEmail(), loginRequest.getPassword());
-        
-        if (member != null) {
-            response.setSuccess(true);
-            response.setMember(member);
-            return ResponseEntity.ok(response);
-        } else {
-            response.setSuccess(false);
-            response.setMessage("아이디 또는 비밀번호가 올바르지 않습니다");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-    }
+	public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
+
+	    LoginResponseDTO response = new LoginResponseDTO();
+
+	    try {
+	        // ✅ JWT 토큰 발급
+	        String token = memberService.login(loginRequest.getEmail(), loginRequest.getPassword());
+
+	        // ✅ 로그인 성공 시 회원 정보도 내려주기 (민감정보 제거해서)
+	        MemberDTO member = memberService.getMemberByEmail(loginRequest.getEmail());
+	        if (member != null) {
+	            member.setPasswordHash(null);
+	            member.setPassword(null); // DTO에 password 필드 있으면 같이 제거
+	        }
+
+	        response.setSuccess(true);
+	        response.setToken(token);      // ⭐ LoginResponseDTO에 token 필드가 있어야 함
+	        response.setMember(member);
+
+	        return ResponseEntity.ok(response);
+
+	    } catch (RuntimeException e) {
+	        response.setSuccess(false);
+	        response.setMessage(e.getMessage());
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	    }
+	}
 
 
 	// ✅ 이메일 중복 체크

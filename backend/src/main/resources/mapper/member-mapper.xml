@@ -156,5 +156,48 @@
       AND p.IS_DELETED = 'N'
     ORDER BY pl.CREATED_AT DESC
   </select>
+  
+  
+  <!-- 이메일로 회원 조회 -->
+  <select id="selectByEmail" parameterType="string" resultType="member">
+    SELECT
+      MEMBER_ID     AS memberId,
+      EMAIL         AS email,
+      PASSWORD_HASH AS passwordHash,
+      NAME          AS name,
+      NICKNAME      AS nickname,
+      ROLE          AS role,
+      STATUS        AS status,
+      CREATED_AT    AS createdAt,
+      UPDATED_AT    AS updatedAt,
+      LAST_LOGIN_AT AS lastLoginAt
+    FROM MEMBER
+    WHERE EMAIL = #{email}
+  </select>
+
+  <!-- ID로 회원 조회 -->
+  <select id="selectById" parameterType="long" resultType="member">
+    SELECT
+      MEMBER_ID     AS memberId,
+      EMAIL         AS email,
+      PASSWORD_HASH AS passwordHash,
+      NAME          AS name,
+      NICKNAME      AS nickname,
+      ROLE          AS role,
+      STATUS        AS status,
+      CREATED_AT    AS createdAt,
+      UPDATED_AT    AS updatedAt,
+      LAST_LOGIN_AT AS lastLoginAt
+    FROM MEMBER
+    WHERE MEMBER_ID = #{memberId}
+  </select>
+
+  <!-- 마지막 로그인 시간 업데이트 -->
+  <update id="updateLastLoginAt" parameterType="long">
+    UPDATE MEMBER
+    SET LAST_LOGIN_AT = SYSDATE
+    WHERE MEMBER_ID = #{memberId}
+  </update>
+  
 
 </mapper>

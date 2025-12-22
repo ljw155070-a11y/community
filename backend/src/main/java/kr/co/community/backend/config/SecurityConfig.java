@@ -1,94 +1,72 @@
 package kr.co.community.backend.config;
 
-import java.util.Arrays;
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-      .csrf(csrf -> csrf.disable())
-      .formLogin(form -> form.disable())
-      .httpBasic(basic -> basic.disable())
-      .authorizeHttpRequests(auth -> auth
+    // ✅ 외부(또는 다른 Config)에서 등록된 CorsConfigurationSource 빈을 주입받아 사용
+    private final CorsConfigurationSource corsConfigurationSource;
 
-        // ✅ 정적 리소스 전체 허용 (Boot 기본 static 위치 포함)
-        .requestMatchers(
-            "/", "/index", "/index.html",
-            "/css/**", "/js/**", "/img/**", "/images/**",
-            "/static/**",
-            "/favicon.ico",
-            "/assets/**"         // (혹시 /assets 로 나갈 때)
-        ).permitAll()
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            // ✅ CORS 활성화 (주입된 설정 사용)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
 
-        // ✅ React (CSR) 정적 리소스 + 라우팅 진입점 허용
-        .requestMatchers("/app/**").permitAll()
+            // ✅ JWT/REST 구성 시 보통 비활성화
+            .csrf(csrf -> csrf.disable())
+            .formLogin(form -> form.disable())
+            .httpBasic(basic -> basic.disable())
 
-        // ✅ SSR 페이지들
-        .requestMatchers("/mainpage", "/board/**", "/terms/**", "/notice/**").permitAll()
+            .authorizeHttpRequests(auth -> auth
 
-        // ✅ API
-        .requestMatchers("/member/**").permitAll()
-        .requestMatchers("/settings/**").permitAll()  // 추가
+                // ✅ 정적 리소스 전체 허용 (Boot 기본 static 위치 포함)
+                .requestMatchers(
+                    "/", "/index", "/index.html",
+                    "/favicon.ico",
+                    "/static/**",
+                    "/css/**", "/js/**",
+                    "/img/**", "/images/**",
+                    "/assets/**"
+                ).permitAll()
 
-        .anyRequest().permitAll()
-      );
+                // ✅ React (CSR) 정적 리소스 + 라우팅 진입점 허용
+                .requestMatchers("/app/**").permitAll()
 
-    return http.build();
-  }
-  	/*
-	  // ============================================
-	  // CORS 설정 - 개발용
-	  // ============================================
-	  @Bean
-	  public CorsConfigurationSource corsConfigurationSource() {
-	      CorsConfiguration configuration = new CorsConfiguration();
-	
-	      configuration.setAllowedOriginPatterns(List.of("*"));  // 모든 출처 허용
-	      configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-	      configuration.setAllowedHeaders(Arrays.asList("*"));
-	      configuration.setAllowCredentials(false);  // 인증 정보 OFF
-	
-	      // 설정을 Spring Security에 등록
-	      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	      source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 적용
-	      return source;
-	  }
+                // ✅ SSR 페이지들
+                .requestMatchers(
+                    "/mainpage", "/mainpage/**",
+                    "/board/**",
+                    "/terms/**",
+                    "/notice/**"
+                ).permitAll()
 
-	  // ============================================
-	  // CORS 설정 - 배포용 (주석)
-	  // ============================================
-	  // 배포시: 위 개발용 주석처리, 아래 주석 해제
-		//  @Bean
-		//  public CorsConfigurationSource corsConfigurationSource() {
-		//      CorsConfiguration configuration = new CorsConfiguration();
-		//
-		//      configuration.setAllowedOrigins(List.of(
-		//          "http://54.206.33.199:5173",  // 배포 서버만 허용
-		//          "http://54.206.33.199:9999"
-		//      ));
-		//      configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		//      configuration.setAllowedHeaders(Arrays.asList("*"));
-		//      configuration.setAllowCredentials(true);  // 인증 정보 ON
-		//
-		//      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		//      source.registerCorsConfiguration("/**", configuration);
-		//      return source;
-		//  }
-/*/
-  @Bean
-  public BCryptPasswordEncoder passwordEncoder() {
-      return new BCryptPasswordEncoder();
-  }
+                // ✅ API (네 프로젝트 라우팅 기준)
+                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/member/**").permitAll()
+                .requestMatchers("/settings/**").permitAll()
+
+                // ✅ 나머지도 일단 허용 (필요 시 authenticated()로 변경)
+                .anyRequest().permitAll()
+            );
+
+        return http.build();
+    }
+
+    // ✅ MemberService에서 PasswordEncoder로 주입받기 좋게 타입 통일
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

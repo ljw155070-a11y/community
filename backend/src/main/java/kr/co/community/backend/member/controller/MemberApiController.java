@@ -1,0 +1,190 @@
+package kr.co.community.backend.member.controller;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import kr.co.community.backend.member.dto.MemberDTO;
+import kr.co.community.backend.member.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/member")
+@RequiredArgsConstructor
+public class MemberApiController {
+
+    private final MemberService memberService;
+
+    /**
+     * 로그인 API
+     */
+    @PostMapping("/login")
+    public ResponseEntity<?> login(
+            @RequestBody Map<String, String> loginRequest,
+            HttpServletResponse response
+    ) {
+        try {
+            String email = loginRequest.get("email");
+            String password = loginRequest.get("password");
+
+            log.info("🔐 API 로그인 요청: {}", email);
+
+            // 로그인 처리 및 JWT 토큰 생성
+            String token = memberService.login(email, password);
+            
+            // 회원 정보 조회
+            MemberDTO member = memberService.getMemberByEmail(email);
+
+            // HttpOnly 쿠키에 JWT 토큰 저장
+            Cookie cookie = new Cookie("accessToken", token);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60 * 24);  // 24시간
+            // cookie.setSecure(true);  // HTTPS 환경에서 활성화
+            
+            response.addCookie(cookie);
+
+            // 응답 데이터
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("message", "로그인 성공");
+            result.put("token", token);
+            result.put("user", Map.of(
+                "memberId", member.getMemberId(),
+                "email", member.getEmail(),
+                "name", member.getName(),
+                "nickname", member.getNickname()
+            ));
+
+            log.info("✅ API 로그인 성공: {}", email);
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("❌ API 로그인 실패: {}", e.getMessage());
+            
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+    }
+
+    /**
+     * 로그아웃 API
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        log.info("🚪 로그아웃 요청");
+        
+        // 쿠키 삭제
+        Cookie cookie = new Cookie("accessToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        
+        response.addCookie(cookie);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("message", "로그아웃 성공");
+
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 회원가입 API
+     */
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody MemberDTO memberDTO) {
+        try {
+            log.info("📝 API 회원가입 요청: {}", memberDTO.getEmail());
+            
+            Long memberId = memberService.register(memberDTO);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("message", "회원가입 성공");
+            result.put("memberId", memberId);
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("❌ API 회원가입 실패: {}", e.getMessage());
+            
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
+    /**
+     * 이메일 중복 확인 API
+     */
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        boolean isDuplicate = memberService.checkEmailDuplicate(email);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("isDuplicate", isDuplicate);
+        result.put("available", !isDuplicate);
+
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 닉네임 중복 확인 API
+     */
+    @GetMapping("/check-nickname")
+    public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
+        boolean isDuplicate = memberService.checkNicknameDuplicate(nickname);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("isDuplicate", isDuplicate);
+        result.put("available", !isDuplicate);
+
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 현재 로그인 사용자 정보 조회
+     */
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(
+            @CookieValue(value = "accessToken", required = false) String token
+    ) {
+        try {
+            if (token == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    Map.of("success", false, "message", "로그인이 필요합니다.")
+                );
+            }
+
+            Long memberId = memberService.getMemberIdFromToken(token);
+            MemberDTO member = memberService.getMemberInfo(memberId);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("user", Map.of(
+                "memberId", member.getMemberId(),
+                "email", member.getEmail(),
+                "name", member.getName(),
+                "nickname", member.getNickname()
+            ));
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                Map.of("success", false, "message", "유효하지 않은 토큰입니다.")
+            );
+        }
+    }
+}

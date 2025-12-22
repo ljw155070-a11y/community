@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class LoginResponseDTO {
     private boolean success;
     private String message;
+    private String token;  
     private MemberDTO member;
 }

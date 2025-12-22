@@ -73,4 +73,21 @@ public interface MemberDao {
      * @return 좋아요한 글 목록
      */
     List<Map<String, Object>> selectMemberLikedPosts(@Param("memberId") Long memberId);
+    
+    /**
+     * 이메일로 회원 조회
+     */
+    MemberDTO selectByEmail(@Param("email") String email);
+
+    /**
+     * ID로 회원 조회
+     */
+    MemberDTO selectById(@Param("memberId") Long memberId);
+
+    /**
+     * 마지막 로그인 시간 업데이트
+     */
+    void updateLastLoginAt(@Param("memberId") Long memberId);
+
+    
 }
