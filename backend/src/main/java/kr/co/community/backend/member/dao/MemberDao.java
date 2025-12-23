@@ -88,6 +88,40 @@ public interface MemberDao {
      * 마지막 로그인 시간 업데이트
      */
     void updateLastLoginAt(@Param("memberId") Long memberId);
+    
+// ========== 아이디/비밀번호 찾기 관련 메서드 ==========
+    
+    /**
+     * 이름과 이메일로 회원 조회 (아이디 찾기용)
+     * @param name 회원 이름
+     * @param email 회원 이메일
+     * @return 회원 정보 (이메일 포함)
+     */
+    MemberDTO selectMemberByNameAndEmail(
+        @Param("name") String name, 
+        @Param("email") String email
+    );
 
+    /**
+     * 이메일과 이름으로 회원 조회 (계정 확인용)
+     * @param email 회원 이메일
+     * @param name 회원 이름
+     * @return 회원 정보
+     */
+    MemberDTO selectMemberByEmailAndName(
+        @Param("email") String email, 
+        @Param("name") String name
+    );
+
+    /**
+     * 비밀번호 업데이트
+     * @param memberId 회원 ID
+     * @param passwordHash 암호화된 비밀번호
+     * @return 업데이트된 행 수
+     */
+    int updatePassword(
+        @Param("memberId") Long memberId, 
+        @Param("passwordHash") String passwordHash
+    );
     
 }
