@@ -21,39 +21,57 @@
             <p>광고 영역</p>
         </div>
     </div>
-    <!-- 메인 배너 영역 (로그인 안 한 경우만 표시) -->
-    <section class="mainpage-banner" th:if="${!isLoggedIn}">
-      <div class="mainpage-banner-content">
-        <h1>함께 소통하고 성장하는 커뮤니티</h1>
-        <p>다양한 주제로 대화하고, 지식을 공유하며, 새로운 친구를 만나보세요</p>
-        <div class="mainpage-banner-buttons">
-          <button class="mainpage-btn-primary" onclick="location.href='/app/login'">로그인</button>
-          <button class="mainpage-btn-secondary" onclick="location.href='/app/signup'">처음이신가요?</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 커뮤니티 특징 소개 (로그인 안 한 경우만 표시) -->
-    <section class="mainpage-features" th:if="${!isLoggedIn}">
-      <h2>커뮤니티의 특징</h2>
-      <div class="mainpage-feature-list">
-        <div class="mainpage-feature-item">
-          <div class="mainpage-feature-icon">💬</div>
-          <h3>자유로운 소통</h3>
-          <p>다양한 주제로 자유롭게 대화하고 의견을 나눠보세요</p>
-        </div>
-        <div class="mainpage-feature-item">
-          <div class="mainpage-feature-icon">👥</div>
-          <h3>활발한 커뮤니티</h3>
-          <p>활발하게 질문과 답변 등을 올리는 커뮤니티</p>
-        </div>
-        <div class="mainpage-feature-item">
-          <div class="mainpage-feature-icon">📈</div>
-          <h3>트렌딩 콘텐츠</h3>
-          <p>인기 있는 게시글과 핫한 토픽을 만들어요</p>
-        </div>
-      </div>
-    </section>
+		   <!-- 메인 배너 영역 (로그인 안 한 경우만 표시) -->
+		<section class="mainpage-banner" th:if="${!isLoggedIn}">
+		  <div class="mainpage-banner-content">
+		    <div class="mainpage-banner-tag">COMMUNITY</div>
+		    <h1>함께 소통하고 성장하는<br>커뮤니티</h1>
+		    <p>다양한 주제로 대화하고, 지식을 공유하며, 새로운 친구를 만나보세요</p>
+		    <div class="mainpage-banner-buttons">
+		      <button class="mainpage-btn-primary" onclick="location.href='/app/login'">
+		        로그인
+		        <span class="mainpage-btn-arrow">→</span>
+		      </button>
+		      <button class="mainpage-btn-secondary" onclick="location.href='/app/signup'">
+		        처음이신가요?
+		      </button>
+		    </div>
+		  </div>
+		  <div class="mainpage-banner-decoration">
+		    <div class="mainpage-banner-circle mainpage-circle-1"></div>
+		    <div class="mainpage-banner-circle mainpage-circle-2"></div>
+		    <div class="mainpage-banner-circle mainpage-circle-3"></div>
+		  </div>
+		</section>
+		
+		<!-- 커뮤니티 특징 소개 (로그인 안 한 경우만 표시) -->
+		<section class="mainpage-features" th:if="${!isLoggedIn}">
+		  <div class="mainpage-features-tag">FEATURES</div>
+		  <h2>커뮤니티의 특징</h2>
+		  <div class="mainpage-feature-list">
+		    <div class="mainpage-feature-item">
+		      <div class="mainpage-feature-icon-wrapper">
+		        <div class="mainpage-feature-icon">💬</div>
+		      </div>
+		      <h3>자유로운 소통</h3>
+		      <p>다양한 주제로 자유롭게 대화하고 의견을 나눠보세요</p>
+		    </div>
+		    <div class="mainpage-feature-item">
+		      <div class="mainpage-feature-icon-wrapper">
+		        <div class="mainpage-feature-icon">👥</div>
+		      </div>
+		      <h3>활발한 커뮤니티</h3>
+		      <p>활발하게 질문과 답변 등을 올리는 커뮤니티</p>
+		    </div>
+		    <div class="mainpage-feature-item">
+		      <div class="mainpage-feature-icon-wrapper">
+		        <div class="mainpage-feature-icon">📈</div>
+		      </div>
+		      <h3>트렌딩 콘텐츠</h3>
+		      <p>인기 있는 게시글과 핫한 토픽을 만들어요</p>
+		    </div>
+		  </div>
+		</section>
 
     <!-- 공지사항 영역 (로그인 한 경우 맨 위, 안 한 경우 인기게시글 아래) -->
     <section class="mainpage-notices" th:classappend="${isLoggedIn} ? 'mainpage-logged-in' : ''">
@@ -64,13 +82,15 @@
 
       <div class="mainpage-notice-list" id="noticeList">
         <div class="mainpage-notice-item"
-             th:each="notice, stat : ${noticeList}"
-             th:classappend="${stat.index >= 5} ? 'mainpage-notice-hidden' : ''">
-          <span class="mainpage-notice-badge" th:text="${notice.noticeType}">공지</span>
-          <span class="mainpage-notice-title" th:text="${notice.title}">제목</span>
-          <span class="mainpage-notice-date"
-                th:text="${#dates.format(notice.createdAt, 'yyyy. MM. dd.')}">날짜</span>
-        </div>
+		     th:each="notice, stat : ${noticeList}"
+		     th:classappend="${stat.index >= 5} ? 'mainpage-notice-hidden' : ''"
+		     th:onclick="|location.href='/notice/' + ${notice.noticeId}|"
+		     style="cursor: pointer;">
+		  <span class="mainpage-notice-badge" th:text="${notice.noticeType}">공지</span>
+		  <span class="mainpage-notice-title" th:text="${notice.title}">제목</span>
+		  <span class="mainpage-notice-date"
+      th:text="${#dates.format(notice.createdAt, 'yyyy. MM. dd.')}">날짜</span>
+		</div>
       </div>
     </section>
 

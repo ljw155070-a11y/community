@@ -62,91 +62,174 @@ body {
 
 /* 메인 배너 영역 */
 .mainpage-banner {
+    position: relative;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 100px 20px;
+    padding: 120px 20px;
     text-align: center;
     max-width: 1200px;
     margin: 20px auto;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+    overflow: hidden;
+}
+
+.mainpage-banner-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.mainpage-banner-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mainpage-circle-1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    right: -50px;
+}
+
+.mainpage-circle-2 {
+    width: 200px;
+    height: 200px;
+    bottom: -50px;
+    left: -30px;
+}
+
+.mainpage-circle-3 {
+    width: 150px;
+    height: 150px;
+    top: 50%;
+    left: 10%;
+}
+
+.mainpage-banner-content {
+    position: relative;
+    z-index: 1;
+}
+
+.mainpage-banner-tag {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 20px;
     border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .mainpage-banner-content h1 {
     font-size: 48px;
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 20px;
+    line-height: 1.3;
 }
 
 .mainpage-banner-content p {
     font-size: 18px;
     margin-bottom: 40px;
     opacity: 0.95;
+    font-weight: 400;
 }
 
 .mainpage-banner-buttons {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     justify-content: center;
 }
 
 .mainpage-btn-primary {
     background: white;
     color: #667eea;
-    padding: 15px 40px;
+    padding: 16px 36px;
     border: none;
     border-radius: 50px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mainpage-btn-arrow {
+    font-size: 20px;
+    transition: transform 0.3s;
 }
 
 .mainpage-btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.mainpage-btn-primary:hover .mainpage-btn-arrow {
+    transform: translateX(5px);
 }
 
 .mainpage-btn-secondary {
     background: transparent;
     color: white;
-    padding: 15px 40px;
+    padding: 16px 36px;
     border: 2px solid white;
     border-radius: 50px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s;
 }
 
 .mainpage-btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-3px);
 }
 
 /* 커뮤니티 특징 영역 */
 .mainpage-features {
-    padding: 80px 20px;
+    padding: 100px 20px;
     text-align: center;
     background: white;
     max-width: 1200px;
     margin: 20px auto;
-    border-radius: 20px;
+    border-radius: 24px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.mainpage-features h2 {
-    font-size: 36px;
-    margin-bottom: 60px;
-    color: #667eea;
+.mainpage-features-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.mainpage-features h2 {
+    font-size: 40px;
+    margin-bottom: 60px;
+    color: #333;
+    font-weight: 800;
 }
 
 .mainpage-feature-list {
     display: flex;
-    gap: 40px;
-    max-width: 1200px;
+    gap: 30px;
+    max-width: 1100px;
     margin: 0 auto;
     justify-content: center;
 }
@@ -154,34 +237,47 @@ body {
 .mainpage-feature-item {
     flex: 1;
     max-width: 350px;
-    padding: 30px;
-    background: #f8f9fa;
-    border-radius: 15px;
+    padding: 40px 30px;
+    background: white;
+    border-radius: 20px;
     transition: all 0.3s;
+    border: 2px solid #f0f0f0;
 }
 
 .mainpage-feature-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+}
+
+.mainpage-feature-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
 }
 
 .mainpage-feature-icon {
-    font-size: 60px;
-    margin-bottom: 20px;
+    font-size: 40px;
 }
 
 .mainpage-feature-item h3 {
-    font-size: 24px;
+    font-size: 22px;
     margin-bottom: 15px;
     color: #333;
+    font-weight: 700;
 }
 
 .mainpage-feature-item p {
-    font-size: 16px;
+    font-size: 15px;
     color: #666;
-    line-height: 1.6;
+    line-height: 1.7;
 }
-
 /* 공지사항 영역 */
 .mainpage-notices {
     padding: 50px 20px;
@@ -563,7 +659,6 @@ body {
     border-bottom: 3px solid #4facfe;
 }
 
-/* 사과게임 CSS는 그대로 유지 */
  /* =========================
    Apple Game (Scoped)
 ========================= */
@@ -1074,6 +1169,388 @@ body {
   text-align: center;
 }
 
+/* =========================
+   반응형 - 태블릿 (768px 이하)
+========================= */
+@media (max-width: 768px) {
+    /* 배너 */
+    .mainpage-banner {
+        padding: 60px 20px;
+        margin: 10px;
+        border-radius: 15px;
+    }
+    
+    .mainpage-banner-content h1 {
+        font-size: 32px;
+    }
+    
+    .mainpage-banner-content p {
+        font-size: 16px;
+    }
+    
+    .mainpage-banner-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .mainpage-btn-primary,
+    .mainpage-btn-secondary {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    /* 특징 영역 */
+    .mainpage-features {
+        padding: 50px 20px;
+        margin: 10px;
+        border-radius: 15px;
+    }
+    
+    .mainpage-features h2 {
+        font-size: 28px;
+        margin-bottom: 40px;
+    }
+    
+    .mainpage-feature-list {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .mainpage-feature-item {
+        max-width: 100%;
+        padding: 25px;
+    }
+    
+    /* 공지사항 */
+    .mainpage-notices {
+        padding: 30px 15px;
+    }
+    
+    .mainpage-notices h2 {
+        font-size: 24px;
+    }
+    
+    .mainpage-notice-item {
+        padding: 15px;
+        gap: 10px;
+    }
+    
+    .mainpage-notice-badge {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+    
+    .mainpage-notice-title {
+        font-size: 14px;
+    }
+    
+    .mainpage-notice-date {
+        font-size: 12px;
+    }
+    
+    /* 인기 게시글 */
+    .mainpage-posts {
+        padding: 30px 15px;
+    }
+    
+    .mainpage-posts-header h2 {
+        font-size: 24px;
+    }
+    
+    .mainpage-top-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .mainpage-top-section {
+        padding: 20px;
+    }
+    
+    .mainpage-section-title {
+        font-size: 16px;
+    }
+    
+    .mainpage-top-item {
+        padding: 12px;
+    }
+    
+    .mainpage-rank {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+    }
+    
+    .mainpage-item-content h4 {
+        font-size: 14px;
+    }
+    
+    .mainpage-post-info {
+        font-size: 12px;
+    }
+    
+    /* 카테고리별 게시판 */
+    .mainpage-category-boards {
+        padding: 40px 15px;
+    }
+    
+    .mainpage-boards-header h2 {
+        font-size: 24px;
+    }
+    
+    .mainpage-boards-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .mainpage-board-card {
+        padding: 20px;
+    }
+    
+    .mainpage-board-card-title {
+        font-size: 18px;
+    }
+    
+    /* 하단 배너 */
+    .mainpage-bottom-banner {
+        padding: 60px 20px;
+        margin: 10px;
+        border-radius: 15px;
+    }
+    
+    .mainpage-bottom-content h2 {
+        font-size: 28px;
+    }
+    
+    .mainpage-bottom-content p {
+        font-size: 16px;
+    }
+    
+    .mainpage-btn-join {
+        padding: 15px 40px;
+        font-size: 16px;
+    }
+}
+
+/* =========================
+   반응형 - 모바일 (480px 이하)
+========================= */
+@media (max-width: 480px) {
+    /* 배너 */
+    .mainpage-banner {
+        padding: 40px 15px;
+    }
+    
+    .mainpage-banner-content h1 {
+        font-size: 24px;
+    }
+    
+    .mainpage-banner-content p {
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+    
+    /* 특징 영역 */
+    .mainpage-features {
+        padding: 40px 15px;
+    }
+    
+    .mainpage-features h2 {
+        font-size: 24px;
+        margin-bottom: 30px;
+    }
+    
+    .mainpage-feature-item {
+        padding: 20px;
+    }
+    
+    .mainpage-feature-icon {
+        font-size: 50px;
+    }
+    
+    .mainpage-feature-item h3 {
+        font-size: 20px;
+    }
+    
+    .mainpage-feature-item p {
+        font-size: 14px;
+    }
+    
+    /* 공지사항 */
+    .mainpage-notices {
+        padding: 20px 10px;
+    }
+    
+    .mainpage-notices h2 {
+        font-size: 20px;
+    }
+    
+    .mainpage-notices-header {
+        margin-bottom: 20px;
+    }
+    
+    .mainpage-notice-item {
+        flex-wrap: wrap;
+        padding: 12px;
+    }
+    
+    .mainpage-notice-title {
+        width: 100%;
+        margin-top: 8px;
+    }
+    
+    /* 인기 게시글 */
+    .mainpage-posts {
+        padding: 20px 10px;
+    }
+    
+    .mainpage-posts-header h2 {
+        font-size: 20px;
+    }
+    
+    .mainpage-top-section {
+        padding: 15px;
+    }
+    
+    .mainpage-section-title {
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .mainpage-top-item {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .mainpage-rank {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+    }
+    
+    .mainpage-post-tag {
+        font-size: 11px;
+        padding: 3px 10px;
+    }
+    
+    .mainpage-item-content h4 {
+        font-size: 13px;
+    }
+    
+    .mainpage-post-info {
+        font-size: 11px;
+        gap: 8px;
+    }
+    
+    /* 카테고리별 게시판 */
+    .mainpage-category-boards {
+        padding: 30px 10px;
+    }
+    
+    .mainpage-boards-header h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .mainpage-board-card {
+        padding: 15px;
+    }
+    
+    .mainpage-board-card-title {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+    
+    .mainpage-board-card-post-title {
+        font-size: 13px;
+    }
+    
+    .mainpage-board-card-info {
+        font-size: 11px;
+    }
+    
+    /* 하단 배너 */
+    .mainpage-bottom-banner {
+        padding: 40px 15px;
+    }
+    
+    .mainpage-bottom-content h2 {
+        font-size: 22px;
+    }
+    
+    .mainpage-bottom-content p {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .mainpage-btn-join {
+        width: 100%;
+        max-width: 280px;
+        padding: 12px 30px;
+        font-size: 15px;
+    }
+}
+/* 반응형 추가 */
+@media (max-width: 768px) {
+    .mainpage-banner {
+        padding: 80px 20px;
+    }
+    
+    .mainpage-banner-content h1 {
+        font-size: 32px;
+    }
+    
+    .mainpage-banner-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .mainpage-btn-primary,
+    .mainpage-btn-secondary {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
+    
+    .mainpage-features {
+        padding: 60px 20px;
+    }
+    
+    .mainpage-features h2 {
+        font-size: 28px;
+    }
+    
+    .mainpage-feature-list {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .mainpage-feature-item {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .mainpage-banner {
+        padding: 60px 15px;
+    }
+    
+    .mainpage-banner-content h1 {
+        font-size: 26px;
+    }
+    
+    .mainpage-banner-content p {
+        font-size: 15px;
+    }
+    
+    .mainpage-features {
+        padding: 50px 15px;
+    }
+    
+    .mainpage-features h2 {
+        font-size: 24px;
+    }
+}
+/* 사과게임 반응형 (기존 코드 유지) */
 @media (max-width: 520px){
   .applegame{ min-height: 920px; padding: 30px 16px 50px; }
   .applegame h1{ font-size: 32px; }
