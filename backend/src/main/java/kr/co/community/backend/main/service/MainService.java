@@ -18,12 +18,12 @@ public class MainService {
 		List<PostVo> viewTopPosts = mainDao.getViewTopPosts();
 		return viewTopPosts;
 	}
-	
+
 	public List<PostVo> getLikeTopPosts() {
 		List<PostVo> likeTopPosts = mainDao.getLikeTopPosts();
 		return likeTopPosts;
 	}
-	
+
 	public List<PostVo> getCommentTopPosts() {
 		List<PostVo> commentTopPosts = mainDao.getCommentTopPosts();
 		return commentTopPosts;
@@ -32,5 +32,9 @@ public class MainService {
 	public List<NoticeVo> getNoticeList() {
 		List<NoticeVo> noticeList = mainDao.getNoticeList();
 		return noticeList;
+	}
+	
+	public List<PostVo> getRecentPostsByCategory(Integer categoryId) {
+		return mainDao.getRecentPostsByCategory(categoryId);
 	}
 }
