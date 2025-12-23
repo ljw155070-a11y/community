@@ -213,38 +213,38 @@
   <th:block th:include="common/footer"></th:block>
 
   <script>
-    (function () {
-      const STORAGE_KEY = "board_view_mode";
-      const root = document.getElementById("boardListRoot");
-      if (!root) return;
+  (function () {
+    const STORAGE_KEY = "board_view_mode";
+    const root = document.getElementById("boardListRoot");
+    if (!root) return;
 
-      const radios = document.querySelectorAll('input[name="viewMode"]');
-      const views = root.querySelectorAll(".bl-view");
+    const radios = document.querySelectorAll('input[name="viewMode"]');
+    const views = root.querySelectorAll(".bl-view");
 
-      function normalize(mode) {
-        return (mode === "compact" || mode === "card") ? mode : "compact"; // ✅ 기본 compact
-      }
+    function normalize(mode) {
+      return (mode === "compact" || mode === "card") ? mode : "compact";
+    }
 
-      function apply(modeRaw) {
-        const mode = normalize(modeRaw);
+    function apply(modeRaw) {
+      const mode = normalize(modeRaw);
 
-        views.forEach(v => {
-          const vMode = v.getAttribute("data-view");
-          v.style.display = (vMode === mode) ? "block" : "none";
-        });
-
-        radios.forEach(r => (r.checked = (r.value === mode)));
-        localStorage.setItem(STORAGE_KEY, mode);
-      }
-
-      // ✅ 최초 접속: 저장값 없으면 compact
-      const saved = localStorage.getItem(STORAGE_KEY);
-      apply(saved ?? "compact");
-
-      radios.forEach(r => {
-        r.addEventListener("change", () => apply(r.value));
+      views.forEach(v => {
+        const vMode = v.getAttribute("data-view");
+        v.style.display = (vMode === mode) ? "block" : "none";
       });
-    })();
-  </script>
+
+      radios.forEach(r => (r.checked = (r.value === mode)));
+      localStorage.setItem(STORAGE_KEY, mode);
+    }
+
+    // ✅ 저장값 없으면: compact를 "저장"까지 해버림
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) localStorage.setItem(STORAGE_KEY, "compact");
+    apply(saved ?? "compact");
+
+    radios.forEach(r => r.addEventListener("change", () => apply(r.value)));
+  })();
+</script>
+
 </body>
 </html>

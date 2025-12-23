@@ -1,7 +1,23 @@
 // authUtils.js
 const API_BASE_URL = `${import.meta.env.VITE_BACK_SERVER}/api/member`;
 
-// ✅ 로그인 (쿠키 저장됨: credentials: 'include')
+// ✅ (추가) 토큰 저장 키 (이름만 추가, 기존 함수명 변경 없음)
+const ACCESS_TOKEN_KEY = "accessToken";
+
+// ✅ (추가) 토큰 저장/조회
+const saveAccessToken = (token) => {
+  if (token) localStorage.setItem(ACCESS_TOKEN_KEY, token);
+};
+const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
+const clearAccessToken = () => localStorage.removeItem(ACCESS_TOKEN_KEY);
+
+// ✅ (추가) Authorization 헤더 만들기
+const withAuthHeader = (headers = {}) => {
+  const token = getAccessToken();
+  return token ? { ...headers, Authorization: `Bearer ${token}` } : headers;
+};
+
+// ✅ 로그인 (쿠키 저장됨 + 토큰도 저장)
 export const loginAPI = async (email, password) => {
   const res = await fetch(`${API_BASE_URL}/login`, {
     method: "POST",
@@ -16,7 +32,9 @@ export const loginAPI = async (email, password) => {
     throw new Error(data.message || "로그인 실패");
   }
 
-  // 백엔드 응답 형태:
+  // ✅ (추가) 응답 token을 로컬에도 저장 -> 쿠키 막혀도 CSR 인증 유지
+  if (data.token) saveAccessToken(data.token);
+
   // { success, message, token, user: { memberId, email, name, nickname } }
   return data;
 };
@@ -27,22 +45,52 @@ export const logoutAPI = async (setLoginUser) => {
     await fetch(`${API_BASE_URL}/logout`, {
       method: "POST",
       credentials: "include",
+      // ✅ (추가) 쿠키가 안 붙는 환경 대비해 Bearer도 같이 보냄
+      headers: withAuthHeader(),
     });
   } finally {
+    // ✅ (추가) 토큰도 삭제
+    clearAccessToken();
+
     setLoginUser(null);
     localStorage.removeItem("loginUser");
-    window.location.href = "/login"; // ✅ App 라우팅에 맞춤
+    window.location.href = "/login";
   }
 };
 
-// ✅ 현재 로그인 사용자 조회 (쿠키 기반)
+// ✅ 현재 로그인 사용자 조회 (1차: 쿠키 / 2차: Bearer fallback)
 export const getCurrentUserAPI = async () => {
-  const res = await fetch(`${API_BASE_URL}/me`, {
-    credentials: "include",
-  });
+  // 1) 쿠키 기반
+  try {
+    const res = await fetch(`${API_BASE_URL}/me`, {
+      credentials: "include",
+    });
 
-  const data = await res.json();
-  return data.success ? data.user : null;
+    // 쿠키로 성공하면 그대로 반환
+    if (res.ok) {
+      const data = await res.json();
+      return data.success ? data.user : null;
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  // 2) Bearer 기반 fallback
+  const token = getAccessToken();
+  if (!token) return null;
+
+  try {
+    const res2 = await fetch(`${API_BASE_URL}/me`, {
+      credentials: "include", // 있어도 상관없음
+      headers: withAuthHeader(),
+    });
+
+    if (!res2.ok) return null;
+    const data2 = await res2.json();
+    return data2.success ? data2.user : null;
+  } catch (e) {
+    return null;
+  }
 };
 
 // ✅ 회원가입

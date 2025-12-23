@@ -3,7 +3,7 @@ import "./header.css";
 import { Link } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
-import { logoutAPI } from "../utils/authUtils";
+import { logoutAPI, getCurrentUserAPI } from "../utils/authUtils";
 import axios from "axios";
 
 const Header = () => {
@@ -21,6 +21,17 @@ const Header = () => {
     logoutAPI(setLoginUser);
   };
 
+  // ✅ (추가) recoil이 비어있으면 /me로 1회 동기화
+  useEffect(() => {
+    if (!loginUser) {
+      (async () => {
+        const me = await getCurrentUserAPI();
+        if (me) setLoginUser(me);
+      })();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const loadUnreadCount = async () => {
     try {
       const memberId = loginUser?.memberId;
@@ -28,7 +39,7 @@ const Header = () => {
 
       const response = await axios.get(
         `${import.meta.env.VITE_BACK_SERVER}/alert/list/${memberId}`,
-        { withCredentials: true } // 쿠키 기반이면 axios도 넣어주는 게 안전
+        { withCredentials: true }
       );
 
       const count = response.data.filter((a) => a.isRead === "N").length;
@@ -55,7 +66,6 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-container">
-        {/* SSR로 가는 링크면 <a href>를 유지하는 것도 OK */}
         <a href="/mainpage" className="logo">
           <span className="logo-icon">◀</span>
           <span className="logo-text">커뮤니티</span>
@@ -72,7 +82,6 @@ const Header = () => {
             공지사항
           </a>
 
-          {/* CSR 페이지들 */}
           <Link to="/about" className="nav-link">
             사이트 소개 (임시)
           </Link>

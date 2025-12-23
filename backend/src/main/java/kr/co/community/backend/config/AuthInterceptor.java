@@ -17,25 +17,23 @@ public class AuthInterceptor implements HandlerInterceptor {
     private final JwtUtil jwtUtil;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 쿠키에서 JWT 토큰 추출
-        String token = extractTokenFromCookie(request);
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // ✅ 쿠키 + Authorization(Bearer) 둘 다 지원
+        String token = extractToken(request);
 
         if (token != null && jwtUtil.validateToken(token)) {
             try {
-                // JWT 토큰에서 정보 추출
                 Long memberId = jwtUtil.getMemberIdFromToken(token);
                 String email = jwtUtil.getEmailFromToken(token);
                 String name = jwtUtil.getNameFromToken(token);
                 String nickname = jwtUtil.getNicknameFromToken(token);
 
-                // Request Attribute에 저장 (Thymeleaf에서 사용)
                 request.setAttribute("memberId", memberId);
                 request.setAttribute("email", email);
                 request.setAttribute("name", name);
                 request.setAttribute("nickname", nickname);
                 request.setAttribute("isAuthenticated", true);
-                
+
                 log.debug("✅ Authenticated: memberId={}, email={}", memberId, email);
             } catch (Exception e) {
                 log.error("❌ JWT 파싱 실패", e);
@@ -50,9 +48,16 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * 쿠키에서 JWT 토큰 추출
+     * ✅ 토큰 추출: 1) Authorization Bearer 2) Cookie(accessToken)
      */
-    private String extractTokenFromCookie(HttpServletRequest request) {
+    private String extractToken(HttpServletRequest request) {
+        // 1) Authorization: Bearer xxx
+        String auth = request.getHeader("Authorization");
+        if (auth != null && auth.startsWith("Bearer ")) {
+            return auth.substring(7);
+        }
+
+        // 2) Cookie: accessToken=xxx
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
