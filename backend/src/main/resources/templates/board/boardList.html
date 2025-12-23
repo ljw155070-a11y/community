@@ -98,7 +98,7 @@
 
       <!-- 1) 카드 뷰 -->
       <div class="bl-view bl-view-card" data-view="card" th:if="${not #lists.isEmpty(posts)}">
-        <article class="bl-card" th:each="p : ${posts}">
+        <article class="bl-card"  th:classappend="${p.authorName == nickname} ? ' is-mine' : ''" th:each="p : ${posts}">
           <div class="bl-card-top">
             <span class="bl-badge" th:text="${p.categoryName}">카테고리</span>
 
@@ -119,13 +119,17 @@
             <p class="bl-card-desc" th:text="${p.contentPreview}">본문 미리보기</p>
 
             <div class="bl-card-bottom">
-              <span class="bl-author" th:text="${p.authorName}">작성자</span>
-              <div class="bl-metrics">
-                <span class="bl-metric">👁 <em th:text="${p.viewCount}">0</em></span>
-                <span class="bl-metric">♡ <em th:text="${p.likeCount}">0</em></span>
-                <span class="bl-metric">💬 <em th:text="${p.commentCount}">0</em></span>
-              </div>
-            </div>
+  <span class="bl-author">
+    <span th:text="${p.authorName}">작성자</span>
+    <span class="bl-me" th:if="${p.authorName == nickname}">(나)</span>
+  </span>
+
+  <div class="bl-metrics">
+    <span class="bl-metric">👁 <em th:text="${p.viewCount}">0</em></span>
+    <span class="bl-metric">♡ <em th:text="${p.likeCount}">0</em></span>
+    <span class="bl-metric">💬 <em th:text="${p.commentCount}">0</em></span>
+  </div>
+</div>
           </a>
 
           <div class="bl-card-actions"
@@ -138,7 +142,7 @@
 
       <!-- 2) 리스트 뷰 -->
       <div class="bl-view bl-view-compact" data-view="compact" th:if="${not #lists.isEmpty(posts)}">
-        <article class="bl-row" th:each="p : ${posts}">
+        <article class="bl-row" th:classappend="${p.authorName == nickname} ? ' is-mine' : ''" th:each="p : ${posts}">
           <a class="bl-row-link"
              th:href="@{/board/postDetail/{postId}(postId=${p.postId})}">
             <div class="bl-col-title">
@@ -147,17 +151,21 @@
             </div>
 
             <div class="bl-col-meta">
-              <span class="bl-author-plain" th:text="${p.authorName}">작성자</span>
-              <span class="bl-dot">·</span>
+  <span class="bl-author">
+    <span th:text="${p.authorName}">작성자</span>
+    <span class="bl-me" th:if="${p.authorName == nickname}">(나)</span>
+  </span>
 
-              <span class="bl-datebox">
-                <span class="bl-date" th:text="${#dates.format(p.createdAt, 'yyyy.MM.dd')}">2024.12.14</span>
-                <span class="bl-new bl-new--sm"
-                      th:if="${#dates.format(p.createdAt,'yyyyMMdd') == #dates.format(#dates.createNow(),'yyyyMMdd')}">
-                  NEW
-                </span>
-              </span>
-            </div>
+  <span class="bl-dot">·</span>
+
+  <span class="bl-datebox">
+    <span class="bl-date" th:text="${#dates.format(p.createdAt, 'yyyy.MM.dd')}"></span>
+    <span class="bl-new bl-new--sm"
+          th:if="${#dates.format(p.createdAt,'yyyyMMdd') == #dates.format(#dates.createNow(),'yyyyMMdd')}">
+      NEW
+    </span>
+  </span>
+</div>
 
             <div class="bl-col-metrics">
               <span class="bl-metric">👁 <em th:text="${p.viewCount}">0</em></span>

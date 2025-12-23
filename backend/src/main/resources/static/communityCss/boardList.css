@@ -358,7 +358,9 @@ body{
 .bl-view-compact{ display: none; }
 
 .bl-card{
-  position: relative;
+  position: relative;       /* ✅ actions absolute 기준 */
+  overflow: visible;        /* ✅ 카드 밖으로 버튼 나가도 보이게 */
+
   background: rgba(255,255,255,0.92);
   border: 1px solid var(--line);
   border-radius: var(--r16);
@@ -386,13 +388,16 @@ body{
   display: block;
   color: inherit;
   text-decoration: none;
+
+  position: relative;
+  z-index: 1; /* ✅ 링크 레이어 */
 }
 
 /* ✅ 카드 제목: 과한 굵기 X (중간) */
 .bl-card-title{
   margin: 0 0 6px;
   font-size: 16px;
-  font-weight: 600; /* 포인트 */
+  font-weight: 600;
   letter-spacing: -0.01em;
 }
 
@@ -400,12 +405,9 @@ body{
 .bl-card-desc{
   margin: 0 0 12px;
   color: var(--muted);
-  font-weight: 400; /* 포인트 */
+  font-weight: 400;
   line-height: 1.55;
-}
 
-/* (선택) 카드 내용 2줄로 제한 -> 더 세련됨 */
-.bl-card-desc{
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -448,23 +450,32 @@ body{
   font-weight: 700;
 }
 
-/* edit action */
+/* ✅ Card edit overlay: 카드 밖 오른쪽 + 세로 중앙 */
 .bl-card-actions{
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 45%;
+  right: 32px; /* ✅ 카드 밖으로 빼기(원하면 더 크게/작게 조절) */
+
+  z-index: 5;           /* ✅ 링크보다 위 */
   opacity: 0;
-  transform: translateY(-6px);
-  transition: all .18s ease;
   pointer-events: none;
+
+  transform: translateY(calc(-50% - 6px));
+  transition: opacity .18s ease, transform .18s ease;
 }
 
 .bl-card:hover .bl-card-actions{
   opacity: 1;
-  transform: translateY(0);
   pointer-events: auto;
+  transform: translateY(-50%);
 }
 
+.bl-card-actions .bl-edit-btn{
+  position: relative;
+  z-index: 6;
+}
+
+/* edit button common */
 .bl-edit-btn{
   display: inline-flex;
   align-items: center;
@@ -484,10 +495,12 @@ body{
 /* =========================
    Compact View (List)
    - "딱딱/컴팩트/표" 느낌
+   - ✅ actions는 레이아웃에서 분리(overlay)
 ========================= */
 .bl-row{
+  position: relative;              /* ✅ overlay 기준 */
   display: grid;
-  grid-template-columns: 1fr 200px 170px auto;
+  grid-template-columns: 1fr 200px 170px auto; /* HTML 그대로 두되 */
   gap: 10px;
   align-items: center;
 
@@ -495,6 +508,9 @@ body{
   border: 1px solid var(--line);
   border-radius: var(--r12);
   padding: 10px 12px;
+
+  /* ✅ 버튼 공간을 항상 확보 -> 행마다 폭 안 바뀜 */
+  padding-right: 72px;
 
   box-shadow: none;
   transition: background .12s ease, border-color .12s ease;
@@ -526,7 +542,7 @@ body{
 /* ✅ 리스트 제목: 굵게 필요 없음 (보통) */
 .bl-title-text{
   font-size: 14px;
-  font-weight: 500; /* 포인트 */
+  font-weight: 500;
   letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -534,7 +550,6 @@ body{
   color: rgba(15,23,42,0.92);
 }
 
-/* hover에서만 강조 */
 .bl-row:hover .bl-title-text{
   color: var(--brand);
 }
@@ -569,10 +584,25 @@ body{
   font-size: 12px;
 }
 
+/* ✅ Compact edit actions: overlay */
 .bl-col-actions{
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+
   display: flex;
   align-items: center;
   justify-content: flex-end;
+
+  opacity: 0;
+  transition: opacity .14s ease;
+  pointer-events: none;
+}
+
+.bl-row:hover .bl-col-actions{
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* compact badge slightly smaller */
@@ -595,7 +625,6 @@ body{
   flex-wrap: wrap;
 }
 
-/* 공통 */
 .bl-page-btn,
 .bl-page-num{
   display:inline-flex;
@@ -612,21 +641,18 @@ body{
   backdrop-filter: blur(6px);
 }
 
-/* 숫자 버튼은 더 작고 일정하게 */
 .bl-page-num{
   min-width: 40px;
   padding: 0 12px;
   letter-spacing: -0.01em;
 }
 
-/* 처음/이전/다음/끝 버튼은 pill */
 .bl-page-btn{
   padding: 0 14px;
   gap: 8px;
   font-weight: 650;
 }
 
-/* Hover */
 .bl-page-btn:hover,
 .bl-page-num:hover{
   transform: translateY(-1px);
@@ -642,7 +668,6 @@ body{
   box-shadow: none;
 }
 
-/* Active page (현재 페이지) */
 .bl-page-num.is-active{
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   border-color: rgba(37,99,235,0.65);
@@ -650,7 +675,6 @@ body{
   box-shadow: 0 16px 28px rgba(37,99,235,0.22);
 }
 
-/* Disabled (처음/이전/다음/끝 막기) */
 .bl-page-btn.is-disabled{
   opacity: 0.45;
   filter: grayscale(0.3);
@@ -658,7 +682,6 @@ body{
   box-shadow: none;
 }
 
-/* 모바일에서 버튼 폭 정리 */
 @media (max-width: 520px){
   .bl-page-btn{
     padding: 0 12px;
@@ -689,6 +712,8 @@ body{
   .bl-write-btn{ width: 100%; }
 
   .bl-row{
+    /* 모바일에서는 행이 2열 구조로 바뀌니 버튼 공간 과하게 잡지 않음 */
+    padding-right: 12px;
     grid-template-columns: 1fr auto;
     gap: 8px;
   }
@@ -702,4 +727,57 @@ body{
   .bl-col-metrics{
     justify-content: flex-start;
   }
+
+  /* 모바일에서는 hover 애매 -> 항상 보이게 + 아래로 내려오게 */
+  .bl-col-actions{
+    position: static;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+    margin-top: 6px;
+    justify-content: flex-start;
+  }
+
+  /* ✅ 모바일에서는 카드 밖으로 빼면 잘릴 수 있어서 카드 안쪽으로 */
+  .bl-card-actions{
+    top: 12px;
+    right: 12px;
+    transform: translateY(-6px);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .bl-card:hover .bl-card-actions{
+    transform: translateY(0);
+  }
+  
+
 }
+  .bl-author{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bl-me{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(37,99,235,0.9);
+}
+
+/* =========================
+   My Post Highlight
+========================= */
+.bl-card.is-mine{
+  background:
+    linear-gradient(0deg, rgba(37,99,235,0.03), rgba(37,99,235,0.03)),
+    rgba(255,255,255,0.95);
+  border-color: rgba(37,99,235,0.22);
+}
+
+.bl-row.is-mine{
+  background:
+    linear-gradient(0deg, rgba(37,99,235,0.03), rgba(37,99,235,0.03)),
+    rgba(255,255,255,0.78);
+  border-color: rgba(37,99,235,0.18);
+}
+

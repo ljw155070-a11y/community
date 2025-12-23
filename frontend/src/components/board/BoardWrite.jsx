@@ -5,6 +5,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
 import { getCurrentUserAPI } from "../utils/authUtils";
 import "./boardwrite.css";
+import Swal from "sweetalert2";
 
 const BoardWrite = () => {
   const navigate = useNavigate();
@@ -16,6 +17,19 @@ const BoardWrite = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // ✅ SweetAlert 공용 함수들 (가독성 + 반복 제거)
+  const swalInfo = (title, text) =>
+    Swal.fire({ icon: "info", title, text, confirmButtonText: "확인" });
+
+  const swalWarn = (title, text) =>
+    Swal.fire({ icon: "warning", title, text, confirmButtonText: "확인" });
+
+  const swalError = (title, text) =>
+    Swal.fire({ icon: "error", title, text, confirmButtonText: "확인" });
+
+  const swalSuccess = (title, text) =>
+    Swal.fire({ icon: "success", title, text, confirmButtonText: "확인" });
 
   // ✅ 로그인 체크 (recoil null이어도 /me로 1회 복구 시도)
   useEffect(() => {
@@ -32,7 +46,13 @@ const BoardWrite = () => {
         return;
       }
 
-      alert("로그인이 필요합니다.");
+      await Swal.fire({
+        icon: "warning",
+        title: "로그인이 필요합니다.",
+        text: "로그인 페이지로 이동합니다.",
+        confirmButtonText: "확인",
+      });
+
       navigate("/login");
     })();
 
@@ -56,11 +76,15 @@ const BoardWrite = () => {
         if (list.length > 0) setCategoryId(list[0].categoryId);
       } catch (e) {
         console.error(e);
-        alert("카테고리 목록을 불러오지 못했습니다.");
+        await swalError(
+          "불러오기 실패",
+          "카테고리 목록을 불러오지 못했습니다."
+        );
       }
     };
 
     fetchCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const submitPost = async () => {
@@ -74,10 +98,29 @@ const BoardWrite = () => {
       }
     }
 
-    if (!user) return alert("로그인이 필요합니다.");
-    if (!categoryId) return alert("카테고리를 선택해주세요.");
-    if (!title.trim()) return alert("제목을 입력해주세요.");
-    if (!content.trim()) return alert("내용을 입력해주세요.");
+    if (!user) {
+      await Swal.fire({
+        icon: "warning",
+        title: "로그인이 필요합니다.",
+        text: "로그인 후 다시 시도해주세요.",
+        confirmButtonText: "로그인하러 가기",
+      });
+      navigate("/login");
+      return;
+    }
+
+    if (!categoryId) {
+      await swalWarn("입력 확인", "카테고리를 선택해주세요.");
+      return;
+    }
+    if (!title.trim()) {
+      await swalWarn("입력 확인", "제목을 입력해주세요.");
+      return;
+    }
+    if (!content.trim()) {
+      await swalWarn("입력 확인", "내용을 입력해주세요.");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -90,9 +133,7 @@ const BoardWrite = () => {
           title,
           content,
         },
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
       if (res?.data?.success) {
@@ -101,7 +142,7 @@ const BoardWrite = () => {
           res?.data?.data?.postId ??
           res?.data?.result?.postId;
 
-        alert("글이 등록되었습니다.");
+        await swalSuccess("등록 완료", "글이 등록되었습니다.");
 
         if (postId) {
           window.location.href = `/board/postDetail/${postId}`;
@@ -110,11 +151,14 @@ const BoardWrite = () => {
 
         navigate("/board");
       } else {
-        alert(res?.data?.message || "글 등록에 실패했습니다.");
+        await swalError(
+          "등록 실패",
+          res?.data?.message || "글 등록에 실패했습니다."
+        );
       }
     } catch (e) {
       console.error(e);
-      alert("글 등록 중 오류가 발생했습니다.");
+      await swalError("오류", "글 등록 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
