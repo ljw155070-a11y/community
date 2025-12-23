@@ -58,11 +58,12 @@
       <div class="bl-toolbar-right">
         <div class="bl-view-toggle" role="radiogroup" aria-label="보기 방식">
           <label class="bl-pill bl-pill--sm">
-            <input type="radio" name="viewMode" value="card" checked />
+            <input type="radio" name="viewMode" value="card" />
             <span>카드</span>
           </label>
           <label class="bl-pill bl-pill--sm">
-            <input type="radio" name="viewMode" value="compact" />
+            <!-- ✅ 기본 체크: 리스트 -->
+            <input type="radio" name="viewMode" value="compact" checked />
             <span>리스트</span>
           </label>
         </div>
@@ -115,7 +116,6 @@
              th:href="@{/board/postDetail/{postId}(postId=${p.postId})}">
             <div class="bl-card-title" th:text="${p.title}">제목</div>
 
-            <!-- 필요하면 이 줄 삭제해서 더 촘촘하게 가능 -->
             <p class="bl-card-desc" th:text="${p.contentPreview}">본문 미리보기</p>
 
             <div class="bl-card-bottom">
@@ -150,7 +150,6 @@
               <span class="bl-author-plain" th:text="${p.authorName}">작성자</span>
               <span class="bl-dot">·</span>
 
-              <!-- ✅ 날짜 + NEW -->
               <span class="bl-datebox">
                 <span class="bl-date" th:text="${#dates.format(p.createdAt, 'yyyy.MM.dd')}">2024.12.14</span>
                 <span class="bl-new bl-new--sm"
@@ -223,20 +222,24 @@
       const views = root.querySelectorAll(".bl-view");
 
       function normalize(mode) {
-        return (mode === "compact" || mode === "card") ? mode : "card";
+        return (mode === "compact" || mode === "card") ? mode : "compact"; // ✅ 기본 compact
       }
 
       function apply(modeRaw) {
         const mode = normalize(modeRaw);
+
         views.forEach(v => {
           const vMode = v.getAttribute("data-view");
           v.style.display = (vMode === mode) ? "block" : "none";
         });
+
         radios.forEach(r => (r.checked = (r.value === mode)));
         localStorage.setItem(STORAGE_KEY, mode);
       }
 
-      apply(normalize(localStorage.getItem(STORAGE_KEY)));
+      // ✅ 최초 접속: 저장값 없으면 compact
+      const saved = localStorage.getItem(STORAGE_KEY);
+      apply(saved ?? "compact");
 
       radios.forEach(r => {
         r.addEventListener("change", () => apply(r.value));

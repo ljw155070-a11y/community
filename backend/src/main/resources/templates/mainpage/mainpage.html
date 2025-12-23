@@ -1,30 +1,416 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
   <head>
     <meta charset="UTF-8" />
     <title>커뮤니티 메인</title>
     <link rel="stylesheet" href="/communityCss/mainPage.css" />
+
+    <!-- 사과게임 점수용 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet" />
+
+    <style>
+      /* =========================
+         Apple Game (Scoped)
+      ========================= */
+
+      /* ✅ 핵심: absolute 기준 잡기 + 잘림 방지 */
+      .applegame{
+        position: relative;            /* ✅ before/overlay/timeApple 기준 */
+        min-height: 980px;             /* ✅ 더 넉넉하게 (배너랑 붙는 문제 해결) */
+        padding: 24px 16px 44px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow: visible;             /* ✅ scoreLogs/top 요소 잘림 방지 */
+      }
+
+      /* 배경 원 */
+      .applegame::before{
+        content:"";
+        position:absolute;
+        inset:-120px -120px auto auto;
+        width: 420px;
+        height: 420px;
+        background: radial-gradient(circle at 30% 30%, rgba(214,244,255,0.9), transparent 60%);
+        pointer-events:none;
+        z-index: 0;
+      }
+
+      .applegame * { box-sizing: border-box; }
+
+      .applegame h1{
+        position: relative;
+        z-index: 1;
+        margin: 0 0 10px;
+        text-align: center;
+        color: #d35400;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.18);
+        font-size: 28px;
+      }
+
+      .applegame-controls{
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin: 8px 0 14px;
+      }
+
+      .applegame #startBtn{
+        padding: 10px 18px;
+        font-size: 16px;
+        background-color: #d35400;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 6px 14px rgba(211, 84, 0, 0.35);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease, transform .12s ease;
+      }
+      .applegame #startBtn:hover{
+        background-color: #e67e22;
+        box-shadow: 0 10px 22px rgba(230, 126, 34, 0.45);
+        transform: translateY(-1px);
+      }
+      .applegame #startBtn:active{ transform: translateY(0); }
+
+      .applegame #score{
+        font-family: 'Do Hyeon', sans-serif;
+        font-size: 22px;
+        color: #e67e22;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.12);
+        user-select: none;
+        padding: 6px 12px;
+        border-radius: 12px;
+        background-color: #fff7e6;
+        box-shadow: 0 10px 22px rgba(230,126,34,0.22);
+        min-width: 140px;
+        text-align: center;
+      }
+
+      .applegame #timerContainer{
+        position: relative;
+        width: 220px;
+        height: 30px;
+      }
+      .applegame #timerBar{
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        height: 12px;
+        width: 100%;
+        background-color: #eee;
+        border-radius: 999px;
+        overflow: hidden;
+        box-shadow: inset 0 0 8px rgba(0,0,0,0.15);
+      }
+      .applegame #timerBarFill{
+        height: 100%;
+        width: 100%;
+        background-color: #d35400;
+        border-radius: 999px;
+        transition: width 1s linear;
+        box-shadow: 0 0 8px rgba(211, 84, 0, 0.55);
+      }
+
+      /* ✅ 보드 래퍼: 여기서 높이를 확실히 확보 */
+      .applegame-board{
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+
+      /* ✅ 실제 게임 박스(카드) */
+      .applegame-board-inner{
+        position: relative;                 /* ✅ overlay / scoreLogs 기준 */
+        width: max-content;
+        margin: 0 auto;
+        background: rgba(255,255,255,0.9);
+        border: 1px solid rgba(15,23,42,0.10);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 18px 50px rgba(15,23,42,0.12);
+        overflow: visible;                  /* ✅ scoreLogs가 위로 튀어도 안 잘림 */
+        min-height: 520px;                  /* ✅ 핵심: 보드 높이 확보 */
+      }
+
+      /* ✅ game grid 스타일 복구(이게 빠져있어서 레이아웃이 깨질 수 있음) */
+      .applegame #game{
+        position: relative;
+        width: max-content;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(17, 30px);
+        gap: 5px;
+        background-color: white;
+        padding: 20px;
+        border: 3px solid rgba(46, 204, 113, 0.75);
+        border-radius: 16px;
+        box-shadow: 0 10px 26px rgba(0,0,0,0.10);
+        min-height: 420px;
+      }
+
+      .applegame .apple{
+        position: relative;
+        width: 30px;
+        height: 30px;
+        background-color: transparent;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: default;
+        user-select: none;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+        transition: border 0.2s ease;
+      }
+      .applegame .apple::before{
+        content: "🍎";
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        pointer-events: none;
+        z-index: 0;
+        filter: drop-shadow(0 0 1px rgba(0,0,0,0.25));
+      }
+      .applegame .apple span{
+        position: relative;
+        z-index: 1;
+        color: #fff;
+        font-weight: 800;
+        user-select: none;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 100%;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+      }
+
+      .applegame #selectionBox{
+        position: fixed;
+        border: 2px dashed #d35400;
+        background-color: rgba(255, 118, 117, 0.2);
+        pointer-events: none;
+        display: none;
+        z-index: 1000;
+      }
+
+      @keyframes vanish{
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(0); opacity: 0; }
+      }
+      .applegame .apple.vanish{ animation: vanish 0.5s forwards; }
+
+      @keyframes logUpFade{
+        0% { opacity: 1; transform: translateY(20px); }
+        100% { opacity: 0; transform: translateY(-30px); }
+      }
+
+      /* ✅ scoreLogs: 부모(.applegame-board-inner)가 relative + overflow visible이므로 안 잘림 */
+      .applegame #scoreLogs{
+        position: absolute;
+        top: -62px;
+        right: 0;
+        width: 140px;
+        max-height: 180px;
+        pointer-events: none;
+        z-index: 2000;
+        font-weight: bold;
+        font-size: 20px;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 6px;
+        text-align: right;
+      }
+
+      .applegame .scoreLogItem{
+        background: rgba(39, 174, 96, 0.10);
+        border: 1px solid rgba(39, 174, 96, 0.55);
+        border-radius: 10px;
+        padding: 4px 10px;
+        user-select: none;
+        animation: logUpFade 1.2s forwards;
+        color: #27ae60;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+      .applegame .scoreLogItem.blue{
+        background: rgba(41, 128, 185, 0.12);
+        border: 1px solid rgba(41, 128, 185, 0.55);
+        color: #2980b9;
+      }
+      .applegame .scoreLogPoints{ font-size: 22px; min-width: 48px; text-align: right; }
+      .applegame .scoreLogApple{ font-size: 26px; line-height: 1; user-select: none; }
+
+      .applegame .apple.selected{
+        border: 8px solid #00ff22;
+        box-sizing: border-box;
+      }
+
+      @keyframes timeAppleUp { 0% { bottom: 10px; opacity: 1; } 100% { bottom: 90%; opacity: 0; } }
+      @keyframes timeAppleDown { 0% { top: 10px; opacity: 1; } 100% { top: 90%; opacity: 0; } }
+      @keyframes growAndFade { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+      .applegame .growFade { animation: growAndFade 0.6s forwards; }
+
+      /* ✅ 초기 안내 오버레이(서비스 느낌) */
+      .applegame-overlay{
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        z-index: 5000;
+        padding: 16px;
+        background: radial-gradient(1200px 600px at 15% 10%, rgba(37,99,235,0.16), transparent 55%),
+                    radial-gradient(900px 500px at 90% 20%, rgba(16,185,129,0.14), transparent 55%),
+                    rgba(255,255,255,0.55);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+      }
+
+      .applegame-overlay-card{
+        width: min(620px, 100%);
+        background: rgba(255,255,255,0.92);
+        border: 1px solid rgba(15,23,42,0.10);
+        border-radius: 18px;
+        box-shadow: 0 18px 55px rgba(15,23,42,0.16);
+        padding: 18px 18px 16px;
+        text-align: left;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .applegame-overlay-badge{
+        display: inline-flex;
+        align-items: center;
+        height: 28px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: rgba(37,99,235,0.10);
+        border: 1px solid rgba(37,99,235,0.18);
+        color: #1d4ed8;
+        font-weight: 800;
+        font-size: 13px;
+      }
+
+      .applegame-overlay-title{
+        margin: 10px 0 8px;
+        font-size: 20px;
+        letter-spacing: -0.02em;
+        color: rgba(15,23,42,0.92);
+      }
+
+      .applegame-overlay-desc{
+        margin: 0 0 14px;
+        color: rgba(15,23,42,0.72);
+        font-weight: 600;
+        line-height: 1.5;
+      }
+
+      .applegame-rulegrid{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 10px 0 14px;
+      }
+
+      .applegame-rule{
+        background: rgba(248,250,252,0.95);
+        border: 1px solid rgba(15,23,42,0.08);
+        border-radius: 14px;
+        padding: 10px 12px;
+      }
+
+      .applegame-rule-k{
+        font-size: 12px;
+        color: rgba(15,23,42,0.55);
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+
+      .applegame-rule-v{
+        font-size: 13px;
+        color: rgba(15,23,42,0.82);
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
+      .applegame-overlay-actions{
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 6px;
+      }
+
+      .applegame-overlay-primary{
+        height: 42px;
+        padding: 0 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(37,99,235,0.25);
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: #fff;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: 0 14px 26px rgba(37,99,235,0.22);
+        transition: transform .12s ease, box-shadow .12s ease;
+      }
+      .applegame-overlay-primary:hover{
+        transform: translateY(-1px);
+        box-shadow: 0 18px 34px rgba(37,99,235,0.30);
+      }
+
+      .applegame-overlay-ghost{
+        height: 42px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(15,23,42,0.12);
+        background: rgba(255,255,255,0.75);
+        color: rgba(15,23,42,0.78);
+        font-weight: 850;
+        cursor: pointer;
+      }
+
+      .applegame-overlay-foot{
+        margin-top: 10px;
+        font-size: 12px;
+        color: rgba(15,23,42,0.58);
+        font-weight: 650;
+      }
+
+      @media (max-width: 520px){
+        .applegame{ min-height: 920px; }
+        .applegame #game{ grid-template-columns: repeat(17, 26px); gap: 4px; padding: 16px; }
+        .applegame .apple{ width: 26px; height: 26px; }
+        .applegame .apple::before{ font-size: 20px; }
+      }
+    </style>
   </head>
+
   <body>
     <th:block th:include="common/header"></th:block>
+
     <!-- 메인 배너 영역 -->
     <section class="mainpage-banner">
       <div class="mainpage-banner-content">
         <h1>함께 소통하고 성장하는 커뮤니티</h1>
         <p>다양한 주제로 대화하고, 지식을 공유하며, 새로운 친구를 만나보세요</p>
-        <!-- 로그인/회원가입 버튼 -->
         <div class="mainpage-banner-buttons">
-          <!-- 로그인 페이지로 이동 -->
-          <button class="mainpage-btn-primary" onclick="location.href='/app/login'">
-            로그인
-          </button>
-          <!-- 회원가입 페이지로 이동 -->
-          <button
-            class="mainpage-btn-secondary"
-            onclick="location.href='/app/signup'"
-          >
-            처음이신가요?
-          </button>
+          <button class="mainpage-btn-primary" onclick="location.href='/app/login'">로그인</button>
+          <button class="mainpage-btn-secondary" onclick="location.href='/app/signup'">처음이신가요?</button>
         </div>
       </div>
     </section>
@@ -33,19 +419,16 @@
     <section class="mainpage-features">
       <h2>커뮤니티의 특징</h2>
       <div class="mainpage-feature-list">
-        <!-- 특징 1 -->
         <div class="mainpage-feature-item">
           <div class="mainpage-feature-icon">💬</div>
           <h3>자유로운 소통</h3>
           <p>다양한 주제로 자유롭게 대화하고 의견을 나눠보세요</p>
         </div>
-        <!-- 특징 2 -->
         <div class="mainpage-feature-item">
           <div class="mainpage-feature-icon">👥</div>
           <h3>활발한 커뮤니티</h3>
           <p>활발하게 질문과 답변 등을 올리는 커뮤니티</p>
         </div>
-        <!-- 특징 3 -->
         <div class="mainpage-feature-item">
           <div class="mainpage-feature-icon">📈</div>
           <h3>트렌딩 콘텐츠</h3>
@@ -54,79 +437,75 @@
       </div>
     </section>
 
- <!-- 인기 게시글 영역 -->
-<section class="mainpage-posts">
-  <div class="mainpage-posts-header">
-    <h2>인기 게시글</h2>
-    <a href="javascript:void(0);" class="mainpage-more-link" onclick="togglePosts()">더보기 ↓</a>
-  </div>
-  
-  <!-- 3개 칸으로 나눈 표 -->
-  <div class="mainpage-top-container">
-    <!-- 조회수 TOP -->
-    <div class="mainpage-top-section">
-      <h3 class="mainpage-section-title">👁 조회수 TOP</h3>
-      <div class="mainpage-top-list">
-        <div class="mainpage-top-item" 
-             th:each="post, stat : ${viewTopPosts}"
-             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
-             style="cursor: pointer;">
-          <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
-          <div class="mainpage-item-content">
-            <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
-            <h4 th:text="${post.title}">제목</h4>
-            <div class="mainpage-post-info">
-              <span th:text="${post.nickname}">작성자</span>
-              <span th:text="'👁 ' + ${post.viewCount}">조회수</span>
-            </div>
-          </div>
-        </div>
+    <!-- 인기 게시글 영역 -->
+    <section class="mainpage-posts">
+      <div class="mainpage-posts-header">
+        <h2>인기 게시글</h2>
+        <a href="javascript:void(0);" class="mainpage-more-link" onclick="togglePosts()">더보기 ↓</a>
       </div>
-    </div>
 
-    <!-- 좋아요 TOP -->
-    <div class="mainpage-top-section">
-      <h3 class="mainpage-section-title">❤ 좋아요 TOP</h3>
-      <div class="mainpage-top-list">
-        <div class="mainpage-top-item" 
-             th:each="post, stat : ${likeTopPosts}"
-             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
-             style="cursor: pointer;">
-          <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
-          <div class="mainpage-item-content">
-            <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
-            <h4 th:text="${post.title}">제목</h4>
-            <div class="mainpage-post-info">
-              <span th:text="${post.nickname}">작성자</span>
-              <span th:text="'❤ ' + ${post.likeCount}">좋아요</span>
+      <div class="mainpage-top-container">
+        <div class="mainpage-top-section">
+          <h3 class="mainpage-section-title">👁 조회수 TOP</h3>
+          <div class="mainpage-top-list">
+            <div class="mainpage-top-item"
+                 th:each="post, stat : ${viewTopPosts}"
+                 th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+                 style="cursor: pointer;">
+              <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
+              <div class="mainpage-item-content">
+                <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
+                <h4 th:text="${post.title}">제목</h4>
+                <div class="mainpage-post-info">
+                  <span th:text="${post.nickname}">작성자</span>
+                  <span th:text="'👁 ' + ${post.viewCount}">조회수</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- 댓글 TOP -->
-    <div class="mainpage-top-section">
-      <h3 class="mainpage-section-title">💬 댓글 TOP</h3>
-      <div class="mainpage-top-list">
-        <div class="mainpage-top-item" 
-             th:each="post, stat : ${commentTopPosts}"
-             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
-             style="cursor: pointer;">
-          <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
-          <div class="mainpage-item-content">
-            <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
-            <h4 th:text="${post.title}">제목</h4>
-            <div class="mainpage-post-info">
-              <span th:text="${post.nickname}">작성자</span>
-              <span th:text="'💬 ' + ${post.commentCount}">댓글</span>
+        <div class="mainpage-top-section">
+          <h3 class="mainpage-section-title">❤ 좋아요 TOP</h3>
+          <div class="mainpage-top-list">
+            <div class="mainpage-top-item"
+                 th:each="post, stat : ${likeTopPosts}"
+                 th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+                 style="cursor: pointer;">
+              <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
+              <div class="mainpage-item-content">
+                <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
+                <h4 th:text="${post.title}">제목</h4>
+                <div class="mainpage-post-info">
+                  <span th:text="${post.nickname}">작성자</span>
+                  <span th:text="'❤ ' + ${post.likeCount}">좋아요</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mainpage-top-section">
+          <h3 class="mainpage-section-title">💬 댓글 TOP</h3>
+          <div class="mainpage-top-list">
+            <div class="mainpage-top-item"
+                 th:each="post, stat : ${commentTopPosts}"
+                 th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+                 style="cursor: pointer;">
+              <span class="mainpage-rank" th:text="${stat.index + 1}">1</span>
+              <div class="mainpage-item-content">
+                <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
+                <h4 th:text="${post.title}">제목</h4>
+                <div class="mainpage-post-info">
+                  <span th:text="${post.nickname}">작성자</span>
+                  <span th:text="'💬 ' + ${post.commentCount}">댓글</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- 공지사항 영역 -->
     <section class="mainpage-notices">
@@ -134,16 +513,81 @@
         <h2>공지사항</h2>
         <a href="javascript:void(0);" class="mainpage-more-link" onclick="toggleNotices()">더보기 ↓</a>
       </div>
-      <!-- 공지사항 목록 -->
+
       <div class="mainpage-notice-list" id="noticeList">
-        <!-- 타임리프로 반복 -->
-        <div class="mainpage-notice-item" 
+        <div class="mainpage-notice-item"
              th:each="notice, stat : ${noticeList}"
              th:classappend="${stat.index >= 3} ? 'mainpage-notice-hidden' : ''">
           <span class="mainpage-notice-badge" th:text="${notice.noticeType}">공지</span>
           <span class="mainpage-notice-title" th:text="${notice.title}">제목</span>
-          <span class="mainpage-notice-date" 
+          <span class="mainpage-notice-date"
                 th:text="${#dates.format(notice.createdAt, 'yyyy. MM. dd.')}">날짜</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ✅ 사과게임 섹션 -->
+    <section class="applegame" id="appleTop">
+      <h1>🍎 사과게임</h1>
+
+      <div class="applegame-controls">
+        <button id="startBtn" type="button">게임 시작</button>
+        <div id="score">Score : 0</div>
+        <div id="timerContainer" aria-label="남은 시간">
+          <div id="timerBar">
+            <div id="timerBarFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="applegame-board">
+        <!-- ✅ 게임 카드(여기 기준으로 overlay/bonus/log가 잡힘) -->
+        <div class="applegame-board-inner">
+          <!-- ✅ 초기 안내 오버레이 -->
+          <div id="gameOverlay" class="applegame-overlay" aria-live="polite">
+            <div class="applegame-overlay-card">
+              <div class="applegame-overlay-badge">10 만들기 퍼즐</div>
+              <h2 class="applegame-overlay-title">드래그로 사과를 선택해서 합이 10이면 제거!</h2>
+              <p class="applegame-overlay-desc">
+                숫자가 적힌 사과들을 <b>드래그</b>로 영역 선택하세요.<br />
+                선택한 사과 숫자의 <b>합이 10</b>이면 사과가 사라지고 점수를 얻습니다.
+              </p>
+
+              <div class="applegame-rulegrid">
+                <div class="applegame-rule">
+                  <div class="applegame-rule-k">조작</div>
+                  <div class="applegame-rule-v">마우스 드래그(좌클릭)로 영역 선택</div>
+                </div>
+                <div class="applegame-rule">
+                  <div class="applegame-rule-k">점수</div>
+                  <div class="applegame-rule-v">제거한 개수의 <b>제곱</b> (예: 3개 → 9점)</div>
+                </div>
+                <div class="applegame-rule">
+                  <div class="applegame-rule-k">시간</div>
+                  <div class="applegame-rule-v"><b>120초</b> 제한</div>
+                </div>
+                <div class="applegame-rule">
+                  <div class="applegame-rule-k">보너스</div>
+                  <div class="applegame-rule-v">🍎+3 사과 클릭 시 <b>3점</b> 획득</div>
+                </div>
+              </div>
+
+              <div class="applegame-overlay-actions">
+                <button id="overlayStartBtn" type="button" class="applegame-overlay-primary">게임 시작</button>
+                <button id="overlayHowBtn" type="button" class="applegame-overlay-ghost">한 번 더 설명</button>
+              </div>
+
+              <div class="applegame-overlay-foot">
+                팁: 많은 개수를 한 번에 맞추면 점수가 크게 올라가요.
+              </div>
+            </div>
+          </div>
+
+          <div id="game" aria-label="게임 보드">
+            <div id="scoreLogs"></div>
+          </div>
+
+          <div id="selectionBox"></div>
         </div>
       </div>
     </section>
@@ -153,75 +597,379 @@
       <div class="mainpage-bottom-content">
         <h2>지금 바로 커뮤니티에 참여하세요</h2>
         <p>무료로 가입하고 다양한 사람들과 소통해보세요</p>
-        <!-- 회원가입 페이지로 이동 -->
-        <button class="mainpage-btn-join" onclick="location.href='/app/signup'">
-          회원가입
-        </button>
+        <button class="mainpage-btn-join" onclick="location.href='/app/signup'">회원가입</button>
       </div>
     </section>
+
     <th:block th:include="common/footer"></th:block>
-    
-    <!-- 자바스크립트 -->
+
     <script>
- // 게시글 더보기 토글
-    function togglePosts() {
-      const sections = document.querySelectorAll('.mainpage-top-section');
-      const moreLink = document.querySelector('.mainpage-posts .mainpage-more-link');
-      
-      sections.forEach(section => {
-        const items = section.querySelectorAll('.mainpage-top-item');
-        
-        if (items[1] && (items[1].style.display === 'none' || items[1].style.display === '')) {
-          items.forEach(item => {
-            item.style.display = 'flex';
-          });
+      /* =========================
+         메인 페이지 토글
+      ========================= */
+      function togglePosts() {
+        const sections = document.querySelectorAll('.mainpage-top-section');
+        const moreLink = document.querySelector('.mainpage-posts .mainpage-more-link');
+
+        sections.forEach(section => {
+          const items = section.querySelectorAll('.mainpage-top-item');
+
+          if (items[1] && (items[1].style.display === 'none' || items[1].style.display === '')) {
+            items.forEach(item => item.style.display = 'flex');
+            moreLink.textContent = '접기 ↑';
+          } else {
+            items.forEach((item, index) => {
+              if (index >= 1) item.style.display = 'none';
+            });
+            moreLink.textContent = '더보기 ↓';
+          }
+        });
+      }
+
+      function toggleNotices() {
+        const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
+        const moreLink = document.querySelector('.mainpage-notices .mainpage-more-link');
+
+        if (!hiddenNotices.length) return;
+
+        if (hiddenNotices[0].style.display === 'none' || hiddenNotices[0].style.display === '') {
+          hiddenNotices.forEach((notice) => notice.style.display = 'flex');
           moreLink.textContent = '접기 ↑';
         } else {
-          items.forEach((item, index) => {
-            if (index >= 1) {
-              item.style.display = 'none';
-            }
-          });
+          hiddenNotices.forEach((notice) => notice.style.display = 'none');
           moreLink.textContent = '더보기 ↓';
         }
-      });
-    }
+      }
 
-    // 공지사항 더보기 토글
-    function toggleNotices() {
-      const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
-      const moreLink = document.querySelector('.mainpage-notices .mainpage-more-link');
+      /* =========================
+         사과게임 로직 (서비스형 오버레이 포함)
+      ========================= */
+      (function(){
+        const game = document.getElementById('game');
+        const scoreDisplay = document.getElementById('score');
+        const timerBarFill = document.getElementById('timerBarFill');
+        const startBtn = document.getElementById('startBtn');
 
-      if (hiddenNotices[0].style.display === 'none' || hiddenNotices[0].style.display === '') {
-        hiddenNotices.forEach((notice) => {
-          notice.style.display = 'flex';
+        const overlay = document.getElementById('gameOverlay');
+        const overlayStartBtn = document.getElementById('overlayStartBtn');
+        const overlayHowBtn = document.getElementById('overlayHowBtn');
+
+        const selectionBox = document.getElementById('selectionBox');
+        const scoreLogs = document.getElementById('scoreLogs');
+
+        const COLS = 17;
+        const ROWS = 10;
+
+        let score = 0;
+        let timeLeft = 120;
+        let timer;
+
+        let startX = 0, startY = 0;
+        let isDragging = false;
+
+        let applesGrid = [];
+        let currentSelected = [];
+        let isGameRunning = false;
+
+        // ✅ 보너스 사과 컨테이너: 보드 카드 안에 붙이기(잘림/위치 안정)
+        const boardInner = document.querySelector('.applegame-board-inner');
+        const timeAppleContainer = document.createElement('div');
+        timeAppleContainer.style.position = 'absolute';
+        timeAppleContainer.style.inset = '0';
+        timeAppleContainer.style.pointerEvents = 'none';
+        timeAppleContainer.style.zIndex = '4500';
+        boardInner.appendChild(timeAppleContainer);
+
+        function showOverlay(mode, finalScore){
+          overlay.style.display = 'grid';
+
+          const title = overlay.querySelector('.applegame-overlay-title');
+          const desc = overlay.querySelector('.applegame-overlay-desc');
+          const badge = overlay.querySelector('.applegame-overlay-badge');
+          const foot = overlay.querySelector('.applegame-overlay-foot');
+
+          if(mode === 'end'){
+            badge.textContent = '게임 종료';
+            title.textContent = `최종 점수: ${finalScore}점`;
+            desc.innerHTML = `다시 한 번 도전해볼까요?<br/>더 크게 묶을수록 점수가 제곱으로 올라가요!`;
+            foot.textContent = '팁: 4개(16점), 5개(25점)처럼 크게 맞추면 점수 폭발';
+            overlayStartBtn.textContent = '다시 하기';
+          }else{
+            badge.textContent = '10 만들기 퍼즐';
+            title.textContent = '드래그로 사과를 선택해서 합이 10이면 제거!';
+            desc.innerHTML = `숫자가 적힌 사과들을 <b>드래그</b>로 영역 선택하세요.<br/>선택한 사과 숫자의 <b>합이 10</b>이면 사과가 사라지고 점수를 얻습니다.`;
+            foot.textContent = '팁: 많은 개수를 한 번에 맞추면 점수가 크게 올라가요.';
+            overlayStartBtn.textContent = '게임 시작';
+          }
+        }
+
+        function hideOverlay(){
+          overlay.style.display = 'none';
+        }
+
+        function generateApple(value) {
+          const apple = document.createElement('div');
+          apple.className = 'apple';
+          apple.dataset.value = value;
+
+          const span = document.createElement('span');
+          span.textContent = value;
+          apple.appendChild(span);
+
+          return apple;
+        }
+
+        function renderGrid() {
+          const keepLogs = scoreLogs;
+          game.innerHTML = '';
+
+          for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+              const apple = applesGrid[r][c];
+              if (apple) {
+                game.appendChild(apple);
+              } else {
+                const empty = document.createElement('div');
+                empty.style.width = '30px';
+                empty.style.height = '30px';
+                game.appendChild(empty);
+              }
+            }
+          }
+
+          if (!game.contains(keepLogs)) game.appendChild(keepLogs);
+        }
+
+        function addScoreLog(points) {
+          if(points <= 0) return;
+
+          const logItem = document.createElement('div');
+          logItem.className = 'scoreLogItem';
+          if (points >= 6) logItem.classList.add('blue');
+
+          logItem.innerHTML =
+            `<span class="scoreLogPoints">+${points}</span>` +
+            `<span class="scoreLogApple">🍎</span>`;
+
+          scoreLogs.appendChild(logItem);
+          logItem.addEventListener('animationend', () => logItem.remove());
+
+          if(scoreLogs.children.length > 5) {
+            scoreLogs.removeChild(scoreLogs.firstChild);
+          }
+        }
+
+        function updateScore() {
+          scoreDisplay.textContent = 'Score : ' + score;
+        }
+
+        function updateTimerBar() {
+          const percent = Math.max(0, (timeLeft / 120) * 100);
+          timerBarFill.style.width = percent + '%';
+        }
+
+        function clearSelectedBorders() {
+          currentSelected.forEach(({apple}) => apple.classList.remove('selected'));
+          currentSelected = [];
+        }
+
+        function updateSelectedApples(boxLeft, boxTop, boxRight, boxBottom) {
+          clearSelectedBorders();
+          let newlySelected = [];
+
+          for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+              const apple = applesGrid[r][c];
+              if (!apple) continue;
+
+              const rect = apple.getBoundingClientRect();
+              const isOverlap = !(rect.right < boxLeft || rect.left > boxRight || rect.bottom < boxTop || rect.top > boxBottom);
+
+              if (isOverlap) {
+                apple.classList.add('selected');
+                newlySelected.push({ r, c, apple });
+              }
+            }
+          }
+
+          currentSelected = newlySelected;
+        }
+
+        function startGame() {
+          hideOverlay();
+
+          applesGrid = [];
+          score = 0;
+          timeLeft = 120;
+          updateScore();
+          updateTimerBar();
+          scoreLogs.innerHTML = '';
+          currentSelected = [];
+          isGameRunning = true;
+
+          for (let r = 0; r < ROWS; r++) {
+            applesGrid[r] = [];
+            for (let c = 0; c < COLS; c++) {
+              const rand = Math.floor(Math.random() * 9) + 1;
+              applesGrid[r][c] = generateApple(rand);
+            }
+          }
+
+          renderGrid();
+
+          clearInterval(timer);
+          timer = setInterval(() => {
+            timeLeft--;
+            updateTimerBar();
+            if (timeLeft <= 0) {
+              clearInterval(timer);
+              isGameRunning = false;
+              showOverlay("end", score);
+            }
+          }, 1000);
+
+          if (window.timeAppleInterval) clearInterval(window.timeAppleInterval);
+          window.timeAppleInterval = setInterval(createTimeApple, 10000);
+        }
+
+        function createTimeApple() {
+          if (!isGameRunning) return;
+          if (timeAppleContainer.childElementCount >= 3) return;
+
+          const apple = document.createElement('div');
+          apple.textContent = '🍎 +3';
+          apple.style.position = 'absolute';
+          apple.style.fontSize = '46px';
+          apple.style.cursor = 'pointer';
+          apple.style.userSelect = 'none';
+          apple.style.color = '#d35400';
+          apple.style.fontWeight = '900';
+          apple.style.filter = 'drop-shadow(0 0 1px rgba(0,0,0,0.3))';
+          apple.style.pointerEvents = 'auto';
+          apple.style.zIndex = '4600';
+
+          const side = Math.random() < 0.5 ? 'left' : 'right';
+          const fromTop = Math.random() < 0.5;
+
+          if (side === 'left') apple.style.left = '10px';
+          else apple.style.right = '10px';
+
+          if (fromTop) {
+            apple.style.top = '10px';
+            apple.style.animation = `timeAppleDown 4s linear forwards`;
+          } else {
+            apple.style.bottom = '10px';
+            apple.style.animation = `timeAppleUp 4s linear forwards`;
+          }
+
+          apple.addEventListener('animationend', () => {
+            if (apple.parentNode) timeAppleContainer.removeChild(apple);
+          });
+
+          apple.addEventListener('click', (e) => {
+            if (!isGameRunning) return;
+            e.stopPropagation();
+            score += 3;
+            updateScore();
+            addScoreLog(3);
+
+            apple.style.animation = '';
+            apple.style.pointerEvents = 'none';
+            apple.classList.add('growFade');
+
+            setTimeout(() => {
+              if (apple.parentNode) timeAppleContainer.removeChild(apple);
+            }, 600);
+          });
+
+          timeAppleContainer.appendChild(apple);
+        }
+
+        game.addEventListener('mousedown', (e) => {
+          if (!isGameRunning) return;
+          if (e.button !== 0) return;
+
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+
+          selectionBox.style.left = startX + 'px';
+          selectionBox.style.top = startY + 'px';
+          selectionBox.style.width = '0px';
+          selectionBox.style.height = '0px';
+          selectionBox.style.display = 'block';
         });
-        moreLink.textContent = '접기 ↑';
-      } else {
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+
+          const currentX = e.clientX;
+          const currentY = e.clientY;
+
+          const x = Math.min(startX, currentX);
+          const y = Math.min(startY, currentY);
+          const width = Math.abs(startX - currentX);
+          const height = Math.abs(startY - currentY);
+
+          selectionBox.style.left = x + 'px';
+          selectionBox.style.top = y + 'px';
+          selectionBox.style.width = width + 'px';
+          selectionBox.style.height = height + 'px';
+
+          updateSelectedApples(x, y, x + width, y + height);
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (!isGameRunning) return;
+          if (!isDragging) return;
+
+          isDragging = false;
+          selectionBox.style.display = 'none';
+
+          const selected = currentSelected;
+          const sum = selected.reduce((acc, obj) => acc + parseInt(obj.apple.dataset.value), 0);
+
+          if (sum === 10 && selected.length > 0) {
+            const points = selected.length ** 2;
+            score += points;
+            updateScore();
+            addScoreLog(points);
+
+            selected.forEach(({ r, c, apple }) => {
+              apple.classList.add('vanish');
+              apple.addEventListener('animationend', () => {
+                applesGrid[r][c] = null;
+                renderGrid();
+              }, { once: true });
+            });
+          }
+
+          clearSelectedBorders();
+        });
+
+        startBtn.addEventListener('click', () => startGame());
+        overlayStartBtn.addEventListener('click', () => startGame());
+        overlayHowBtn.addEventListener('click', () => showOverlay("intro", 0));
+
+        showOverlay("intro", 0);
+        updateTimerBar();
+        updateScore();
+      })();
+
+      window.onload = function () {
+        const sections = document.querySelectorAll('.mainpage-top-section');
+        sections.forEach(section => {
+          const items = section.querySelectorAll('.mainpage-top-item');
+          items.forEach((item, index) => {
+            if (index >= 1) item.style.display = 'none';
+          });
+        });
+
+        const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
         hiddenNotices.forEach((notice) => {
           notice.style.display = 'none';
         });
-        moreLink.textContent = '더보기 ↓';
-      }
-    }
-
-    // 페이지 로드시 숨김 처리
-    window.onload = function () {
-      const sections = document.querySelectorAll('.mainpage-top-section');
-      sections.forEach(section => {
-        const items = section.querySelectorAll('.mainpage-top-item');
-        items.forEach((item, index) => {
-          if (index >= 1) {
-            item.style.display = 'none';
-          }
-        });
-      });
-
-      const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
-      hiddenNotices.forEach((notice) => {
-        notice.style.display = 'none';
-      });
-    };
+      };
     </script>
   </body>
 </html>
