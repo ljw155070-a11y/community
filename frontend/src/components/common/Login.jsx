@@ -3,7 +3,7 @@ import { useSetRecoilState } from "recoil";
 import { Link } from "react-router-dom";
 import { loginUserState } from "../utils/authState";
 import { loginAPI } from "../utils/authUtils";
-import "./Login.css";
+import "./login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -145,13 +145,17 @@ const Login = () => {
         </form>
 
         <div className="link-section">
-          <a href="/find-id" className="link">
+          <Link to="/find-id" className="link">
+            {" "}
+            {/* ✅ href → to, a → Link */}
             아이디 찾기
-          </a>
+          </Link>
           <span className="divider">|</span>
-          <a href="/find-password" className="link">
+          <Link to="/find-password" className="link">
+            {" "}
+            {/* ✅ href → to, a → Link */}
             비밀번호 찾기
-          </a>
+          </Link>
         </div>
 
         <div className="signup-section">

@@ -193,4 +193,125 @@ public class MemberController {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
 			}
 		}
+		// ========== 아이디/비밀번호 찾기 관련 API ==========
+
+		/**
+		 * 아이디 찾기
+		 * GET http://localhost:9999/member/find-id?name=홍길동&email=test@email.com
+		 * @param name 회원 이름
+		 * @param email 가입 시 사용한 이메일
+		 * @return 회원 이메일 정보
+		 */
+		@GetMapping("/find-id")
+		public ResponseEntity<Map<String, Object>> findId(
+		        @RequestParam("name") String name,
+		        @RequestParam("email") String email) {
+		    
+		    Map<String, Object> response = new HashMap<>();
+		    
+		    try {
+		        MemberDTO member = memberService.findIdByNameAndEmail(name, email);
+		        
+		        if (member != null) {
+		            response.put("success", true);
+		            response.put("email", member.getEmail());
+		            return ResponseEntity.ok(response);
+		        } else {
+		            response.put("success", false);
+		            response.put("message", "일치하는 회원 정보를 찾을 수 없습니다.");
+		            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		        }
+		        
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        response.put("success", false);
+		        response.put("message", "서버 오류가 발생했습니다.");
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		    }
+		}
+
+		/**
+		 * 계정 확인 (비밀번호 재설정 1단계)
+		 * GET http://localhost:9999/member/verify-account?email=test@email.com&name=홍길동
+		 * @param email 회원 이메일
+		 * @param name 회원 이름
+		 * @return 계정 확인 성공 여부
+		 */
+		@GetMapping("/verify-account")
+		public ResponseEntity<Map<String, Object>> verifyAccount(
+		        @RequestParam("email") String email,
+		        @RequestParam("name") String name) {
+		    
+		    Map<String, Object> response = new HashMap<>();
+		    
+		    try {
+		        boolean isValid = memberService.verifyAccountByEmailAndName(email, name);
+		        
+		        if (isValid) {
+		            response.put("success", true);
+		            response.put("message", "계정 확인이 완료되었습니다.");
+		            return ResponseEntity.ok(response);
+		        } else {
+		            response.put("success", false);
+		            response.put("message", "일치하는 회원 정보를 찾을 수 없습니다.");
+		            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		        }
+		        
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        response.put("success", false);
+		        response.put("message", "서버 오류가 발생했습니다.");
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		    }
+		}
+
+		/**
+		 * 비밀번호 재설정
+		 * POST http://localhost:9999/member/reset-password
+		 * @param request { "email": "test@email.com", "newPassword": "newpass123" }
+		 * @return 비밀번호 변경 성공 여부
+		 */
+		@PostMapping("/reset-password")
+		public ResponseEntity<Map<String, Object>> resetPassword(
+		        @RequestBody Map<String, String> request) {
+		    
+		    Map<String, Object> response = new HashMap<>();
+		    
+		    try {
+		        String email = request.get("email");
+		        String newPassword = request.get("newPassword");
+		        
+		        // 입력값 검증
+		        if (email == null || email.isBlank() || newPassword == null || newPassword.isBlank()) {
+		            response.put("success", false);
+		            response.put("message", "이메일과 새 비밀번호를 입력해주세요.");
+		            return ResponseEntity.badRequest().body(response);
+		        }
+		        
+		        if (newPassword.length() < 6) {
+		            response.put("success", false);
+		            response.put("message", "비밀번호는 최소 6자 이상이어야 합니다.");
+		            return ResponseEntity.badRequest().body(response);
+		        }
+		        
+		        // 비밀번호 재설정
+		        boolean success = memberService.resetPassword(email, newPassword);
+		        
+		        if (success) {
+		            response.put("success", true);
+		            response.put("message", "비밀번호가 성공적으로 변경되었습니다.");
+		            return ResponseEntity.ok(response);
+		        } else {
+		            response.put("success", false);
+		            response.put("message", "비밀번호 변경에 실패했습니다.");
+		            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		        }
+		        
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        response.put("success", false);
+		        response.put("message", "서버 오류가 발생했습니다.");
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		    }
+		}
 }

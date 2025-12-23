@@ -199,5 +199,46 @@
     WHERE MEMBER_ID = #{memberId}
   </update>
   
+  <!-- ========== 아이디/비밀번호 찾기 관련 쿼리 ========== -->
+
+<!-- 이름과 이메일로 회원 조회 (아이디 찾기) -->
+<select id="selectMemberByNameAndEmail" resultType="member">
+  SELECT 
+    MEMBER_ID AS memberId,
+    EMAIL AS email,
+    NAME AS name,
+    NICKNAME AS nickname,
+    ROLE AS role,
+    STATUS AS status,
+    TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS createdAt
+  FROM MEMBER
+  WHERE NAME = #{name}
+    AND EMAIL = #{email}
+    AND STATUS = 'ACTIVE'
+</select>
+
+<!-- 이메일과 이름으로 회원 조회 (계정 확인) -->
+<select id="selectMemberByEmailAndName" resultType="member">
+  SELECT 
+    MEMBER_ID AS memberId,
+    EMAIL AS email,
+    NAME AS name,
+    NICKNAME AS nickname,
+    ROLE AS role,
+    STATUS AS status,
+    TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS createdAt
+  FROM MEMBER
+  WHERE EMAIL = #{email}
+    AND NAME = #{name}
+    AND STATUS = 'ACTIVE'
+</select>
+
+<!-- 비밀번호 업데이트 -->
+<update id="updatePassword">
+  UPDATE MEMBER
+  SET PASSWORD_HASH = #{passwordHash},
+      UPDATED_AT = SYSDATE
+  WHERE MEMBER_ID = #{memberId}
+</update>
 
 </mapper>

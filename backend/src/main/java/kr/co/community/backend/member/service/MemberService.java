@@ -249,5 +249,87 @@ public class MemberService {
 
         return memberDTO.getMemberId(); // insert 후 key가 세팅되는 구조여야 함 (MyBatis useGeneratedKeys 등)
     }
+ // ========== 아이디/비밀번호 찾기 기능 ==========
 
+    /**
+     * 아이디 찾기 (이름 + 이메일로 조회)
+     */
+    public MemberDTO findIdByNameAndEmail(String name, String email) {
+        log.info("🔍 아이디 찾기 시도: name={}, email={}", name, email);
+        
+        // 이름과 이메일로 회원 조회
+        MemberDTO member = memberDao.selectMemberByNameAndEmail(name, email);
+        
+        if (member == null) {
+            log.warn("❌ 일치하는 회원 정보 없음: name={}, email={}", name, email);
+            return null;
+        }
+        
+        // 민감 정보 제거
+        member.setPasswordHash(null);
+        
+        log.info("✅ 아이디 찾기 성공: memberId={}, email={}", member.getMemberId(), member.getEmail());
+        return member;
+    }
+
+    /**
+     * 계정 확인 (이메일 + 이름) - 비밀번호 찾기 1단계
+     */
+    public boolean verifyAccountByEmailAndName(String email, String name) {
+        log.info("🔍 계정 확인 시도: email={}, name={}", email, name);
+        
+        // 이메일과 이름으로 회원 조회
+        MemberDTO member = memberDao.selectMemberByEmailAndName(email, name);
+        
+        if (member == null) {
+            log.warn("❌ 일치하는 회원 정보 없음: email={}, name={}", email, name);
+            return false;
+        }
+        
+        // 계정 상태 확인
+        if (!"ACTIVE".equals(member.getStatus())) {
+            log.warn("❌ 비활성화된 계정: email={}, status={}", email, member.getStatus());
+            return false;
+        }
+        
+        log.info("✅ 계정 확인 성공: memberId={}", member.getMemberId());
+        return true;
+    }
+
+    /**
+     * 비밀번호 재설정
+     */
+    @Transactional
+    public boolean resetPassword(String email, String newPassword) {
+        log.info("🔐 비밀번호 재설정 시도: email={}", email);
+        
+        // 이메일로 회원 조회
+        MemberDTO member = memberDao.selectMemberByEmail(email);
+        
+        if (member == null) {
+            log.warn("❌ 존재하지 않는 이메일: {}", email);
+            return false;
+        }
+        
+        // 계정 상태 확인
+        if (!"ACTIVE".equals(member.getStatus())) {
+            log.warn("❌ 비활성화된 계정: email={}, status={}", email, member.getStatus());
+            return false;
+        }
+        
+        // 새 비밀번호 해시화
+        String hashedPassword = passwordEncoder.encode(newPassword);
+        
+        // DB 업데이트
+        int result = memberDao.updatePassword(member.getMemberId(), hashedPassword);
+        
+        if (result == 1) {
+            log.info("✅ 비밀번호 재설정 성공: memberId={}", member.getMemberId());
+            return true;
+        } else {
+            log.error("❌ 비밀번호 업데이트 실패: memberId={}", member.getMemberId());
+            return false;
+        }
+    }
+    
 }
