@@ -35,7 +35,7 @@ public class PostSsrController {
 
         List<BoardCategoryDTO> categories = postSsrService.getActiveCategories();
 
-        int size = 5; // 화면 카드 기준
+        int size = 20; // 화면 카드 기준
         Map<String, Object> listResult = postSsrService.getPostList(categoryId, q, sort, page, size);
 
         int totalPages = (int) listResult.get("totalPages");
