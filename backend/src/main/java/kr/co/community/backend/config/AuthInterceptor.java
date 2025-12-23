@@ -18,7 +18,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        // ✅ 쿠키 + Authorization(Bearer) 둘 다 지원
+        // ✅ 쿠키 + Authorization(Bearer) 둘 다 지원 (기존 유지)
         String token = extractToken(request);
 
         if (token != null && jwtUtil.validateToken(token)) {
@@ -33,6 +33,9 @@ public class AuthInterceptor implements HandlerInterceptor {
                 request.setAttribute("name", name);
                 request.setAttribute("nickname", nickname);
                 request.setAttribute("isAuthenticated", true);
+
+                // ✅ 추가(핵심): boardList.html에서 쓰는 이름 그대로 맞춰줌
+                request.setAttribute("loginMemberId", memberId);
 
                 log.debug("✅ Authenticated: memberId={}, email={}", memberId, email);
             } catch (Exception e) {

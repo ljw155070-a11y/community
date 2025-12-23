@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 import "./boardedit.css";
 
 export default function BoardEditPage() {
@@ -26,7 +27,7 @@ export default function BoardEditPage() {
           `${import.meta.env.VITE_BACK_SERVER}/post/${postId}`
         );
 
-        const post = res.data.post; // { post: {...} } 형태라고 했으니
+        const post = res.data.post;
         setForm({
           title: post?.title ?? "",
           content: post?.content ?? "",
@@ -34,7 +35,11 @@ export default function BoardEditPage() {
         });
       } catch (e) {
         console.error(e);
-        alert("게시글을 불러오지 못했습니다.");
+        await Swal.fire({
+          icon: "error",
+          title: "불러오기 실패",
+          text: "게시글을 불러오지 못했습니다.",
+        });
         nav("/board");
       } finally {
         setLoading(false);
@@ -44,20 +49,45 @@ export default function BoardEditPage() {
 
   // ✅ 수정
   const onUpdate = async () => {
-    if (!form.title.trim()) return alert("제목을 입력하세요.");
-    if (!form.content.trim()) return alert("내용을 입력하세요.");
+    if (!form.title.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "제목이 비어있어요",
+        text: "제목을 입력해주세요.",
+      });
+    }
+
+    if (!form.content.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "내용이 비어있어요",
+        text: "내용을 입력해주세요.",
+      });
+    }
 
     try {
       setSaving(true);
+
       await axios.put(
         `${import.meta.env.VITE_BACK_SERVER}/post/${postId}`,
         form
       );
-      alert("수정 완료");
-      nav("/board");
+
+      await Swal.fire({
+        icon: "success",
+        title: "수정 완료",
+        text: "게시글이 성공적으로 수정되었습니다.",
+      });
+
+      // ✅ SSR 상세 페이지로 이동
+      window.location.href = `/board/postDetail/${postId}`;
     } catch (e) {
       console.error(e);
-      alert("수정에 실패했습니다.");
+      Swal.fire({
+        icon: "error",
+        title: "수정 실패",
+        text: "게시글 수정 중 오류가 발생했습니다.",
+      });
     } finally {
       setSaving(false);
     }
@@ -65,16 +95,37 @@ export default function BoardEditPage() {
 
   // ✅ 삭제
   const onDelete = async () => {
-    if (!window.confirm("정말 삭제할까요?")) return;
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "정말 삭제할까요?",
+      text: "삭제된 게시글은 복구할 수 없습니다.",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       setSaving(true);
+
       await axios.delete(`${import.meta.env.VITE_BACK_SERVER}/post/${postId}`);
-      alert("삭제 완료");
-      nav("/board");
+
+      await Swal.fire({
+        icon: "success",
+        title: "삭제 완료",
+        text: "게시글이 삭제되었습니다.",
+      });
+
+      // ✅ SSR 게시판 목록으로 이동
+      window.location.href = "/board";
     } catch (e) {
       console.error(e);
-      alert("삭제에 실패했습니다.");
+      Swal.fire({
+        icon: "error",
+        title: "삭제 실패",
+        text: "게시글 삭제 중 오류가 발생했습니다.",
+      });
     } finally {
       setSaving(false);
     }

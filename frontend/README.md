@@ -9,3 +9,6 @@ npm install axios
 
 2025-12-17 17:46 채희찬
 npm install recoil
+
+2025-12-23 15:14 이진원
+npm install sweetalert2
