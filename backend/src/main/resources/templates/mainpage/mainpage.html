@@ -65,7 +65,7 @@
       <div class="mainpage-notice-list" id="noticeList">
         <div class="mainpage-notice-item"
              th:each="notice, stat : ${noticeList}"
-             th:classappend="${stat.index >= 3} ? 'mainpage-notice-hidden' : ''">
+             th:classappend="${stat.index >= 5} ? 'mainpage-notice-hidden' : ''">
           <span class="mainpage-notice-badge" th:text="${notice.noticeType}">공지</span>
           <span class="mainpage-notice-title" th:text="${notice.title}">제목</span>
           <span class="mainpage-notice-date"
@@ -145,37 +145,36 @@
     </section>
 
    <!-- 로그인 한 경우: 카테고리별 게시판 -->
-	<section class="mainpage-category-boards" th:if="${isLoggedIn}">
-	  <div class="mainpage-boards-header">
-	    <h2>카테고리별 게시판</h2>
-	  </div>
-	
-	  <div class="mainpage-boards-container">
-	    <div class="mainpage-board-card" th:each="category : ${categories}">
-	      <h3 class="mainpage-board-card-title" th:text="${category.categoryName}">카테고리</h3>
-	      <div class="mainpage-board-card-list">
-	        <div class="mainpage-board-card-item"
-	             th:each="post : ${categoryPosts.get(category.categoryName)}"
-	             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
-	             style="cursor: pointer;">
-	          <div class="mainpage-board-card-content">
-	            <p class="mainpage-board-card-post-title" th:text="${post.title}">제목</p>
-	            <div class="mainpage-board-card-info">
-	              <span th:text="${post.nickname}">작성자</span>
-	              <span>·</span>
-	              <span th:text="'👁 ' + ${post.viewCount}">조회수</span>
-	            </div>
-	          </div>
-	        </div>
-	        
-	        <div th:if="${#lists.isEmpty(categoryPosts.get(category.categoryName))}" 
-	             class="mainpage-board-card-empty">
-	          게시글이 없습니다.
-	        </div>
-	      </div>
-	    </div>
-	  </div>
-	</section>
+<section class="mainpage-category-boards" th:if="${isLoggedIn}">
+  <div class="mainpage-boards-header">
+    <h2>카테고리별 게시판</h2>
+  </div>
+
+  <div class="mainpage-boards-container">
+    <div class="mainpage-board-card" th:each="category : ${categories}">
+      <h3 class="mainpage-board-card-title" th:text="${category.categoryName}">카테고리</h3>
+      <div class="mainpage-board-card-list">
+        <div class="mainpage-board-card-item"
+             th:each="post : ${categoryPosts.get(category.categoryName)}"
+             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+             style="cursor: pointer;">
+          <div class="mainpage-board-card-content">
+            <p class="mainpage-board-card-post-title" th:text="${post.title}">제목</p>
+            <div class="mainpage-board-card-info">
+			  <span th:text="${post.nickname}">작성자</span>
+			  <span th:text="${#dates.format(post.createdAt, 'MM.dd')}">날짜</span>
+			</div>
+          </div>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(categoryPosts.get(category.categoryName))}" 
+             class="mainpage-board-card-empty">
+          게시글이 없습니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
     <!-- 사과게임 섹션 -->
     <section class="applegame" id="appleTop">
@@ -232,11 +231,11 @@
             </div>
           </div>
 
-          <div id="game" aria-label="게임 보드">
-            <div id="scoreLogs"></div>
-          </div>
-
-          <div id="selectionBox"></div>
+         <div id="game" aria-label="게임 보드">
+		      <div id="scoreLogs"></div>
+		    </div>
+		
+		    <div id="selectionBox"></div> <!-- 여기로 다시 이동 -->
         </div>
       </div>
     </section>
@@ -433,46 +432,45 @@
 
           return apple;
         }
-
+        
         function renderGrid() {
-          const keepLogs = scoreLogs;
-          game.innerHTML = '';
+        	  const keepLogs = scoreLogs;
+        	  game.innerHTML = '';
 
-          for (let r = 0; r < ROWS; r++) {
-            for (let c = 0; c < COLS; c++) {
-              const apple = applesGrid[r][c];
-              if (apple) {
-                game.appendChild(apple);
-              } else {
-                const empty = document.createElement('div');
-                empty.style.width = '30px';
-                empty.style.height = '30px';
-                game.appendChild(empty);
-              }
-            }
-          }
+        	  for (let r = 0; r < ROWS; r++) {
+        	    for (let c = 0; c < COLS; c++) {
+        	      const apple = applesGrid[r][c];
+        	      if (apple) {
+        	        game.appendChild(apple);
+        	      } else {
+        	        const empty = document.createElement('div');
+        	        empty.style.width = '30px';
+        	        empty.style.height = '30px';
+        	        game.appendChild(empty);
+        	      }
+        	    }
+        	  }
 
-          if (!game.contains(keepLogs)) game.appendChild(keepLogs);
-        }
+        	  if (!game.contains(keepLogs)) game.appendChild(keepLogs);
+        	}
+
 
         function addScoreLog(points) {
-          if(points <= 0) return;
+        	  if(points <= 0) return;
 
-          const logItem = document.createElement('div');
-          logItem.className = 'scoreLogItem';
-          if (points >= 6) logItem.classList.add('blue');
+        	  // 이전 로그 전부 삭제
+        	  scoreLogs.innerHTML = '';
 
-          logItem.innerHTML =
-            `<span class="scoreLogPoints">+${points}</span>` +
-            `<span class="scoreLogApple">🍎</span>`;
+        	  const logItem = document.createElement('div');
+        	  logItem.className = 'scoreLogItem';
+        	  if (points >= 6) logItem.classList.add('blue');
 
-          scoreLogs.appendChild(logItem);
-          logItem.addEventListener('animationend', () => logItem.remove());
+        	  logItem.innerHTML =
+        	    `<span class="scoreLogPoints">+${points}</span>` +
+        	    `<span class="scoreLogApple">🍎</span>`;
 
-          if(scoreLogs.children.length > 5) {
-            scoreLogs.removeChild(scoreLogs.firstChild);
-          }
-        }
+        	  scoreLogs.appendChild(logItem);
+        	}
 
         function updateScore() {
           scoreDisplay.textContent = 'Score : ' + score;
@@ -511,41 +509,43 @@
         }
 
         function startGame() {
-          hideOverlay();
+        	  hideOverlay();
 
-          applesGrid = [];
-          score = 0;
-          timeLeft = 120;
-          updateScore();
-          updateTimerBar();
-          scoreLogs.innerHTML = '';
-          currentSelected = [];
-          isGameRunning = true;
+        	  timeAppleContainer.innerHTML = '';
 
-          for (let r = 0; r < ROWS; r++) {
-            applesGrid[r] = [];
-            for (let c = 0; c < COLS; c++) {
-              const rand = Math.floor(Math.random() * 9) + 1;
-              applesGrid[r][c] = generateApple(rand);
-            }
-          }
+        	  applesGrid = [];
+        	  score = 0;
+        	  timeLeft = 120;
+        	  updateScore();
+        	  updateTimerBar();
+        	  scoreLogs.innerHTML = '';
+        	  currentSelected = [];
+        	  isGameRunning = true;
 
-          renderGrid();
+        	  for (let r = 0; r < ROWS; r++) {
+        	    applesGrid[r] = [];
+        	    for (let c = 0; c < COLS; c++) {
+        	      const rand = Math.floor(Math.random() * 9) + 1;
+        	      applesGrid[r][c] = generateApple(rand);
+        	    }
+        	  }
 
-          clearInterval(timer);
-          timer = setInterval(() => {
-            timeLeft--;
-            updateTimerBar();
-            if (timeLeft <= 0) {
-              clearInterval(timer);
-              isGameRunning = false;
-              showOverlay("end", score);
-            }
-          }, 1000);
+        	  renderGrid();
 
-          if (window.timeAppleInterval) clearInterval(window.timeAppleInterval);
-          window.timeAppleInterval = setInterval(createTimeApple, 10000);
-        }
+        	  clearInterval(timer);
+        	  timer = setInterval(() => {
+        	    timeLeft--;
+        	    updateTimerBar();
+        	    if (timeLeft <= 0) {
+        	      clearInterval(timer);
+        	      isGameRunning = false;
+        	      showOverlay("end", score);
+        	    }
+        	  }, 1000);
+
+        	  // 시간 사과 인터벌 제거
+        	  if (window.timeAppleInterval) clearInterval(window.timeAppleInterval);
+        	}
 
         function createTimeApple() {
           if (!isGameRunning) return;
@@ -570,97 +570,108 @@
           else apple.style.right = '10px';
 
           if (fromTop) {
-            apple.style.top = '10px';
-            apple.style.animation = `timeAppleDown 4s linear forwards`;
-          } else {
-            apple.style.bottom = '10px';
-            apple.style.animation = `timeAppleUp 4s linear forwards`;
-          }
+        	  apple.style.top = '10px';
+        	  apple.style.animation = `timeAppleDown 1s linear forwards`;
+        	} else {
+        	  apple.style.bottom = '10px';
+        	  apple.style.animation = `timeAppleUp 1s linear forwards`;
+        	}
 
           apple.addEventListener('animationend', () => {
             if (apple.parentNode) timeAppleContainer.removeChild(apple);
           });
 
           apple.addEventListener('click', (e) => {
-            if (!isGameRunning) return;
-            e.stopPropagation();
-            score += 3;
-            updateScore();
-            addScoreLog(3);
+        	  if (!isGameRunning) return;
+        	  if (apple.dataset.clicked) return;
+        	  
+        	  e.stopPropagation();
+        	  apple.dataset.clicked = 'true';
+        	  
+        	  score += 3;
+        	  updateScore();
+        	  addScoreLog(3);
 
-            apple.style.animation = '';
-            apple.style.pointerEvents = 'none';
-            apple.classList.add('growFade');
+        	  apple.style.animation = '';
+        	  apple.style.pointerEvents = 'none';
+        	  apple.classList.add('growFade');
 
-            setTimeout(() => {
-              if (apple.parentNode) timeAppleContainer.removeChild(apple);
-            }, 600);
-          });
+        	  setTimeout(() => {
+        	    if (apple.parentNode) timeAppleContainer.removeChild(apple);
+        	  }, 600);
+        	});
 
           timeAppleContainer.appendChild(apple);
         }
 
         game.addEventListener('mousedown', (e) => {
-          if (!isGameRunning) return;
-          if (e.button !== 0) return;
+        	  if (!isGameRunning) return;
+        	  if (e.button !== 0) return;
 
-          isDragging = true;
-          startX = e.clientX;
-          startY = e.clientY;
+        	  isDragging = true;
+        	  startX = e.clientX;
+        	  startY = e.clientY;
 
-          selectionBox.style.left = startX + 'px';
-          selectionBox.style.top = startY + 'px';
-          selectionBox.style.width = '0px';
-          selectionBox.style.height = '0px';
-          selectionBox.style.display = 'block';
-        });
+        	  selectionBox.style.left = startX + 'px';
+        	  selectionBox.style.top = startY + 'px';
+        	  selectionBox.style.width = '0px';
+        	  selectionBox.style.height = '0px';
+        	  selectionBox.style.display = 'block';
+        	});
 
-        window.addEventListener('mousemove', (e) => {
-          if (!isDragging) return;
+        	window.addEventListener('mousemove', (e) => {
+        	  if (!isDragging) return;
 
-          const currentX = e.clientX;
-          const currentY = e.clientY;
+        	  const currentX = e.clientX;
+        	  const currentY = e.clientY;
 
-          const x = Math.min(startX, currentX);
-          const y = Math.min(startY, currentY);
-          const width = Math.abs(startX - currentX);
-          const height = Math.abs(startY - currentY);
+        	  const x = Math.min(startX, currentX);
+        	  const y = Math.min(startY, currentY);
+        	  const width = Math.abs(startX - currentX);
+        	  const height = Math.abs(startY - currentY);
 
-          selectionBox.style.left = x + 'px';
-          selectionBox.style.top = y + 'px';
-          selectionBox.style.width = width + 'px';
-          selectionBox.style.height = height + 'px';
+        	  selectionBox.style.left = x + 'px';
+        	  selectionBox.style.top = y + 'px';
+        	  selectionBox.style.width = width + 'px';
+        	  selectionBox.style.height = height + 'px';
 
-          updateSelectedApples(x, y, x + width, y + height);
-        });
+        	  updateSelectedApples(x, y, x + width, y + height);
+        	});
 
         window.addEventListener('mouseup', () => {
-          if (!isGameRunning) return;
-          if (!isDragging) return;
+        	  if (!isGameRunning) return;
+        	  if (!isDragging) return;
 
-          isDragging = false;
-          selectionBox.style.display = 'none';
+        	  isDragging = false;
+        	  selectionBox.style.display = 'none';
 
-          const selected = currentSelected;
-          const sum = selected.reduce((acc, obj) => acc + parseInt(obj.apple.dataset.value), 0);
+        	  const selected = currentSelected;
+        	  const sum = selected.reduce((acc, obj) => acc + parseInt(obj.apple.dataset.value), 0);
 
-          if (sum === 10 && selected.length > 0) {
-            const points = selected.length ** 2;
-            score += points;
-            updateScore();
-            addScoreLog(points);
+        	  if (sum === 10 && selected.length > 0) {
+        	    const points = selected.length ** 2;
+        	    score += points;
+        	    updateScore();
+        	    addScoreLog(points);
 
-            selected.forEach(({ r, c, apple }) => {
-              apple.classList.add('vanish');
-              apple.addEventListener('animationend', () => {
-                applesGrid[r][c] = null;
-                renderGrid();
-              }, { once: true });
-            });
-          }
+        	    // 시간 5초 추가
+        	    timeLeft += 5;
+        	    updateTimerBar();
 
-          clearSelectedBorders();
-        });
+        	    // 시간 사과 생성
+        	    createTimeApple();
+
+        	    selected.forEach(({ r, c, apple }) => {
+        	      apple.classList.add('vanish');
+        	      apple.addEventListener('animationend', () => {
+        	        applesGrid[r][c] = null;
+        	        renderGrid();
+        	      }, { once: true });
+        	    });
+        	  }
+
+        	  clearSelectedBorders();
+        	});
 
         startBtn.addEventListener('click', () => startGame());
         overlayStartBtn.addEventListener('click', () => startGame());
@@ -672,19 +683,19 @@
       })();
 
       window.onload = function () {
-        const sections = document.querySelectorAll('.mainpage-top-section');
-        sections.forEach(section => {
-          const items = section.querySelectorAll('.mainpage-top-item');
-          items.forEach((item, index) => {
-            if (index >= 1) item.style.display = 'none';
-          });
-        });
+    	  const sections = document.querySelectorAll('.mainpage-top-section');
+    	  sections.forEach(section => {
+    	    const items = section.querySelectorAll('.mainpage-top-item');
+    	    items.forEach((item, index) => {
+    	      if (index >= 1) item.style.display = 'none';
+    	    });
+    	  });
 
-        const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
-        hiddenNotices.forEach((notice) => {
-          notice.style.display = 'none';
-        });
-      };
+    	  const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
+    	  hiddenNotices.forEach((notice) => {
+    	    notice.style.display = 'none';
+    	  });
+    	};
     </script>
   </body>
 </html>
