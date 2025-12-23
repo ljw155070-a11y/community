@@ -184,7 +184,9 @@ export default function BoardEditPage() {
                 <button
                   className="bw-btn bw-btn-ghost"
                   type="button"
-                  onClick={() => nav("/board")}
+                  onClick={() =>
+                    (window.location.href = `/board/postDetail/${postId}`)
+                  }
                   disabled={saving}
                 >
                   취소
