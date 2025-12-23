@@ -11,11 +11,13 @@ import kr.co.community.backend.main.vo.PostVo;
 public interface MainDao {
 
 	List<PostVo> getViewTopPosts();
-	
+
 	List<PostVo> getLikeTopPosts();
-	
+
 	List<PostVo> getCommentTopPosts();
 
 	List<NoticeVo> getNoticeList();
+	
+	List<PostVo> getRecentPostsByCategory(Integer categoryId);
 
 }
