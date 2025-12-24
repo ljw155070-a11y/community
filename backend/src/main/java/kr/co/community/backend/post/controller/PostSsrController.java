@@ -8,8 +8,10 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
+import kr.co.community.backend.post.dto.CommentDTO;
 import kr.co.community.backend.post.dto.PostDTO;
 import kr.co.community.backend.post.service.PostSsrService;
 import kr.co.community.backend.util.DateFormatUtil;
@@ -76,7 +78,6 @@ public class PostSsrController {
     }
     /**
      * 게시글 상세 페이지
-     * ✅ @RequestAttribute로 JWT 인증 정보 받기
      */
     @GetMapping("/postDetail/{postId}")
     public String getPostDetail(
@@ -86,21 +87,11 @@ public class PostSsrController {
             @RequestAttribute(value = "isAuthenticated", required = false) Boolean isAuthenticated
     ) {
         try {
-            // 1. 게시글 조회 (조회수 증가 포함)
             PostDTO post = postSsrService.getPostDetail(postId);
             
-            // 2. 로그인한 사용자의 좋아요/북마크 여부 확인
             if (memberId != null) {
                 boolean isLiked = postSsrService.isPostLiked(postId, memberId);
                 boolean isBookmarked = postSsrService.isBookmarked(postId, memberId);
-                
-                System.out.println("========== JWT 인증 정보 ==========");
-                System.out.println("postId: " + postId);
-                System.out.println("memberId: " + memberId);
-                System.out.println("isAuthenticated: " + isAuthenticated);
-                System.out.println("isLiked: " + isLiked);
-                System.out.println("isBookmarked: " + isBookmarked);
-                System.out.println("====================================");
                 
                 post.setIsLiked(isLiked);
                 post.setIsBookmarked(isBookmarked);
@@ -109,20 +100,12 @@ public class PostSsrController {
                 post.setIsBookmarked(false);
             }
             
-            // 3. 이전글/다음글 조회
             PostDTO prevPost = postSsrService.getPrevPost(postId, post.getCategoryId());
             PostDTO nextPost = postSsrService.getNextPost(postId, post.getCategoryId());
-            
-            // 4. 인기 게시글 조회 (조회수 기준 TOP 4)
             List<PostDTO> popularPosts = postSsrService.getViewTopPosts(4);
-            
-            // 5. 작성자의 다른 글 조회 (현재 글 제외, 최신순 3개)
             List<PostDTO> authorOtherPosts = postSsrService.getAuthorOtherPosts(post.getAuthorId(), postId, 3);
-            
-            // 6. 작성자 통계 조회 (게시글 수, 댓글 수)
             Map<String, Object> authorStats = postSsrService.getAuthorStats(post.getAuthorId());
             
-            // 7. Model에 데이터 추가
             model.addAttribute("dateUtil", DateFormatUtil.class);
             model.addAttribute("post", post);
             model.addAttribute("prevPost", prevPost);
@@ -141,8 +124,48 @@ public class PostSsrController {
     }
 
     /**
+     * ✅ 댓글 작성 (SSR - Form Submit)
+     */
+    @PostMapping("/postDetail/{postId}/comments")
+    public String createComment(
+            @PathVariable Long postId,
+            @RequestParam String content,
+            @RequestAttribute(value = "memberId", required = false) Long memberId,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            // 로그인 체크
+            if (memberId == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "로그인이 필요합니다.");
+                return "redirect:/app/login";
+            }
+            
+            // 댓글 내용 검증
+            if (content == null || content.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "댓글 내용을 입력해주세요.");
+                return "redirect:/board/postDetail/" + postId;
+            }
+            
+            // 댓글 생성
+            CommentDTO commentDTO = new CommentDTO();
+            commentDTO.setPostId(postId);
+            commentDTO.setAuthorId(memberId);
+            commentDTO.setContent(content.trim());
+            
+            postSsrService.createComment(commentDTO);
+            
+            redirectAttributes.addFlashAttribute("successMessage", "댓글이 작성되었습니다.");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "댓글 작성 중 오류가 발생했습니다.");
+        }
+        
+        return "redirect:/board/postDetail/" + postId;
+    }
+
+    /**
      * 좋아요 토글 API
-     * ✅ @RequestAttribute로 JWT 인증 정보 받기
      */
     @PostMapping("/postDetail/{postId}/like")
     @ResponseBody
@@ -175,7 +198,6 @@ public class PostSsrController {
 
     /**
      * 북마크 토글 API
-     * ✅ @RequestAttribute로 JWT 인증 정보 받기
      */
     @PostMapping("/postDetail/{postId}/bookmark")
     @ResponseBody
@@ -192,7 +214,6 @@ public class PostSsrController {
                 return result;
             }
             
-            // 북마크 토글
             boolean isBookmarked = postSsrService.toggleBookmark(postId, memberId);
             
             result.put("success", true);
@@ -210,7 +231,6 @@ public class PostSsrController {
 
     /**
      * 게시글 삭제 API
-     * ✅ @RequestAttribute로 JWT 인증 정보 받기
      */
     @PostMapping("/delete/{postId}")
     @ResponseBody
@@ -248,7 +268,6 @@ public class PostSsrController {
 
     /**
      * 신고 API
-     * ✅ @RequestAttribute로 JWT 인증 정보 받기
      */
     @PostMapping("/postDetail/{postId}/report")
     @ResponseBody
@@ -264,9 +283,6 @@ public class PostSsrController {
                 result.put("message", "로그인이 필요합니다.");
                 return result;
             }
-            
-            // 신고 처리 로직 (Service에 구현 필요)
-            // postSsrService.reportPost(postId, memberId);
             
             result.put("success", true);
             result.put("message", "신고가 접수되었습니다.");

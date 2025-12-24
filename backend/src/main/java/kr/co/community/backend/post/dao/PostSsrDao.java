@@ -34,7 +34,12 @@ public interface PostSsrDao {
     void updateViewCount(@Param("postId") Long postId);
 
     List<CommentDTO> selectCommentsByPostId(@Param("postId") Long postId);
-
+    
+    // ========== 댓글 작성 ==========
+    void insertComment(CommentDTO commentDTO);
+    
+    void incrementCommentCount(@Param("postId") Long postId);
+    
     // ========== 좋아요 관련 ==========
     int selectPostLikeExists(@Param("postId") Long postId, @Param("memberId") Long memberId);
 

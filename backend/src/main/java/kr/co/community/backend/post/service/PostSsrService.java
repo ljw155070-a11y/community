@@ -75,7 +75,21 @@ public class PostSsrService {
 
         return post;
     }
-
+    /**
+     * ✅ 댓글 작성
+     */
+    @Transactional
+    public void createComment(CommentDTO commentDTO) {
+        log.info("댓글 작성: postId={}, authorId={}", commentDTO.getPostId(), commentDTO.getAuthorId());
+        
+        // 1. 댓글 삽입
+        postSsrDao.insertComment(commentDTO);
+        
+        // 2. 게시글의 댓글 수 증가
+        postSsrDao.incrementCommentCount(commentDTO.getPostId());
+        
+        log.info("댓글 작성 완료: commentId={}", commentDTO.getCommentId());
+    }
     public boolean isPostLiked(Long postId, Long memberId) {
         if (memberId == null) return false;
         return postSsrDao.selectPostLikeExists(postId, memberId) > 0;

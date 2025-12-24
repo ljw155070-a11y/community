@@ -940,19 +940,29 @@
 		        </h2>
 		    </div>
 		    
-		    <!-- ✅ 로그인 했을 때: 댓글 작성 폼 -->
-		    <div th:if="${isAuthenticated}" class="comment-form">
-		        <form th:action="@{/posts/{id}/comments(id=${post.postId})}" method="post">
-		            <textarea 
-		                name="content" 
-		                class="comment-textarea" 
-		                placeholder="댓글을 작성해주세요"
-		                required></textarea>
-		            <div class="comment-form-actions">
-		                <button type="submit" class="submit-comment-btn">댓글 작성</button>
-		            </div>
-		        </form>
-		    </div>
+			<!-- 댓글 작성 폼 -->
+			<div th:if="${isAuthenticated}" class="comment-form">
+			    <form th:action="@{/board/postDetail/{id}/comments(id=${post.postId})}" method="post">
+			        <textarea 
+			            name="content" 
+			            class="comment-textarea" 
+			            placeholder="댓글을 작성해주세요"
+			            maxlength="500"
+			            required></textarea>
+			        <div class="comment-form-actions">
+			            <button type="submit" class="submit-comment-btn">댓글 작성</button>
+			        </div>
+			    </form>
+			</div>
+			
+			<!-- 성공/에러 메시지 표시 -->
+			<div th:if="${successMessage}" class="alert alert-success" style="margin: 1rem 2rem; padding: 1rem; background: #d1fae5; color: #065f46; border-radius: 8px;">
+			    <span th:text="${successMessage}"></span>
+			</div>
+			
+			<div th:if="${errorMessage}" class="alert alert-error" style="margin: 1rem 2rem; padding: 1rem; background: #fee2e2; color: #991b1b; border-radius: 8px;">
+			    <span th:text="${errorMessage}"></span>
+			</div>
 		    
 		    <!-- ✅ 로그인 안했을 때: 로그인 안내 -->
 		    <div th:unless="${isAuthenticated}" class="comment-notice">

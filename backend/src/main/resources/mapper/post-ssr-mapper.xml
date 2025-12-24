@@ -319,4 +319,36 @@
 		UPDATED_AT = SYSDATE
 		WHERE POST_ID = #{postId}
 	</update>
+	
+	<!-- ✅ 댓글 작성 -->
+  <insert id="insertComment" parameterType="kr.co.community.backend.post.dto.CommentDTO">
+    <selectKey keyProperty="commentId" resultType="long" order="BEFORE">
+      SELECT COMMENTS_SEQ.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO COMMENTS (
+      COMMENT_ID,
+      POST_ID,
+      AUTHOR_ID,
+      PARENT_COMMENT_ID,
+      CONTENT,
+      IS_DELETED,
+      CREATED_AT
+    ) VALUES (
+      #{commentId},
+      #{postId},
+      #{authorId},
+      #{parentCommentId},
+      #{content},
+      'N',
+      SYSDATE
+    )
+  </insert>
+
+  <!-- ✅ 게시글의 댓글 수 증가 -->
+  <update id="incrementCommentCount">
+    UPDATE POST
+    SET COMMENT_COUNT = COMMENT_COUNT + 1
+    WHERE POST_ID = #{postId}
+  </update>
+	
 </mapper>
