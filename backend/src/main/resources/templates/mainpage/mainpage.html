@@ -80,8 +80,7 @@
         <a href="javascript:void(0);" class="mainpage-more-link" onclick="toggleNotices()">더보기 ↓</a>
       </div>
 
-      <div class="mainpage-notice-list" id="noticeList">
-        <div class="mainpage-notice-item"
+      <div class="mainpage-notice-item"
 		     th:each="notice, stat : ${noticeList}"
 		     th:classappend="${stat.index >= 5} ? 'mainpage-notice-hidden' : ''"
 		     th:onclick="|location.href='/notice/' + ${notice.noticeId}|"
@@ -89,9 +88,8 @@
 		  <span class="mainpage-notice-badge" th:text="${notice.noticeType}">공지</span>
 		  <span class="mainpage-notice-title" th:text="${notice.title}">제목</span>
 		  <span class="mainpage-notice-date"
-      th:text="${#dates.format(notice.createdAt, 'yyyy. MM. dd.')}">날짜</span>
+		        th:text="${#dates.format(notice.createdAt, 'yyyy. MM. dd.')}">날짜</span>
 		</div>
-      </div>
     </section>
 
     <!-- 인기 게시글 영역 (로그인 여부 상관없이 표시) -->
