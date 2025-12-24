@@ -180,16 +180,6 @@ const Settings = () => {
 
   return (
     <div className="settings-page">
-      <div className="settings-sidebar">
-        <button className="settings-menu-item active">프로필</button>
-        <button className="settings-menu-item" onClick={goToAlerts}>
-          알림
-        </button>
-        <button className="settings-menu-item" onClick={goToPrivacy}>
-          개인정보
-        </button>
-      </div>
-
       <div className="settings-content">
         <div className="settings-header">
           <h2>프로필 설정</h2>
