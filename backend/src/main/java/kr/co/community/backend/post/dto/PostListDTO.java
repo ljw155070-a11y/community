@@ -23,4 +23,6 @@ public class PostListDTO {
     private Integer commentCount;
 
     private Date createdAt;
+    // ✅ 추가: 목록용 첫 이미지
+    private String firstImageSaveName;
 }
