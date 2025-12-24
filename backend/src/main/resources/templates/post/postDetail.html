@@ -1062,6 +1062,11 @@
     const postId = /*[[${post.postId}]]*/ 1;
     const isAuthenticated = /*[[${isAuthenticated}]]*/ false;
     
+    // ✅ 디버깅 로그 추가
+    console.log('postId:', postId);
+    console.log('isAuthenticated:', isAuthenticated);
+    console.log('isAuthenticated type:', typeof isAuthenticated);
+    
     // 좋아요 토글
     function toggleLike() {
         // ✅ 로그인 체크

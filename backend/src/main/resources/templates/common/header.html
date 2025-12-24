@@ -106,10 +106,17 @@
             if (confirm('로그아웃 하시겠습니까?')) {
                 fetch('/api/member/logout', {
                     method: 'POST',
-                    credentials: 'include'
+                    credentials: 'include',
+                   	headers: { 
+                        'Content-Type': 'application/json'
+                    }
                 })
-                .then(res => res.json())
+                .then(res => {
+                    console.log('응답 상태:', res.status);
+                    return res.json();
+                })
                 .then(data => {
+                    console.log('응답 데이터:', data);
                     if (data && data.success) {
                         alert('로그아웃 되었습니다.');
                         window.location.href = '/mainpage';
