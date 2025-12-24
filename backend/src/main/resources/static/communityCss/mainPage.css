@@ -11,7 +11,7 @@
 body {
     font-family: 'Noto Sans KR', sans-serif;
     color: #333;
-    background: #f8f9fa;
+    background: #fffbf5;
 }
 
 /* 사이드 광고 영역 */
@@ -30,20 +30,20 @@ body {
     top: 150px;
     width: 160px;
     height: 600px;
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 12px;
+    background: #fff;
+    border: 2px dashed #ffd6a5;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: auto;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(255, 160, 100, 0.1);
 }
 
 .mainpage-side-ad p {
-    color: #999;
+    color: #ffb380;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .mainpage-side-ad-left {
@@ -63,14 +63,14 @@ body {
 /* 메인 배너 영역 */
 .mainpage-banner {
     position: relative;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
     color: white;
-    padding: 120px 20px;
+    padding: 100px 20px;
     text-align: center;
     max-width: 1200px;
     margin: 20px auto;
-    border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+    border-radius: 30px;
+    box-shadow: 0 10px 40px rgba(255, 160, 100, 0.2);
     overflow: hidden;
 }
 
@@ -87,7 +87,7 @@ body {
 .mainpage-banner-circle {
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .mainpage-circle-1 {
@@ -118,15 +118,15 @@ body {
 
 .mainpage-banner-tag {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
     color: white;
     padding: 8px 20px;
-    border-radius: 20px;
+    border-radius: 25px;
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     margin-bottom: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
 .mainpage-banner-content h1 {
@@ -151,7 +151,7 @@ body {
 
 .mainpage-btn-primary {
     background: white;
-    color: #667eea;
+    color: #ff8a5b;
     padding: 16px 36px;
     border: none;
     border-radius: 50px;
@@ -159,7 +159,7 @@ body {
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(255, 138, 91, 0.2);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -171,8 +171,8 @@ body {
 }
 
 .mainpage-btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 138, 91, 0.3);
 }
 
 .mainpage-btn-primary:hover .mainpage-btn-arrow {
@@ -192,8 +192,8 @@ body {
 }
 
 .mainpage-btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
 }
 
 /* 커뮤니티 특징 영역 */
@@ -203,19 +203,19 @@ body {
     background: white;
     max-width: 1200px;
     margin: 20px auto;
-    border-radius: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 30px;
+    box-shadow: 0 4px 20px rgba(255, 160, 100, 0.1);
 }
 
 .mainpage-features-tag {
     display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
     color: white;
     padding: 8px 20px;
-    border-radius: 20px;
+    border-radius: 25px;
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     margin-bottom: 20px;
 }
 
@@ -238,28 +238,28 @@ body {
     flex: 1;
     max-width: 350px;
     padding: 40px 30px;
-    background: white;
-    border-radius: 20px;
+    background: #fffbf5;
+    border-radius: 25px;
     transition: all 0.3s;
-    border: 2px solid #f0f0f0;
+    border: 2px solid #ffe8d6;
 }
 
 .mainpage-feature-item:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-    border-color: #667eea;
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(255, 160, 100, 0.15);
+    border-color: #ffd6a5;
 }
 
 .mainpage-feature-icon-wrapper {
     width: 80px;
     height: 80px;
     margin: 0 auto 25px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 20px;
+    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
+    border-radius: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 20px rgba(255, 160, 100, 0.2);
 }
 
 .mainpage-feature-icon {
@@ -278,6 +278,7 @@ body {
     color: #666;
     line-height: 1.7;
 }
+
 /* 공지사항 영역 */
 .mainpage-notices {
     padding: 50px 20px;
@@ -314,20 +315,20 @@ body {
     gap: 15px;
     padding: 20px;
     background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 12px;
+    border: 2px solid #ffe8d6;
+    border-radius: 20px;
     transition: all 0.3s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 10px rgba(255, 160, 100, 0.05);
 }
 
 .mainpage-notice-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    border-color: #667eea;
+    box-shadow: 0 4px 15px rgba(255, 160, 100, 0.1);
+    border-color: #ffd6a5;
 }
 
 .mainpage-notice-badge {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
     color: white;
     padding: 6px 16px;
     border-radius: 20px;
@@ -368,7 +369,7 @@ body {
 }
 
 .mainpage-more-link {
-    color: #667eea;
+    color: #ff8a5b;
     text-decoration: none;
     font-size: 16px;
     font-weight: 600;
@@ -377,7 +378,7 @@ body {
 }
 
 .mainpage-more-link:hover {
-    color: #764ba2;
+    color: #ff6b3d;
 }
 
 /* 3개 칸 컨테이너 */
@@ -390,15 +391,16 @@ body {
 /* 각 섹션 */
 .mainpage-top-section {
     background: white;
-    border-radius: 15px;
+    border-radius: 25px;
     padding: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(255, 160, 100, 0.08);
     transition: all 0.3s;
+    border: 2px solid #ffe8d6;
 }
 
 .mainpage-top-section:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 20px rgba(255, 160, 100, 0.12);
 }
 
 /* 섹션 제목 */
@@ -406,7 +408,7 @@ body {
     font-size: 18px;
     margin-bottom: 20px;
     padding-bottom: 12px;
-    border-bottom: 3px solid #e5e7eb;
+    border-bottom: 3px solid #ffe8d6;
     font-weight: 700;
 }
 
@@ -422,15 +424,16 @@ body {
     display: flex;
     gap: 12px;
     padding: 15px;
-    background: #f8f9fa;
-    border-radius: 10px;
+    background: #fffbf5;
+    border-radius: 15px;
     transition: all 0.3s;
     cursor: pointer;
+    border: 1px solid #fff4e6;
 }
 
 .mainpage-top-item:hover {
-    background: #e9ecef;
-    transform: translateX(5px);
+    background: #fff4e6;
+    transform: translateX(3px);
 }
 
 /* 순위 표시 */
@@ -440,7 +443,7 @@ body {
     justify-content: center;
     width: 32px;
     height: 32px;
-    background: #667eea;
+    background: #ffb88c;
     color: white;
     border-radius: 50%;
     font-weight: 700;
@@ -456,7 +459,7 @@ body {
 /* 카테고리 태그 */
 .mainpage-post-tag {
     display: inline-block;
-    background: #667eea;
+    background: #ffb88c;
     color: white;
     padding: 4px 12px;
     border-radius: 15px;
@@ -508,17 +511,17 @@ body {
 /* 각 카테고리 카드 */
 .mainpage-board-card {
     background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 15px;
+    border: 2px solid #ffe8d6;
+    border-radius: 25px;
     padding: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(255, 160, 100, 0.08);
     transition: all 0.3s;
 }
 
 .mainpage-board-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    border-color: #667eea;
+    box-shadow: 0 8px 25px rgba(255, 160, 100, 0.15);
+    border-color: #ffd6a5;
 }
 
 .mainpage-board-card-title {
@@ -526,8 +529,8 @@ body {
     font-weight: 700;
     margin-bottom: 20px;
     padding-bottom: 12px;
-    border-bottom: 3px solid #667eea;
-    color: #667eea;
+    border-bottom: 3px solid #ffb88c;
+    color: #ff8a5b;
 }
 
 .mainpage-board-card-list {
@@ -538,14 +541,15 @@ body {
 
 .mainpage-board-card-item {
     padding: 12px;
-    background: #f8f9fa;
-    border-radius: 8px;
+    background: #fffbf5;
+    border-radius: 12px;
     transition: all 0.3s;
     cursor: pointer;
+    border: 1px solid #fff4e6;
 }
 
 .mainpage-board-card-item:hover {
-    background: #e9ecef;
+    background: #fff4e6;
     transform: translateX(3px);
 }
 
@@ -577,14 +581,14 @@ body {
 
 /* 하단 배너 */
 .mainpage-bottom-banner {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
     color: white;
     padding: 80px 20px;
     text-align: center;
     max-width: 1200px;
     margin: 20px auto;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+    border-radius: 30px;
+    box-shadow: 0 10px 40px rgba(255, 160, 100, 0.2);
 }
 
 .mainpage-bottom-content h2 {
@@ -601,7 +605,7 @@ body {
 
 .mainpage-btn-join {
     background: white;
-    color: #667eea;
+    color: #ff8a5b;
     padding: 15px 50px;
     border: none;
     border-radius: 50px;
@@ -609,54 +613,54 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(255, 138, 91, 0.2);
 }
 
 .mainpage-btn-join:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 20px rgba(255, 138, 91, 0.3);
 }
 
 /* 순위별 색상 - 조회수 TOP */
 .mainpage-top-section:nth-child(1) .mainpage-rank {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
 }
 
 .mainpage-top-section:nth-child(1) .mainpage-post-tag {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
 }
 
 .mainpage-top-section:nth-child(1) .mainpage-section-title {
-    color: #667eea;
-    border-bottom: 3px solid #667eea;
+    color: #ff8a5b;
+    border-bottom: 3px solid #ffd6a5;
 }
 
 /* 순위별 색상 - 좋아요 TOP */
 .mainpage-top-section:nth-child(2) .mainpage-rank {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
 }
 
 .mainpage-top-section:nth-child(2) .mainpage-post-tag {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
 }
 
 .mainpage-top-section:nth-child(2) .mainpage-section-title {
-    color: #f5576c;
-    border-bottom: 3px solid #f5576c;
+    color: #ff6b9d;
+    border-bottom: 3px solid #ffd6e7;
 }
 
 /* 순위별 색상 - 댓글 TOP */
 .mainpage-top-section:nth-child(3) .mainpage-rank {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
 }
 
 .mainpage-top-section:nth-child(3) .mainpage-post-tag {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
 }
 
 .mainpage-top-section:nth-child(3) .mainpage-section-title {
-    color: #4facfe;
-    border-bottom: 3px solid #4facfe;
+    color: #6dd5ed;
+    border-bottom: 3px solid #d4f1f4;
 }
 
  /* =========================
@@ -685,8 +689,8 @@ body {
   z-index: 1;
   margin: 0 0 20px;
   text-align: center;
-  color: #667eea;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  color: #ff8a5b;
+  text-shadow: 0 4px 20px rgba(255, 138, 91, 0.3);
   font-size: 42px;
   font-weight: 900;
   letter-spacing: -1px;
@@ -707,12 +711,12 @@ body {
   padding: 14px 32px;
   font-size: 18px;
   font-weight: 700;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
   color: white;
   border: none;
   border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+  box-shadow: 0 10px 30px rgba(255, 154, 158, 0.3);
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -720,7 +724,7 @@ body {
 
 .applegame #startBtn:hover{
   transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
+  box-shadow: 0 15px 40px rgba(255, 154, 158, 0.4);
 }
 
 .applegame #startBtn:active{ 
@@ -730,15 +734,15 @@ body {
 .applegame #score{
   font-family: 'Do Hyeon', sans-serif;
   font-size: 28px;
-    color: #667eea;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  color: #ff8a5b;
+  text-shadow: 0 2px 10px rgba(255, 138, 91, 0.2);
   user-select: none;
   padding: 12px 24px;
   border-radius: 50px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ffd6a5;
+  box-shadow: 0 8px 32px rgba(255, 160, 100, 0.1);
   min-width: 160px;
   text-align: center;
   font-weight: 900;
@@ -757,21 +761,21 @@ body {
   transform: translateY(-50%);
   height: 16px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border-radius: 50px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+  border: 2px solid #ffd6a5;
+  box-shadow: inset 0 2px 10px rgba(255, 160, 100, 0.1);
 }
 
 .applegame #timerBarFill{
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(90deg, #a8edea 0%, #fed6e3 100%);
   border-radius: 50px;
   transition: width 1s linear;
-  box-shadow: 0 0 20px rgba(79, 172, 254, 0.6);
+  box-shadow: 0 0 20px rgba(168, 237, 234, 0.4);
   position: relative;
 }
 
@@ -805,10 +809,10 @@ body {
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
-  border: 3px solid rgba(255, 255, 255, 0.5);
+  border: 3px solid #ffe8d6;
   border-radius: 30px;
   padding: 30px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 30px 80px rgba(255, 160, 100, 0.2);
   overflow: visible;
   min-height: 520px;
 }
@@ -820,11 +824,11 @@ body {
   display: grid;
   grid-template-columns: repeat(17, 30px);
   gap: 5px;
-  background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+  background: linear-gradient(135deg, #fff4e6 0%, #ffe8d6 100%);
   padding: 25px;
-  border: 4px solid rgba(255, 255, 255, 0.8);
+  border: 4px solid #ffd6a5;
   border-radius: 20px;
-  box-shadow: inset 0 0 30px rgba(0,0,0,0.1);
+  box-shadow: inset 0 0 30px rgba(255, 160, 100, 0.1);
   min-height: 420px;
 }
 
@@ -858,7 +862,7 @@ body {
   font-size: 26px;
   pointer-events: none;
   z-index: 0;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 2px 4px rgba(255, 138, 91, 0.3));
 }
 
 .applegame .apple span{
@@ -880,15 +884,16 @@ body {
 
 .applegame #selectionBox{
   position: fixed;
-  border: 3px dashed #667eea;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+  border: 3px dashed #ff8a5b;
+  background: linear-gradient(135deg, rgba(255, 138, 91, 0.2), rgba(255, 154, 118, 0.2));
   backdrop-filter: blur(5px);
   pointer-events: none;
-   display: none !important;
+  display: none !important;
   z-index: 1000;
   border-radius: 10px;
-  box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 0 20px rgba(255, 138, 91, 0.3);
 }
+
 @keyframes vanish{
   0% { 
     transform: scale(1) rotate(0deg); 
@@ -943,7 +948,7 @@ body {
 }
 
 .applegame .scoreLogItem{
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.95), rgba(16, 185, 129, 0.95));
+  background: linear-gradient(135deg, rgba(168, 237, 234, 0.95), rgba(254, 214, 227, 0.95));
   backdrop-filter: blur(10px);
   border: 3px solid rgba(255, 255, 255, 0.8);
   border-radius: 50px;
@@ -956,14 +961,14 @@ body {
   align-items: center;
   gap: 10px;
   white-space: nowrap;
-  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 10px 30px rgba(168, 237, 234, 0.3);
   font-weight: 900;
 }
 
 .applegame .scoreLogItem.blue{
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.95));
+  background: linear-gradient(135deg, rgba(255, 184, 140, 0.95), rgba(255, 154, 118, 0.95));
   border: 3px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 10px 30px rgba(255, 184, 140, 0.3);
 }
 
 .applegame .scoreLogPoints{ 
@@ -1035,18 +1040,18 @@ body {
   place-items: center;
   z-index: 5000;
   padding: 20px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(255, 251, 245, 0.95);
   backdrop-filter: blur(15px);
   border-radius: 30px;
 }
 
 .applegame-overlay-card{
   width: min(640px, 100%);
-  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,251,245,0.9));
   backdrop-filter: blur(20px);
-  border: 3px solid rgba(255, 255, 255, 0.5);
+  border: 3px solid #ffe8d6;
   border-radius: 30px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 30px 80px rgba(255, 160, 100, 0.2);
   padding: 30px;
   text-align: left;
   position: relative;
@@ -1059,13 +1064,13 @@ body {
   height: 36px;
   padding: 0 20px;
   border-radius: 50px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #ffb88c, #ff9a76);
   color: #fff;
   font-weight: 900;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 5px 15px rgba(255, 184, 140, 0.3);
 }
 
 .applegame-overlay-title{
@@ -1073,12 +1078,12 @@ body {
   font-size: 24px;
   font-weight: 900;
   letter-spacing: -0.5px;
-  color: #1f2937;
+  color: #333;
 }
 
 .applegame-overlay-desc{
   margin: 0 0 20px;
-  color: #6b7280;
+  color: #666;
   font-weight: 600;
   line-height: 1.7;
   font-size: 16px;
@@ -1092,16 +1097,16 @@ body {
 }
 
 .applegame-rule{
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  border: 2px solid #fbbf24;
+  background: linear-gradient(135deg, #fff4e6, #ffe8d6);
+  border: 2px solid #ffd6a5;
   border-radius: 20px;
   padding: 15px;
-  box-shadow: 0 5px 15px rgba(251, 191, 36, 0.2);
+  box-shadow: 0 5px 15px rgba(255, 214, 165, 0.2);
 }
 
 .applegame-rule-k{
   font-size: 13px;
-  color: #92400e;
+  color: #ff8a5b;
   font-weight: 900;
   margin-bottom: 8px;
   text-transform: uppercase;
@@ -1110,7 +1115,7 @@ body {
 
 .applegame-rule-v{
   font-size: 14px;
-  color: #78350f;
+  color: #666;
   font-weight: 700;
   line-height: 1.5;
 }
@@ -1127,12 +1132,12 @@ body {
   padding: 0 30px;
   border-radius: 50px;
   border: none;
-  background: linear-gradient(135deg, #f093fb, #f5576c);
+  background: linear-gradient(135deg, #ff9a9e, #fecfef);
   color: #fff;
   font-weight: 900;
   font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+  box-shadow: 0 10px 30px rgba(255, 154, 158, 0.3);
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -1140,16 +1145,16 @@ body {
 
 .applegame-overlay-primary:hover{
   transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
+  box-shadow: 0 15px 40px rgba(255, 154, 158, 0.4);
 }
 
 .applegame-overlay-ghost{
   height: 50px;
   padding: 0 24px;
   border-radius: 50px;
-  border: 2px solid #d1d5db;
-  background: rgba(255, 255, 255, 0.5);
-  color: #6b7280;
+  border: 2px solid #ffd6a5;
+  background: rgba(255, 251, 245, 0.5);
+  color: #ff8a5b;
   font-weight: 800;
   font-size: 15px;
   cursor: pointer;
@@ -1157,14 +1162,14 @@ body {
 }
 
 .applegame-overlay-ghost:hover{
-  background: rgba(255, 255, 255, 0.8);
-  border-color: #9ca3af;
+  background: rgba(255, 251, 245, 0.8);
+  border-color: #ffb88c;
 }
 
 .applegame-overlay-foot{
   margin-top: 20px;
   font-size: 13px;
-  color: #9ca3af;
+  color: #999;
   font-weight: 600;
   text-align: center;
 }
@@ -1173,11 +1178,10 @@ body {
    반응형 - 태블릿 (768px 이하)
 ========================= */
 @media (max-width: 768px) {
-    /* 배너 */
     .mainpage-banner {
         padding: 60px 20px;
         margin: 10px;
-        border-radius: 15px;
+        border-radius: 20px;
     }
     
     .mainpage-banner-content h1 {
@@ -1199,11 +1203,10 @@ body {
         max-width: 300px;
     }
     
-    /* 특징 영역 */
     .mainpage-features {
         padding: 50px 20px;
         margin: 10px;
-        border-radius: 15px;
+        border-radius: 20px;
     }
     
     .mainpage-features h2 {
@@ -1221,7 +1224,6 @@ body {
         padding: 25px;
     }
     
-    /* 공지사항 */
     .mainpage-notices {
         padding: 30px 15px;
     }
@@ -1248,7 +1250,6 @@ body {
         font-size: 12px;
     }
     
-    /* 인기 게시글 */
     .mainpage-posts {
         padding: 30px 15px;
     }
@@ -1288,7 +1289,6 @@ body {
         font-size: 12px;
     }
     
-    /* 카테고리별 게시판 */
     .mainpage-category-boards {
         padding: 40px 15px;
     }
@@ -1310,11 +1310,10 @@ body {
         font-size: 18px;
     }
     
-    /* 하단 배너 */
     .mainpage-bottom-banner {
         padding: 60px 20px;
         margin: 10px;
-        border-radius: 15px;
+        border-radius: 20px;
     }
     
     .mainpage-bottom-content h2 {
@@ -1331,11 +1330,7 @@ body {
     }
 }
 
-/* =========================
-   반응형 - 모바일 (480px 이하)
-========================= */
 @media (max-width: 480px) {
-    /* 배너 */
     .mainpage-banner {
         padding: 40px 15px;
     }
@@ -1349,7 +1344,6 @@ body {
         margin-bottom: 30px;
     }
     
-    /* 특징 영역 */
     .mainpage-features {
         padding: 40px 15px;
     }
@@ -1375,7 +1369,6 @@ body {
         font-size: 14px;
     }
     
-    /* 공지사항 */
     .mainpage-notices {
         padding: 20px 10px;
     }
@@ -1398,7 +1391,6 @@ body {
         margin-top: 8px;
     }
     
-    /* 인기 게시글 */
     .mainpage-posts {
         padding: 20px 10px;
     }
@@ -1441,7 +1433,6 @@ body {
         gap: 8px;
     }
     
-    /* 카테고리별 게시판 */
     .mainpage-category-boards {
         padding: 30px 10px;
     }
@@ -1468,7 +1459,6 @@ body {
         font-size: 11px;
     }
     
-    /* 하단 배너 */
     .mainpage-bottom-banner {
         padding: 40px 15px;
     }
@@ -1489,68 +1479,7 @@ body {
         font-size: 15px;
     }
 }
-/* 반응형 추가 */
-@media (max-width: 768px) {
-    .mainpage-banner {
-        padding: 80px 20px;
-    }
-    
-    .mainpage-banner-content h1 {
-        font-size: 32px;
-    }
-    
-    .mainpage-banner-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .mainpage-btn-primary,
-    .mainpage-btn-secondary {
-        width: 100%;
-        max-width: 280px;
-        justify-content: center;
-    }
-    
-    .mainpage-features {
-        padding: 60px 20px;
-    }
-    
-    .mainpage-features h2 {
-        font-size: 28px;
-    }
-    
-    .mainpage-feature-list {
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    .mainpage-feature-item {
-        max-width: 100%;
-    }
-}
 
-@media (max-width: 480px) {
-    .mainpage-banner {
-        padding: 60px 15px;
-    }
-    
-    .mainpage-banner-content h1 {
-        font-size: 26px;
-    }
-    
-    .mainpage-banner-content p {
-        font-size: 15px;
-    }
-    
-    .mainpage-features {
-        padding: 50px 15px;
-    }
-    
-    .mainpage-features h2 {
-        font-size: 24px;
-    }
-}
-/* 사과게임 반응형 (기존 코드 유지) */
 @media (max-width: 520px){
   .applegame{ min-height: 920px; padding: 30px 16px 50px; }
   .applegame h1{ font-size: 32px; }

@@ -4,15 +4,13 @@
     <meta charset="UTF-8" />
     <title>커뮤니티 메인</title>
     <link rel="stylesheet" href="/communityCss/mainPage.css" />
-
-    <!-- 사과게임 점수용 폰트 -->
     <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet" />
-
   </head>
 
   <body>
     <th:block th:include="common/header"></th:block>
-	<!-- 사이드 광고 영역 (좌우) -->
+
+    <!-- 사이드 광고 영역 (좌우) -->
     <div class="mainpage-side-ads">
         <div class="mainpage-side-ad mainpage-side-ad-left">
             <p>광고 영역</p>
@@ -21,76 +19,27 @@
             <p>광고 영역</p>
         </div>
     </div>
-		   <!-- 메인 배너 영역 (로그인 안 한 경우만 표시) -->
-		<section class="mainpage-banner" th:if="${!isLoggedIn}">
-		  <div class="mainpage-banner-content">
-		    <div class="mainpage-banner-tag">COMMUNITY</div>
-		    <h1>함께 소통하고 성장하는<br>커뮤니티</h1>
-		    <p>다양한 주제로 대화하고, 지식을 공유하며, 새로운 친구를 만나보세요</p>
-		    <div class="mainpage-banner-buttons">
-		      <button class="mainpage-btn-primary" onclick="location.href='/app/login'">
-		        로그인
-		        <span class="mainpage-btn-arrow">→</span>
-		      </button>
-		      <button class="mainpage-btn-secondary" onclick="location.href='/app/signup'">
-		        처음이신가요?
-		      </button>
-		    </div>
-		  </div>
-		  <div class="mainpage-banner-decoration">
-		    <div class="mainpage-banner-circle mainpage-circle-1"></div>
-		    <div class="mainpage-banner-circle mainpage-circle-2"></div>
-		    <div class="mainpage-banner-circle mainpage-circle-3"></div>
-		  </div>
-		</section>
-		
-		<!-- 커뮤니티 특징 소개 (로그인 안 한 경우만 표시) -->
-		<section class="mainpage-features" th:if="${!isLoggedIn}">
-		  <div class="mainpage-features-tag">FEATURES</div>
-		  <h2>커뮤니티의 특징</h2>
-		  <div class="mainpage-feature-list">
-		    <div class="mainpage-feature-item">
-		      <div class="mainpage-feature-icon-wrapper">
-		        <div class="mainpage-feature-icon">💬</div>
-		      </div>
-		      <h3>자유로운 소통</h3>
-		      <p>다양한 주제로 자유롭게 대화하고 의견을 나눠보세요</p>
-		    </div>
-		    <div class="mainpage-feature-item">
-		      <div class="mainpage-feature-icon-wrapper">
-		        <div class="mainpage-feature-icon">👥</div>
-		      </div>
-		      <h3>활발한 커뮤니티</h3>
-		      <p>활발하게 질문과 답변 등을 올리는 커뮤니티</p>
-		    </div>
-		    <div class="mainpage-feature-item">
-		      <div class="mainpage-feature-icon-wrapper">
-		        <div class="mainpage-feature-icon">📈</div>
-		      </div>
-		      <h3>트렌딩 콘텐츠</h3>
-		      <p>인기 있는 게시글과 핫한 토픽을 만들어요</p>
-		    </div>
-		  </div>
-		</section>
 
-    <!-- 공지사항 영역 (로그인 한 경우 맨 위, 안 한 경우 인기게시글 아래) -->
-    <section class="mainpage-notices" th:classappend="${isLoggedIn} ? 'mainpage-logged-in' : ''">
-      <div class="mainpage-notices-header">
-        <h2>공지사항</h2>
-        <a href="javascript:void(0);" class="mainpage-more-link" onclick="toggleNotices()">더보기 ↓</a>
+    <!-- 메인 배너 영역 (로그인 안 한 경우만 표시) -->
+    <section class="mainpage-banner" th:if="${!isLoggedIn}">
+      <div class="mainpage-banner-content">
+        <div class="mainpage-banner-tag">COMMUNITY</div>
+        <h1>함께 소통하고 성장하는<br>커뮤니티</h1>
+        <p>다양한 주제로 대화하고, 지식을 공유하며, 새로운 친구를 만나보세요</p>
+        <div class="mainpage-banner-buttons">
+          <button class="mainpage-btn-primary" onclick="location.href='/app/login'">
+            로그인
+            <span class="mainpage-btn-arrow">→</span>
+          </button>
+          <button class="mainpage-btn-secondary" onclick="location.href='/app/signup'">
+            처음이신가요?
+          </button>
+        </div>
       </div>
-
-      <div class="mainpage-notice-list" id="noticeList">
-        <div class="mainpage-notice-item"
-		     th:each="notice, stat : ${noticeList}"
-		     th:classappend="${stat.index >= 5} ? 'mainpage-notice-hidden' : ''"
-		     th:onclick="|location.href='/notice/' + ${notice.noticeId}|"
-		     style="cursor: pointer;">
-		  <span class="mainpage-notice-badge" th:text="${notice.noticeType}">공지</span>
-		  <span class="mainpage-notice-title" th:text="${notice.title}">제목</span>
-		  <span class="mainpage-notice-date"
-      th:text="${#dates.format(notice.createdAt, 'yyyy. MM. dd.')}">날짜</span>
-		</div>
+      <div class="mainpage-banner-decoration">
+        <div class="mainpage-banner-circle mainpage-circle-1"></div>
+        <div class="mainpage-banner-circle mainpage-circle-2"></div>
+        <div class="mainpage-banner-circle mainpage-circle-3"></div>
       </div>
     </section>
 
@@ -164,37 +113,37 @@
       </div>
     </section>
 
-   <!-- 로그인 한 경우: 카테고리별 게시판 -->
-<section class="mainpage-category-boards" th:if="${isLoggedIn}">
-  <div class="mainpage-boards-header">
-    <h2>카테고리별 게시판</h2>
-  </div>
+    <!-- 카테고리별 게시판 (로그인 여부 상관없이 표시) -->
+    <section class="mainpage-category-boards">
+      <div class="mainpage-boards-header">
+        <h2>카테고리별 게시판</h2>
+      </div>
 
-  <div class="mainpage-boards-container">
-    <div class="mainpage-board-card" th:each="category : ${categories}">
-      <h3 class="mainpage-board-card-title" th:text="${category.categoryName}">카테고리</h3>
-      <div class="mainpage-board-card-list">
-        <div class="mainpage-board-card-item"
-             th:each="post : ${categoryPosts.get(category.categoryName)}"
-             th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
-             style="cursor: pointer;">
-          <div class="mainpage-board-card-content">
-            <p class="mainpage-board-card-post-title" th:text="${post.title}">제목</p>
-            <div class="mainpage-board-card-info">
-			  <span th:text="${post.nickname}">작성자</span>
-			  <span th:text="${#dates.format(post.createdAt, 'MM.dd')}">날짜</span>
-			</div>
+      <div class="mainpage-boards-container">
+        <div class="mainpage-board-card" th:each="category : ${categories}">
+          <h3 class="mainpage-board-card-title" th:text="${category.categoryName}">카테고리</h3>
+          <div class="mainpage-board-card-list">
+            <div class="mainpage-board-card-item"
+                 th:each="post : ${categoryPosts.get(category.categoryName)}"
+                 th:onclick="|location.href='/board/postDetail/' + ${post.postId}|"
+                 style="cursor: pointer;">
+              <div class="mainpage-board-card-content">
+                <p class="mainpage-board-card-post-title" th:text="${post.title}">제목</p>
+                <div class="mainpage-board-card-info">
+                  <span th:text="${post.nickname}">작성자</span>
+                  <span th:text="${#dates.format(post.createdAt, 'MM.dd')}">날짜</span>
+                </div>
+              </div>
+            </div>
+            
+            <div th:if="${#lists.isEmpty(categoryPosts.get(category.categoryName))}" 
+                 class="mainpage-board-card-empty">
+              게시글이 없습니다.
+            </div>
           </div>
         </div>
-        
-        <div th:if="${#lists.isEmpty(categoryPosts.get(category.categoryName))}" 
-             class="mainpage-board-card-empty">
-          게시글이 없습니다.
-        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- 사과게임 섹션 -->
     <section class="applegame" id="appleTop">
@@ -251,11 +200,11 @@
             </div>
           </div>
 
-         <div id="game" aria-label="게임 보드">
-		      <div id="scoreLogs"></div>
-		    </div>
-		
-		    <div id="selectionBox"></div> <!-- 여기로 다시 이동 -->
+          <div id="game" aria-label="게임 보드">
+            <div id="scoreLogs"></div>
+          </div>
+
+          <div id="selectionBox"></div>
         </div>
       </div>
     </section>
@@ -272,39 +221,27 @@
     <th:block th:include="common/footer"></th:block>
 
     <script th:inline="javascript">
-      /* =========================
-         카테고리 데이터 (Thymeleaf에서 전달)
-      ========================= */
       const categoryPostsData = /*[[${categoryPosts}]]*/ {};
 
-      /* =========================
-         카테고리 토글 함수
-      ========================= */
       function toggleCategory(button) {
         const categoryName = button.dataset.categoryName;
         const categoryContent = document.getElementById('categoryContent');
         const categoryTitle = document.getElementById('categoryTitle');
         const categoryPostsDiv = document.getElementById('categoryPosts');
 
-        // 같은 버튼 다시 클릭하면 닫기
         if (categoryContent.style.display === 'block' && categoryTitle.textContent === categoryName) {
           categoryContent.style.display = 'none';
           button.classList.remove('active');
           return;
         }
 
-        // 모든 버튼 비활성화
         document.querySelectorAll('.mainpage-category-btn').forEach(btn => {
           btn.classList.remove('active');
         });
 
-        // 현재 버튼 활성화
         button.classList.add('active');
-
-        // 카테고리 제목 설정
         categoryTitle.textContent = categoryName;
 
-        // 게시글 목록 표시
         const posts = categoryPostsData[categoryName] || [];
         categoryPostsDiv.innerHTML = '';
 
@@ -335,13 +272,9 @@
           });
         }
 
-        // 콘텐츠 표시
         categoryContent.style.display = 'block';
       }
 
-      /* =========================
-         메인 페이지 토글
-      ========================= */
       function togglePosts() {
         const sections = document.querySelectorAll('.mainpage-top-section');
         const moreLink = document.querySelector('.mainpage-posts .mainpage-more-link');
@@ -361,24 +294,6 @@
         });
       }
 
-      function toggleNotices() {
-        const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
-        const moreLink = document.querySelector('.mainpage-notices .mainpage-more-link');
-
-        if (!hiddenNotices.length) return;
-
-        if (hiddenNotices[0].style.display === 'none' || hiddenNotices[0].style.display === '') {
-          hiddenNotices.forEach((notice) => notice.style.display = 'flex');
-          moreLink.textContent = '접기 ↑';
-        } else {
-          hiddenNotices.forEach((notice) => notice.style.display = 'none');
-          moreLink.textContent = '더보기 ↓';
-        }
-      }
-
-      /* =========================
-         사과게임 로직
-      ========================= */
       (function(){
         const game = document.getElementById('game');
         const scoreDisplay = document.getElementById('score');
@@ -454,43 +369,41 @@
         }
         
         function renderGrid() {
-        	  const keepLogs = scoreLogs;
-        	  game.innerHTML = '';
+          const keepLogs = scoreLogs;
+          game.innerHTML = '';
 
-        	  for (let r = 0; r < ROWS; r++) {
-        	    for (let c = 0; c < COLS; c++) {
-        	      const apple = applesGrid[r][c];
-        	      if (apple) {
-        	        game.appendChild(apple);
-        	      } else {
-        	        const empty = document.createElement('div');
-        	        empty.style.width = '30px';
-        	        empty.style.height = '30px';
-        	        game.appendChild(empty);
-        	      }
-        	    }
-        	  }
+          for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+              const apple = applesGrid[r][c];
+              if (apple) {
+                game.appendChild(apple);
+              } else {
+                const empty = document.createElement('div');
+                empty.style.width = '30px';
+                empty.style.height = '30px';
+                game.appendChild(empty);
+              }
+            }
+          }
 
-        	  if (!game.contains(keepLogs)) game.appendChild(keepLogs);
-        	}
-
+          if (!game.contains(keepLogs)) game.appendChild(keepLogs);
+        }
 
         function addScoreLog(points) {
-        	  if(points <= 0) return;
+          if(points <= 0) return;
 
-        	  // 이전 로그 전부 삭제
-        	  scoreLogs.innerHTML = '';
+          scoreLogs.innerHTML = '';
 
-        	  const logItem = document.createElement('div');
-        	  logItem.className = 'scoreLogItem';
-        	  if (points >= 6) logItem.classList.add('blue');
+          const logItem = document.createElement('div');
+          logItem.className = 'scoreLogItem';
+          if (points >= 6) logItem.classList.add('blue');
 
-        	  logItem.innerHTML =
-        	    `<span class="scoreLogPoints">+${points}</span>` +
-        	    `<span class="scoreLogApple">🍎</span>`;
+          logItem.innerHTML =
+            `<span class="scoreLogPoints">+${points}</span>` +
+            `<span class="scoreLogApple">🍎</span>`;
 
-        	  scoreLogs.appendChild(logItem);
-        	}
+          scoreLogs.appendChild(logItem);
+        }
 
         function updateScore() {
           scoreDisplay.textContent = 'Score : ' + score;
@@ -529,43 +442,42 @@
         }
 
         function startGame() {
-        	  hideOverlay();
+          hideOverlay();
 
-        	  timeAppleContainer.innerHTML = '';
+          timeAppleContainer.innerHTML = '';
 
-        	  applesGrid = [];
-        	  score = 0;
-        	  timeLeft = 120;
-        	  updateScore();
-        	  updateTimerBar();
-        	  scoreLogs.innerHTML = '';
-        	  currentSelected = [];
-        	  isGameRunning = true;
+          applesGrid = [];
+          score = 0;
+          timeLeft = 120;
+          updateScore();
+          updateTimerBar();
+          scoreLogs.innerHTML = '';
+          currentSelected = [];
+          isGameRunning = true;
 
-        	  for (let r = 0; r < ROWS; r++) {
-        	    applesGrid[r] = [];
-        	    for (let c = 0; c < COLS; c++) {
-        	      const rand = Math.floor(Math.random() * 9) + 1;
-        	      applesGrid[r][c] = generateApple(rand);
-        	    }
-        	  }
+          for (let r = 0; r < ROWS; r++) {
+            applesGrid[r] = [];
+            for (let c = 0; c < COLS; c++) {
+              const rand = Math.floor(Math.random() * 9) + 1;
+              applesGrid[r][c] = generateApple(rand);
+            }
+          }
 
-        	  renderGrid();
+          renderGrid();
 
-        	  clearInterval(timer);
-        	  timer = setInterval(() => {
-        	    timeLeft--;
-        	    updateTimerBar();
-        	    if (timeLeft <= 0) {
-        	      clearInterval(timer);
-        	      isGameRunning = false;
-        	      showOverlay("end", score);
-        	    }
-        	  }, 1000);
+          clearInterval(timer);
+          timer = setInterval(() => {
+            timeLeft--;
+            updateTimerBar();
+            if (timeLeft <= 0) {
+              clearInterval(timer);
+              isGameRunning = false;
+              showOverlay("end", score);
+            }
+          }, 1000);
 
-        	  // 시간 사과 인터벌 제거
-        	  if (window.timeAppleInterval) clearInterval(window.timeAppleInterval);
-        	}
+          if (window.timeAppleInterval) clearInterval(window.timeAppleInterval);
+        }
 
         function createTimeApple() {
           if (!isGameRunning) return;
@@ -590,108 +502,106 @@
           else apple.style.right = '10px';
 
           if (fromTop) {
-        	  apple.style.top = '10px';
-        	  apple.style.animation = `timeAppleDown 1s linear forwards`;
-        	} else {
-        	  apple.style.bottom = '10px';
-        	  apple.style.animation = `timeAppleUp 1s linear forwards`;
-        	}
+            apple.style.top = '10px';
+            apple.style.animation = `timeAppleDown 1s linear forwards`;
+          } else {
+            apple.style.bottom = '10px';
+            apple.style.animation = `timeAppleUp 1s linear forwards`;
+          }
 
           apple.addEventListener('animationend', () => {
             if (apple.parentNode) timeAppleContainer.removeChild(apple);
           });
 
           apple.addEventListener('click', (e) => {
-        	  if (!isGameRunning) return;
-        	  if (apple.dataset.clicked) return;
-        	  
-        	  e.stopPropagation();
-        	  apple.dataset.clicked = 'true';
-        	  
-        	  score += 3;
-        	  updateScore();
-        	  addScoreLog(3);
+            if (!isGameRunning) return;
+            if (apple.dataset.clicked) return;
+            
+            e.stopPropagation();
+            apple.dataset.clicked = 'true';
+            
+            score += 3;
+            updateScore();
+            addScoreLog(3);
 
-        	  apple.style.animation = '';
-        	  apple.style.pointerEvents = 'none';
-        	  apple.classList.add('growFade');
+            apple.style.animation = '';
+            apple.style.pointerEvents = 'none';
+            apple.classList.add('growFade');
 
-        	  setTimeout(() => {
-        	    if (apple.parentNode) timeAppleContainer.removeChild(apple);
-        	  }, 600);
-        	});
+            setTimeout(() => {
+              if (apple.parentNode) timeAppleContainer.removeChild(apple);
+            }, 600);
+          });
 
           timeAppleContainer.appendChild(apple);
         }
 
         game.addEventListener('mousedown', (e) => {
-        	  if (!isGameRunning) return;
-        	  if (e.button !== 0) return;
+          if (!isGameRunning) return;
+          if (e.button !== 0) return;
 
-        	  isDragging = true;
-        	  startX = e.clientX;
-        	  startY = e.clientY;
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
 
-        	  selectionBox.style.left = startX + 'px';
-        	  selectionBox.style.top = startY + 'px';
-        	  selectionBox.style.width = '0px';
-        	  selectionBox.style.height = '0px';
-        	  selectionBox.style.display = 'block';
-        	});
+          selectionBox.style.left = startX + 'px';
+          selectionBox.style.top = startY + 'px';
+          selectionBox.style.width = '0px';
+          selectionBox.style.height = '0px';
+          selectionBox.style.display = 'block';
+        });
 
-        	window.addEventListener('mousemove', (e) => {
-        	  if (!isDragging) return;
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
 
-        	  const currentX = e.clientX;
-        	  const currentY = e.clientY;
+          const currentX = e.clientX;
+          const currentY = e.clientY;
 
-        	  const x = Math.min(startX, currentX);
-        	  const y = Math.min(startY, currentY);
-        	  const width = Math.abs(startX - currentX);
-        	  const height = Math.abs(startY - currentY);
+          const x = Math.min(startX, currentX);
+          const y = Math.min(startY, currentY);
+          const width = Math.abs(startX - currentX);
+          const height = Math.abs(startY - currentY);
 
-        	  selectionBox.style.left = x + 'px';
-        	  selectionBox.style.top = y + 'px';
-        	  selectionBox.style.width = width + 'px';
-        	  selectionBox.style.height = height + 'px';
+          selectionBox.style.left = x + 'px';
+          selectionBox.style.top = y + 'px';
+          selectionBox.style.width = width + 'px';
+          selectionBox.style.height = height + 'px';
 
-        	  updateSelectedApples(x, y, x + width, y + height);
-        	});
+          updateSelectedApples(x, y, x + width, y + height);
+        });
 
         window.addEventListener('mouseup', () => {
-        	  if (!isGameRunning) return;
-        	  if (!isDragging) return;
+          if (!isGameRunning) return;
+          if (!isDragging) return;
 
-        	  isDragging = false;
-        	  selectionBox.style.display = 'none';
+          isDragging = false;
+          selectionBox.style.display = 'none';
 
-        	  const selected = currentSelected;
-        	  const sum = selected.reduce((acc, obj) => acc + parseInt(obj.apple.dataset.value), 0);
+          const selected = currentSelected;
+          const sum = selected.reduce((acc, obj) => acc + parseInt(obj.apple.dataset.value), 0);
 
-        	  if (sum === 10 && selected.length > 0) {
-        	    const points = selected.length ** 2;
-        	    score += points;
-        	    updateScore();
-        	    addScoreLog(points);
+          if (sum === 10 && selected.length > 0) {
+            const points = selected.length ** 2;
+            score += points;
+            updateScore();
+            addScoreLog(points);
 
-        	    // 시간 5초 추가
-        	    timeLeft += 5;
-        	    updateTimerBar();
+            timeLeft += 5;
+            updateTimerBar();
 
-        	    // 시간 사과 생성
-        	    createTimeApple();
+            createTimeApple();
 
-        	    selected.forEach(({ r, c, apple }) => {
-        	      apple.classList.add('vanish');
-        	      apple.addEventListener('animationend', () => {
-        	        applesGrid[r][c] = null;
-        	        renderGrid();
-        	      }, { once: true });
-        	    });
-        	  }
+            selected.forEach(({ r, c, apple }) => {
+              apple.classList.add('vanish');
+              apple.addEventListener('animationend', () => {
+                applesGrid[r][c] = null;
+                renderGrid();
+              }, { once: true });
+            });
+          }
 
-        	  clearSelectedBorders();
-        	});
+          clearSelectedBorders();
+        });
 
         startBtn.addEventListener('click', () => startGame());
         overlayStartBtn.addEventListener('click', () => startGame());
@@ -703,19 +613,14 @@
       })();
 
       window.onload = function () {
-    	  const sections = document.querySelectorAll('.mainpage-top-section');
-    	  sections.forEach(section => {
-    	    const items = section.querySelectorAll('.mainpage-top-item');
-    	    items.forEach((item, index) => {
-    	      if (index >= 1) item.style.display = 'none';
-    	    });
-    	  });
-
-    	  const hiddenNotices = document.querySelectorAll('.mainpage-notice-hidden');
-    	  hiddenNotices.forEach((notice) => {
-    	    notice.style.display = 'none';
-    	  });
-    	};
+        const sections = document.querySelectorAll('.mainpage-top-section');
+        sections.forEach(section => {
+          const items = section.querySelectorAll('.mainpage-top-item');
+          items.forEach((item, index) => {
+            if (index >= 1) item.style.display = 'none';
+          });
+        });
+      };
     </script>
   </body>
 </html>
