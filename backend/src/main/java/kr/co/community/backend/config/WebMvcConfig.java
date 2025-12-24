@@ -2,8 +2,7 @@ package kr.co.community.backend.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,7 +20,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
                     "/css/**",
                     "/js/**",
                     "/images/**",
-                    "/error/**"
+                    "/error/**",
+                    "/uploads/**"   // ✅ 업로드 이미지 인터셉터 제외
                 );
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:/C:/upload/community/");
     }
 }

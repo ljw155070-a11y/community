@@ -5,78 +5,132 @@
 
 <mapper namespace="kr.co.community.backend.post.dao.PostDao">
 
-	<insert id="insertPost" parameterType="postDTO">
-		INSERT INTO POST (
-		POST_ID,
-		CATEGORY_ID,
-		AUTHOR_ID,
-		TITLE,
-		CONTENT,
-		VIEW_COUNT,
-		LIKE_COUNT,
-		COMMENT_COUNT,
-		IS_DELETED,
-		CREATED_AT,
-		UPDATED_AT
-		) VALUES (
-		POST_SEQ.NEXTVAL,
-		#{categoryId},
-		#{authorId},
-		#{title},
-		#{content},
-		#{viewCount},
-		#{likeCount},
-		#{commentCount},
-		#{isDeleted},
-		SYSDATE,
-		SYSDATE
-		)
-	</insert>
+  <!-- ✅ 게시글 insert (BLOCKS_META 포함) -->
+  <insert id="insertPost" parameterType="postDTO">
+    INSERT INTO POST (
+      POST_ID, CATEGORY_ID, AUTHOR_ID, TITLE, CONTENT,
+      BLOCKS_META,
+      VIEW_COUNT, LIKE_COUNT, COMMENT_COUNT, IS_DELETED,
+      CREATED_AT, UPDATED_AT
+    ) VALUES (
+      POST_SEQ.NEXTVAL, #{categoryId}, #{authorId}, #{title}, #{content},
+      #{blocksMeta},
+      #{viewCount}, #{likeCount}, #{commentCount}, #{isDeleted},
+      SYSDATE, SYSDATE
+    )
+  </insert>
 
-	<select id="selectPostById" resultType="postDTO">
-		SELECT
-		POST_ID AS postId,
-		CATEGORY_ID AS categoryId,
-		AUTHOR_ID AS authorId,
-		TITLE AS title,
-		CONTENT AS content,
-		VIEW_COUNT AS viewCount,
-		LIKE_COUNT AS likeCount,
-		COMMENT_COUNT AS commentCount,
-		IS_DELETED AS isDeleted,
-		CREATED_AT AS createdAt,
-		UPDATED_AT AS updatedAt
-		FROM POST
-		WHERE POST_ID = #{postId}
-		AND IS_DELETED = 'N'
-	</select>
-	<select id="selectPostSeqCurrval" resultType="long">
-		SELECT
-		POST_SEQ.CURRVAL FROM DUAL
-	</select>
+  <select id="selectPostSeqCurrval" resultType="long">
+    SELECT POST_SEQ.CURRVAL FROM DUAL
+  </select>
 
-	<!-- ✅ 글 수정 (삭제된 글은 수정 불가) -->
-	<update id="updatePost" parameterType="postDTO">
-		UPDATE POST
-		SET CATEGORY_ID
-		= #{categoryId},
-		TITLE = #{title},
-		CONTENT = #{content},
-		UPDATED_AT =
-		SYSDATE
-		WHERE POST_ID = #{postId}
-		AND IS_DELETED = 'N'
-	</update>
+  <!-- ✅ 게시글 단건 조회 (BLOCKS_META 포함) -->
+  <select id="selectPostById" resultType="postDTO">
+    SELECT
+      POST_ID     AS postId,
+      CATEGORY_ID AS categoryId,
+      AUTHOR_ID   AS authorId,
+      TITLE       AS title,
+      CONTENT     AS content,
+      BLOCKS_META AS blocksMeta,
+      VIEW_COUNT  AS viewCount,
+      LIKE_COUNT  AS likeCount,
+      COMMENT_COUNT AS commentCount,
+      IS_DELETED  AS isDeleted,
+      CREATED_AT  AS createdAt,
+      UPDATED_AT  AS updatedAt
+    FROM POST
+    WHERE POST_ID = #{postId}
+      AND IS_DELETED = 'N'
+  </select>
 
-	<!-- ✅ 글 삭제 (소프트 삭제) -->
-	<update id="deletePost" parameterType="map">
-		UPDATE POST
-		SET IS_DELETED
-		= 'Y',
-		UPDATED_AT = SYSDATE
-		WHERE POST_ID = #{postId}
-		AND IS_DELETED =
-		'N'
-	</update>
+  <!-- ✅ 게시글 수정 (BLOCKS_META 포함) -->
+  <update id="updatePost" parameterType="postDTO">
+    UPDATE POST
+    SET
+      CATEGORY_ID = #{categoryId},
+      TITLE = #{title},
+      CONTENT = #{content},
+      BLOCKS_META = #{blocksMeta},
+      UPDATED_AT = SYSDATE
+    WHERE POST_ID = #{postId}
+      AND IS_DELETED = 'N'
+  </update>
+
+  <!-- ✅ 게시글 삭제 (소프트 삭제) -->
+  <update id="deletePost" parameterType="map">
+    UPDATE POST
+    SET
+      IS_DELETED = 'Y',
+      UPDATED_AT = SYSDATE
+    WHERE POST_ID = #{postId}
+      AND IS_DELETED = 'N'
+  </update>
+
+  <!-- =========================
+       POST_IMAGE
+  ========================= -->
+
+  <!-- ✅ 이미지 insert -->
+  <insert id="insertPostImage">
+    INSERT INTO POST_IMAGE(
+      IMG_ID, POST_ID, ORIG_NAME, SAVE_NAME, CONTENT_TYPE, FILE_SIZE, SORT_NO,
+      CREATED_AT
+    ) VALUES (
+      POST_IMAGE_SEQ.NEXTVAL,
+      #{postId}, #{origName}, #{saveName}, #{contentType}, #{fileSize}, #{sortNo},
+      SYSDATE
+    )
+  </insert>
+
+  <!-- ✅ 게시글 이미지 목록 -->
+  <select id="selectImagesByPostId" resultType="postImageDTO">
+    SELECT
+      IMG_ID AS imgId,
+      POST_ID AS postId,
+      ORIG_NAME AS origName,
+      SAVE_NAME AS saveName,
+      CONTENT_TYPE AS contentType,
+      FILE_SIZE AS fileSize,
+      SORT_NO AS sortNo,
+      CREATED_AT AS createdAt
+    FROM POST_IMAGE
+    WHERE POST_ID = #{postId}
+    ORDER BY SORT_NO ASC, IMG_ID ASC
+  </select>
+
+  <!-- ✅ 이미지 단건 -->
+  <select id="selectImageByImgId" resultType="postImageDTO">
+    SELECT
+      IMG_ID AS imgId,
+      POST_ID AS postId,
+      ORIG_NAME AS origName,
+      SAVE_NAME AS saveName,
+      CONTENT_TYPE AS contentType,
+      FILE_SIZE AS fileSize,
+      SORT_NO AS sortNo,
+      CREATED_AT AS createdAt
+    FROM POST_IMAGE
+    WHERE IMG_ID = #{imgId}
+  </select>
+
+  <!-- ✅ sort max -->
+  <select id="selectMaxSortNo" resultType="int">
+    SELECT NVL(MAX(SORT_NO), -1)
+    FROM POST_IMAGE
+    WHERE POST_ID = #{postId}
+  </select>
+
+  <!-- ✅ 이미지 삭제 -->
+  <delete id="deletePostImage">
+    DELETE FROM POST_IMAGE WHERE IMG_ID = #{imgId}
+  </delete>
+
+  <!-- ✅ sort 변경 (드래그정렬용) -->
+  <update id="updateImageSortNo">
+    UPDATE POST_IMAGE
+    SET SORT_NO = #{sortNo}
+    WHERE IMG_ID = #{imgId}
+  </update>
 
 </mapper>

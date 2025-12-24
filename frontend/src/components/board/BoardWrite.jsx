@@ -1,40 +1,50 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
 import { getCurrentUserAPI } from "../utils/authUtils";
+import PostBlocksEditor from "./PostBlocksEditor";
 import "./boardwrite.css";
-import Swal from "sweetalert2";
 
-const BoardWrite = () => {
+export default function BoardWrite() {
   const navigate = useNavigate();
   const loginUser = useRecoilValue(loginUserState);
   const setLoginUser = useSetRecoilState(loginUserState);
 
+  const BACK = (import.meta.env.VITE_BACK_SERVER || "").replace(/\/$/, "");
+
   const [categories, setCategories] = useState([]);
   const [categoryId, setCategoryId] = useState("");
+
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [blocks, setBlocks] = useState([
+    { id: "init-" + Date.now(), type: "text", text: "" },
+  ]);
+
   const [loading, setLoading] = useState(false);
 
-  // ✅ SweetAlert 공용 함수들 (가독성 + 반복 제거)
-  const swalInfo = (title, text) =>
-    Swal.fire({ icon: "info", title, text, confirmButtonText: "확인" });
+  const swalWarn = (t, x) =>
+    Swal.fire({
+      icon: "warning",
+      title: t,
+      text: x,
+      confirmButtonText: "확인",
+    });
+  const swalError = (t, x) =>
+    Swal.fire({ icon: "error", title: t, text: x, confirmButtonText: "확인" });
+  const swalSuccess = (t, x) =>
+    Swal.fire({
+      icon: "success",
+      title: t,
+      text: x,
+      confirmButtonText: "확인",
+    });
 
-  const swalWarn = (title, text) =>
-    Swal.fire({ icon: "warning", title, text, confirmButtonText: "확인" });
-
-  const swalError = (title, text) =>
-    Swal.fire({ icon: "error", title, text, confirmButtonText: "확인" });
-
-  const swalSuccess = (title, text) =>
-    Swal.fire({ icon: "success", title, text, confirmButtonText: "확인" });
-
-  // ✅ 로그인 체크 (recoil null이어도 /me로 1회 복구 시도)
+  // 로그인 복구
   useEffect(() => {
     let mounted = true;
-
     (async () => {
       if (loginUser) return;
 
@@ -42,7 +52,7 @@ const BoardWrite = () => {
       if (!mounted) return;
 
       if (me) {
-        setLoginUser(me); // ✅ 복구
+        setLoginUser(me);
         return;
       }
 
@@ -52,7 +62,6 @@ const BoardWrite = () => {
         text: "로그인 페이지로 이동합니다.",
         confirmButtonText: "확인",
       });
-
       navigate("/login");
     })();
 
@@ -61,18 +70,15 @@ const BoardWrite = () => {
     };
   }, [loginUser, navigate, setLoginUser]);
 
-  // ✅ 카테고리 목록
+  // 카테고리
   useEffect(() => {
-    const fetchCategories = async () => {
+    (async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACK_SERVER}/category/list`,
-          { withCredentials: true }
-        );
-
+        const res = await axios.get(`${BACK}/category/list`, {
+          withCredentials: true,
+        });
         const list = res?.data?.list ?? [];
         setCategories(list);
-
         if (list.length > 0) setCategoryId(list[0].categoryId);
       } catch (e) {
         console.error(e);
@@ -81,14 +87,34 @@ const BoardWrite = () => {
           "카테고리 목록을 불러오지 못했습니다."
         );
       }
-    };
+    })();
+  }, [BACK]);
 
-    fetchCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const contentTextForSearch = useMemo(() => {
+    return blocks
+      .filter((b) => b.type === "text")
+      .map((b) => (b.text || "").trim())
+      .filter(Boolean)
+      .join("\n\n");
+  }, [blocks]);
+
+  const validate = async () => {
+    if (!categoryId) return swalWarn("입력 확인", "카테고리를 선택해주세요.");
+    if (!title.trim()) return swalWarn("입력 확인", "제목을 입력해주세요.");
+
+    const hasAnyText = blocks.some((b) => b.type === "text" && b.text.trim());
+    const hasAnyImage = blocks.some((b) => b.type === "image");
+    if (!hasAnyText && !hasAnyImage) {
+      return swalWarn(
+        "입력 확인",
+        "본문(글 또는 이미지)을 1개 이상 넣어주세요."
+      );
+    }
+    return true;
+  };
 
   const submitPost = async () => {
-    // ✅ 최신 loginUser 보장
+    // 로그인 보장
     let user = loginUser;
     if (!user) {
       const me = await getCurrentUserAPI();
@@ -97,59 +123,69 @@ const BoardWrite = () => {
         user = me;
       }
     }
-
     if (!user) {
       await Swal.fire({
         icon: "warning",
         title: "로그인이 필요합니다.",
         text: "로그인 후 다시 시도해주세요.",
-        confirmButtonText: "로그인하러 가기",
+        confirmButtonText: "확인",
       });
       navigate("/login");
       return;
     }
 
-    if (!categoryId) {
-      await swalWarn("입력 확인", "카테고리를 선택해주세요.");
-      return;
-    }
-    if (!title.trim()) {
-      await swalWarn("입력 확인", "제목을 입력해주세요.");
-      return;
-    }
-    if (!content.trim()) {
-      await swalWarn("입력 확인", "내용을 입력해주세요.");
-      return;
-    }
+    const ok = await validate();
+    if (ok !== true) return;
 
     try {
       setLoading(true);
 
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACK_SERVER}/post/write`,
-        {
-          categoryId: Number(categoryId),
-          authorId: user.memberId,
-          title,
-          content,
-        },
-        { withCredentials: true }
+      // ✅ 새 이미지들(업로드 순서)
+      const newImageBlocks = blocks.filter(
+        (b) => b.type === "image" && b.kind === "new"
       );
+      const filesInOrder = newImageBlocks.map((b) => b.file);
+
+      // ✅ blocksMeta: image는 files[] index를 참조
+      let fileIndex = 0;
+      const blocksMeta = blocks.map((b) => {
+        if (b.type === "text") return { type: "text", text: b.text };
+        // image
+        if (b.kind === "new")
+          return {
+            type: "image",
+            kind: "new",
+            fileIndex: fileIndex++,
+            origName: b.origName,
+          };
+        return { type: "image", kind: "saved" };
+      });
+
+      const postPayload = {
+        categoryId: Number(categoryId),
+        authorId: user.memberId,
+        title,
+        content: contentTextForSearch, // 검색/요약용 텍스트만
+        blocksMeta: JSON.stringify(blocksMeta), // ✅ DB에 저장할 값
+      };
+
+      const fd = new FormData();
+      // 백엔드 컨트롤러는 @RequestPart("post") String postJson 형태 → String으로 보냄
+      fd.append("post", JSON.stringify(postPayload));
+      // 혹시 컨트롤러에서 별도 blocksMeta를 받는 버전이면 같이 보내도 됨(안 받아도 무시됨)
+      fd.append("blocksMeta", JSON.stringify(blocksMeta));
+      filesInOrder.forEach((f) => fd.append("files", f));
+
+      const res = await axios.post(`${BACK}/post`, fd, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       if (res?.data?.success) {
-        const postId =
-          res?.data?.postId ??
-          res?.data?.data?.postId ??
-          res?.data?.result?.postId;
-
+        const postId = res?.data?.postId;
         await swalSuccess("등록 완료", "글이 등록되었습니다.");
-
-        if (postId) {
-          window.location.href = `/board/postDetail/${postId}`;
-          return;
-        }
-
-        navigate("/board");
+        if (postId) window.location.href = `/board/postDetail/${postId}`;
+        else window.location.href = `/board`;
       } else {
         await swalError(
           "등록 실패",
@@ -168,7 +204,11 @@ const BoardWrite = () => {
     <div className="bw-wrap">
       <div className="bw-page">
         <div className="bw-top">
-          <button className="bw-back" onClick={() => navigate(-1)}>
+          <button
+            className="bw-back"
+            onClick={() => navigate(-1)}
+            type="button"
+          >
             ← 뒤로가기
           </button>
         </div>
@@ -206,18 +246,15 @@ const BoardWrite = () => {
           </div>
 
           <div className="bw-field">
-            <label className="bw-label">내용</label>
-            <textarea
-              className="bw-control bw-textarea"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
+            <label className="bw-label">본문 (글+이미지 섞기)</label>
+            <PostBlocksEditor blocks={blocks} setBlocks={setBlocks} />
           </div>
 
           <div className="bw-actions">
             <button
               className="bw-btn bw-btn-ghost"
               onClick={() => navigate(-1)}
+              type="button"
             >
               취소
             </button>
@@ -225,6 +262,7 @@ const BoardWrite = () => {
               className="bw-btn bw-btn-primary"
               onClick={submitPost}
               disabled={loading}
+              type="button"
             >
               {loading ? "작성 중..." : "작성하기"}
             </button>
@@ -233,6 +271,4 @@ const BoardWrite = () => {
       </div>
     </div>
   );
-};
-
-export default BoardWrite;
+}
