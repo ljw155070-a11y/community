@@ -13,7 +13,9 @@ import kr.co.community.backend.post.dto.CommentDTO;
 import kr.co.community.backend.post.dto.PostDTO;
 import kr.co.community.backend.post.dto.PostListDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostSsrService {
@@ -62,7 +64,7 @@ public class PostSsrService {
         PostDTO post = postSsrDao.selectPostById(postId);
 
         if (post == null) {
-            throw new RuntimeException("게시글을 찾을 수 없습니다.");
+        	throw new IllegalArgumentException("게시글 ID " + postId + "를 찾을 수 없습니다.");
         }
 
         postSsrDao.updateViewCount(postId);
@@ -81,17 +83,24 @@ public class PostSsrService {
 
     @Transactional
     public int toggleLike(Long postId, Long memberId) {
+    	log.debug("좋아요 토글: postId={}, memberId={}", postId, memberId);
+        
         int likeExists = postSsrDao.selectPostLikeExists(postId, memberId);
 
         if (likeExists > 0) {
+            log.debug("좋아요 취소");
             postSsrDao.deletePostLike(postId, memberId);
             postSsrDao.decrementLikeCount(postId);
         } else {
+            log.debug("좋아요 추가");
             postSsrDao.insertPostLike(postId, memberId);
             postSsrDao.incrementLikeCount(postId);
         }
 
-        return postSsrDao.selectLikeCount(postId);
+        int newCount = postSsrDao.selectLikeCount(postId);
+        log.debug("새 좋아요 수: {}", newCount);
+        
+        return newCount;
     }
 
     public boolean isBookmarked(Long postId, Long memberId) {
@@ -131,6 +140,12 @@ public class PostSsrService {
     public Map<String, Object> getAuthorStats(Long authorId) {
         Map<String, Object> stats = new HashMap<>();
 
+        if (authorId == null) {
+            stats.put("postCount", 0);
+            stats.put("commentCount", 0);
+            return stats;
+        }
+
         int postCount = postSsrDao.countAuthorPosts(authorId);
         int commentCount = postSsrDao.countAuthorComments(authorId);
 
@@ -142,12 +157,15 @@ public class PostSsrService {
 
     @Transactional
     public boolean deletePost(Long postId, Long memberId) {
-        PostDTO post = postSsrDao.selectPostById(postId);
+    	PostDTO post = postSsrDao.selectPostById(postId);
 
-        if (post == null || !post.getAuthorId().equals(memberId)) {
-            return false;
+        if (post == null) {
+            throw new IllegalArgumentException("게시글을 찾을 수 없습니다.");
         }
-
+        
+        if (!post.getAuthorId().equals(memberId)) {
+            throw new IllegalStateException("삭제 권한이 없습니다.");
+        }
         postSsrDao.updateIsDeleted(postId);
         return true;
     }

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpSession;
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
 import kr.co.community.backend.post.dto.PostDTO;
 import kr.co.community.backend.post.service.PostSsrService;
@@ -77,28 +76,32 @@ public class PostSsrController {
     }
     /**
      * 게시글 상세 페이지
+     * ✅ @RequestAttribute로 JWT 인증 정보 받기
      */
     @GetMapping("/postDetail/{postId}")
     public String getPostDetail(
-            @PathVariable Long postId, 
-            Model model, 
-            HttpSession session
+            @PathVariable Long postId,
+            Model model,
+            @RequestAttribute(value = "memberId", required = false) Long memberId,
+            @RequestAttribute(value = "isAuthenticated", required = false) Boolean isAuthenticated
     ) {
         try {
             // 1. 게시글 조회 (조회수 증가 포함)
             PostDTO post = postSsrService.getPostDetail(postId);
             
             // 2. 로그인한 사용자의 좋아요/북마크 여부 확인
-            Long memberId = (Long) session.getAttribute("memberId");
             if (memberId != null) {
                 boolean isLiked = postSsrService.isPostLiked(postId, memberId);
                 boolean isBookmarked = postSsrService.isBookmarked(postId, memberId);
-                // ✅ 디버깅 로그 추가
-                System.out.println("========== 북마크 상태 확인 ==========");
+                
+                System.out.println("========== JWT 인증 정보 ==========");
                 System.out.println("postId: " + postId);
                 System.out.println("memberId: " + memberId);
+                System.out.println("isAuthenticated: " + isAuthenticated);
+                System.out.println("isLiked: " + isLiked);
                 System.out.println("isBookmarked: " + isBookmarked);
                 System.out.println("====================================");
+                
                 post.setIsLiked(isLiked);
                 post.setIsBookmarked(isBookmarked);
             } else {
@@ -139,18 +142,17 @@ public class PostSsrController {
 
     /**
      * 좋아요 토글 API
+     * ✅ @RequestAttribute로 JWT 인증 정보 받기
      */
     @PostMapping("/postDetail/{postId}/like")
     @ResponseBody
     public Map<String, Object> toggleLike(
             @PathVariable Long postId,
-            HttpSession session
+            @RequestAttribute(value = "memberId", required = false) Long memberId
     ) {
         Map<String, Object> result = new HashMap<>();
         
         try {
-            Long memberId = (Long) session.getAttribute("memberId");
-            
             if (memberId == null) {
                 result.put("success", false);
                 result.put("message", "로그인이 필요합니다.");
@@ -173,18 +175,17 @@ public class PostSsrController {
 
     /**
      * 북마크 토글 API
+     * ✅ @RequestAttribute로 JWT 인증 정보 받기
      */
     @PostMapping("/postDetail/{postId}/bookmark")
     @ResponseBody
     public Map<String, Object> toggleBookmark(
             @PathVariable Long postId,
-            HttpSession session
+            @RequestAttribute(value = "memberId", required = false) Long memberId
     ) {
         Map<String, Object> result = new HashMap<>();
         
         try {
-            Long memberId = (Long) session.getAttribute("memberId");
-            
             if (memberId == null) {
                 result.put("success", false);
                 result.put("message", "로그인이 필요합니다.");
@@ -209,18 +210,17 @@ public class PostSsrController {
 
     /**
      * 게시글 삭제 API
+     * ✅ @RequestAttribute로 JWT 인증 정보 받기
      */
     @PostMapping("/delete/{postId}")
     @ResponseBody
     public Map<String, Object> deletePost(
             @PathVariable Long postId,
-            HttpSession session
+            @RequestAttribute(value = "memberId", required = false) Long memberId
     ) {
         Map<String, Object> result = new HashMap<>();
         
         try {
-            Long memberId = (Long) session.getAttribute("memberId");
-            
             if (memberId == null) {
                 result.put("success", false);
                 result.put("message", "로그인이 필요합니다.");
@@ -241,6 +241,40 @@ public class PostSsrController {
             e.printStackTrace();
             result.put("success", false);
             result.put("message", "삭제 중 오류가 발생했습니다.");
+        }
+        
+        return result;
+    }
+
+    /**
+     * 신고 API
+     * ✅ @RequestAttribute로 JWT 인증 정보 받기
+     */
+    @PostMapping("/postDetail/{postId}/report")
+    @ResponseBody
+    public Map<String, Object> reportPost(
+            @PathVariable Long postId,
+            @RequestAttribute(value = "memberId", required = false) Long memberId
+    ) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            if (memberId == null) {
+                result.put("success", false);
+                result.put("message", "로그인이 필요합니다.");
+                return result;
+            }
+            
+            // 신고 처리 로직 (Service에 구현 필요)
+            // postSsrService.reportPost(postId, memberId);
+            
+            result.put("success", true);
+            result.put("message", "신고가 접수되었습니다.");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "신고 처리 중 오류가 발생했습니다.");
         }
         
         return result;
