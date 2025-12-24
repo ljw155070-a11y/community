@@ -323,7 +323,7 @@
 	<!-- ✅ 댓글 작성 -->
   <insert id="insertComment" parameterType="kr.co.community.backend.post.dto.CommentDTO">
     <selectKey keyProperty="commentId" resultType="long" order="BEFORE">
-      SELECT COMMENTS_SEQ.NEXTVAL FROM DUAL
+      SELECT COMMENT_SEQ.NEXTVAL FROM DUAL
     </selectKey>
     INSERT INTO COMMENTS (
       COMMENT_ID,
