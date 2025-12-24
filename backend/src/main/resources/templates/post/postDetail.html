@@ -942,7 +942,7 @@
 		    
 			<!-- 댓글 작성 폼 -->
 			<div th:if="${isAuthenticated}" class="comment-form">
-			    <form th:action="@{/board/postDetail/{id}/comments(id=${post.postId})}" method="post">
+			    <form th:action="@{/board/postDetail/{postId}/comments(postId=${post.postId})}" method="post">
 			        <textarea 
 			            name="content" 
 			            class="comment-textarea" 
