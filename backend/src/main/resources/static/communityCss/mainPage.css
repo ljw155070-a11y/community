@@ -11,7 +11,7 @@
 body {
     font-family: 'Noto Sans KR', sans-serif;
     color: #333;
-    background: #fffbf5;
+    background: linear-gradient(to bottom, #f8f9fc 0%, #fafbff 100%);
 }
 
 /* 사이드 광고 영역 */
@@ -30,18 +30,18 @@ body {
     top: 150px;
     width: 160px;
     height: 600px;
-    background: #fff;
-    border: 2px dashed #ffd6a5;
-    border-radius: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: auto;
-    box-shadow: 0 4px 20px rgba(255, 160, 100, 0.1);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
 }
 
 .mainpage-side-ad p {
-    color: #ffb380;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 14px;
     font-weight: 500;
 }
@@ -63,14 +63,14 @@ body {
 /* 메인 배너 영역 */
 .mainpage-banner {
     position: relative;
-    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 100px 20px;
+    padding: 80px 20px;
     text-align: center;
     max-width: 1200px;
     margin: 20px auto;
-    border-radius: 30px;
-    box-shadow: 0 10px 40px rgba(255, 160, 100, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.25);
     overflow: hidden;
 }
 
@@ -87,7 +87,7 @@ body {
 .mainpage-banner-circle {
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .mainpage-circle-1 {
@@ -118,117 +118,118 @@ body {
 
 .mainpage-banner-tag {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.2);
     color: white;
-    padding: 8px 20px;
-    border-radius: 25px;
+    padding: 6px 16px;
+    border-radius: 4px;
     font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
     margin-bottom: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
 .mainpage-banner-content h1 {
-    font-size: 48px;
-    font-weight: 800;
-    margin-bottom: 20px;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 16px;
     line-height: 1.3;
 }
 
 .mainpage-banner-content p {
-    font-size: 18px;
-    margin-bottom: 40px;
+    font-size: 16px;
+    margin-bottom: 30px;
     opacity: 0.95;
     font-weight: 400;
 }
 
 .mainpage-banner-buttons {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     justify-content: center;
 }
 
 .mainpage-btn-primary {
     background: white;
-    color: #ff8a5b;
-    padding: 16px 36px;
+    color: #667eea;
+    padding: 14px 32px;
     border: none;
-    border-radius: 50px;
-    font-size: 16px;
-    font-weight: 700;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(255, 138, 91, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .mainpage-btn-arrow {
-    font-size: 20px;
+    font-size: 18px;
     transition: transform 0.3s;
 }
 
 .mainpage-btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 138, 91, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .mainpage-btn-primary:hover .mainpage-btn-arrow {
-    transform: translateX(5px);
+    transform: translateX(4px);
 }
 
 .mainpage-btn-secondary {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 16px 36px;
-    border: 2px solid white;
-    border-radius: 50px;
-    font-size: 16px;
-    font-weight: 700;
+    padding: 14px 32px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
+    backdrop-filter: blur(10px);
 }
 
 .mainpage-btn-secondary:hover {
     background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    border-color: white;
 }
 
 /* 커뮤니티 특징 영역 */
 .mainpage-features {
-    padding: 100px 20px;
+    padding: 80px 20px;
     text-align: center;
     background: white;
     max-width: 1200px;
     margin: 20px auto;
-    border-radius: 30px;
-    box-shadow: 0 4px 20px rgba(255, 160, 100, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.08);
 }
 
 .mainpage-features-tag {
     display: inline-block;
-    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 8px 20px;
-    border-radius: 25px;
+    padding: 6px 16px;
+    border-radius: 20px;
     font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    margin-bottom: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .mainpage-features h2 {
-    font-size: 40px;
-    margin-bottom: 60px;
+    font-size: 32px;
+    margin-bottom: 50px;
     color: #333;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .mainpage-feature-list {
     display: flex;
-    gap: 30px;
+    gap: 24px;
     max-width: 1100px;
     margin: 0 auto;
     justify-content: center;
@@ -237,51 +238,51 @@ body {
 .mainpage-feature-item {
     flex: 1;
     max-width: 350px;
-    padding: 40px 30px;
-    background: #fffbf5;
-    border-radius: 25px;
+    padding: 32px 24px;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f9fc 100%);
+    border-radius: 12px;
     transition: all 0.3s;
-    border: 2px solid #ffe8d6;
+    border: 1px solid rgba(102, 126, 234, 0.1);
 }
 
 .mainpage-feature-item:hover {
     transform: translateY(-8px);
-    box-shadow: 0 10px 30px rgba(255, 160, 100, 0.15);
-    border-color: #ffd6a5;
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.3);
 }
 
 .mainpage-feature-icon-wrapper {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 25px;
-    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
-    border-radius: 25px;
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 20px rgba(255, 160, 100, 0.2);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
 }
 
 .mainpage-feature-icon {
-    font-size: 40px;
+    font-size: 36px;
 }
 
 .mainpage-feature-item h3 {
-    font-size: 22px;
-    margin-bottom: 15px;
+    font-size: 20px;
+    margin-bottom: 12px;
     color: #333;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .mainpage-feature-item p {
-    font-size: 15px;
+    font-size: 14px;
     color: #666;
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
 /* 공지사항 영역 */
 .mainpage-notices {
-    padding: 50px 20px;
+    padding: 40px 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -291,7 +292,7 @@ body {
 }
 
 .mainpage-notices h2 {
-    font-size: 28px;
+    font-size: 24px;
     color: #333;
     font-weight: 700;
 }
@@ -300,57 +301,58 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .mainpage-notice-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .mainpage-notice-item {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 20px;
+    gap: 12px;
+    padding: 16px;
     background: white;
-    border: 2px solid #ffe8d6;
-    border-radius: 20px;
+    border: 1px solid rgba(102, 126, 234, 0.15);
+    border-radius: 10px;
     transition: all 0.3s;
-    box-shadow: 0 2px 10px rgba(255, 160, 100, 0.05);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.05);
 }
 
 .mainpage-notice-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 160, 100, 0.1);
-    border-color: #ffd6a5;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.12);
+    border-color: rgba(102, 126, 234, 0.3);
 }
 
 .mainpage-notice-badge {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     color: white;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 13px;
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
     font-weight: 600;
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
 }
 
 .mainpage-notice-title {
     flex: 1;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
     color: #333;
 }
 
 .mainpage-notice-date {
     color: #999;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 /* 인기 게시글 영역 */
 .mainpage-posts {
-    padding: 50px 20px;
+    padding: 40px 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -359,56 +361,56 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .mainpage-posts-header h2 {
-    font-size: 28px;
+    font-size: 24px;
     color: #333;
     font-weight: 700;
 }
 
 .mainpage-more-link {
-    color: #ff8a5b;
+    color: #667eea;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: color 0.3s;
+    transition: color 0.2s;
 }
 
 .mainpage-more-link:hover {
-    color: #ff6b3d;
+    color: #764ba2;
 }
 
 /* 3개 칸 컨테이너 */
 .mainpage-top-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 16px;
 }
 
 /* 각 섹션 */
 .mainpage-top-section {
     background: white;
-    border-radius: 25px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(255, 160, 100, 0.08);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.08);
     transition: all 0.3s;
-    border: 2px solid #ffe8d6;
+    border: 1px solid rgba(102, 126, 234, 0.1);
 }
 
 .mainpage-top-section:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(255, 160, 100, 0.12);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(102, 126, 234, 0.15);
 }
 
 /* 섹션 제목 */
 .mainpage-section-title {
-    font-size: 18px;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 3px solid #ffe8d6;
+    font-size: 17px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e1e4e8;
     font-weight: 700;
 }
 
@@ -416,24 +418,25 @@ body {
 .mainpage-top-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 /* 각 항목 */
 .mainpage-top-item {
     display: flex;
-    gap: 12px;
-    padding: 15px;
-    background: #fffbf5;
-    border-radius: 15px;
+    gap: 10px;
+    padding: 12px;
+    background: linear-gradient(to right, #fafbff 0%, #f8f9fc 100%);
+    border-radius: 8px;
     transition: all 0.3s;
     cursor: pointer;
-    border: 1px solid #fff4e6;
+    border: 1px solid rgba(102, 126, 234, 0.08);
 }
 
 .mainpage-top-item:hover {
-    background: #fff4e6;
-    transform: translateX(3px);
+    background: linear-gradient(to right, #f5f6ff 0%, #f0f1fc 100%);
+    border-color: rgba(102, 126, 234, 0.2);
+    transform: translateX(4px);
 }
 
 /* 순위 표시 */
@@ -441,14 +444,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: #ffb88c;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border-radius: 50%;
+    border-radius: 8px;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 /* 내용 영역 */
@@ -459,19 +463,20 @@ body {
 /* 카테고리 태그 */
 .mainpage-post-tag {
     display: inline-block;
-    background: #ffb88c;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 4px 12px;
-    border-radius: 15px;
-    font-size: 12px;
-    margin-bottom: 8px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    margin-bottom: 6px;
     font-weight: 600;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
 }
 
 /* 제목 */
 .mainpage-item-content h4 {
-    font-size: 15px;
-    margin-bottom: 8px;
+    font-size: 14px;
+    margin-bottom: 6px;
     color: #333;
     font-weight: 600;
 }
@@ -479,24 +484,24 @@ body {
 /* 게시글 정보 */
 .mainpage-post-info {
     display: flex;
-    gap: 10px;
-    font-size: 13px;
+    gap: 8px;
+    font-size: 12px;
     color: #999;
 }
 
 /* 카테고리별 게시판 영역 */
 .mainpage-category-boards {
-    padding: 60px 20px;
+    padding: 50px 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .mainpage-boards-header {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .mainpage-boards-header h2 {
-    font-size: 32px;
+    font-size: 28px;
     color: #333;
     font-weight: 700;
 }
@@ -505,58 +510,151 @@ body {
 .mainpage-boards-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+    gap: 20px;
 }
 
 /* 각 카테고리 카드 */
 .mainpage-board-card {
     background: white;
-    border: 2px solid #ffe8d6;
-    border-radius: 25px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(255, 160, 100, 0.08);
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.08);
     transition: all 0.3s;
 }
 
 .mainpage-board-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(255, 160, 100, 0.15);
-    border-color: #ffd6a5;
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.3);
 }
 
 .mainpage-board-card-title {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 3px solid #ffb88c;
-    color: #ff8a5b;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid transparent;
+    background: linear-gradient(to right, #667eea, #764ba2) left bottom no-repeat;
+    background-size: 100% 2px;
+    color: #333;
+}
+
+/* 카테고리별 색상 - 1번째 */
+.mainpage-board-card:nth-child(1) {
+    border-color: rgba(102, 126, 234, 0.15);
+}
+
+.mainpage-board-card:nth-child(1):hover {
+    border-color: rgba(102, 126, 234, 0.4);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
+}
+
+.mainpage-board-card:nth-child(1) .mainpage-board-card-title {
+    background: linear-gradient(to right, #667eea, #764ba2) left bottom no-repeat;
+    background-size: 100% 2px;
+}
+
+/* 카테고리별 색상 - 2번째 */
+.mainpage-board-card:nth-child(2) {
+    border-color: rgba(240, 147, 251, 0.15);
+}
+
+.mainpage-board-card:nth-child(2):hover {
+    border-color: rgba(240, 147, 251, 0.4);
+    box-shadow: 0 12px 40px rgba(240, 147, 251, 0.2);
+}
+
+.mainpage-board-card:nth-child(2) .mainpage-board-card-title {
+    background: linear-gradient(to right, #f093fb, #f5576c) left bottom no-repeat;
+    background-size: 100% 2px;
+}
+
+/* 카테고리별 색상 - 3번째 */
+.mainpage-board-card:nth-child(3) {
+    border-color: rgba(79, 172, 254, 0.15);
+}
+
+.mainpage-board-card:nth-child(3):hover {
+    border-color: rgba(79, 172, 254, 0.4);
+    box-shadow: 0 12px 40px rgba(79, 172, 254, 0.2);
+}
+
+.mainpage-board-card:nth-child(3) .mainpage-board-card-title {
+    background: linear-gradient(to right, #4facfe, #00f2fe) left bottom no-repeat;
+    background-size: 100% 2px;
+}
+
+/* 카테고리별 색상 - 4번째 */
+.mainpage-board-card:nth-child(4) {
+    border-color: rgba(250, 112, 154, 0.15);
+}
+
+.mainpage-board-card:nth-child(4):hover {
+    border-color: rgba(250, 112, 154, 0.4);
+    box-shadow: 0 12px 40px rgba(250, 112, 154, 0.2);
+}
+
+.mainpage-board-card:nth-child(4) .mainpage-board-card-title {
+    background: linear-gradient(to right, #fa709a, #fee140) left bottom no-repeat;
+    background-size: 100% 2px;
+}
+
+/* 카테고리별 색상 - 5번째 */
+.mainpage-board-card:nth-child(5) {
+    border-color: rgba(48, 207, 208, 0.15);
+}
+
+.mainpage-board-card:nth-child(5):hover {
+    border-color: rgba(48, 207, 208, 0.4);
+    box-shadow: 0 12px 40px rgba(48, 207, 208, 0.2);
+}
+
+.mainpage-board-card:nth-child(5) .mainpage-board-card-title {
+    background: linear-gradient(to right, #30cfd0, #330867) left bottom no-repeat;
+    background-size: 100% 2px;
+}
+
+/* 카테고리별 색상 - 6번째 */
+.mainpage-board-card:nth-child(6) {
+    border-color: rgba(168, 237, 234, 0.15);
+}
+
+.mainpage-board-card:nth-child(6):hover {
+    border-color: rgba(168, 237, 234, 0.4);
+    box-shadow: 0 12px 40px rgba(168, 237, 234, 0.2);
+}
+
+.mainpage-board-card:nth-child(6) .mainpage-board-card-title {
+    background: linear-gradient(to right, #a8edea, #fed6e3) left bottom no-repeat;
+    background-size: 100% 2px;
 }
 
 .mainpage-board-card-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .mainpage-board-card-item {
-    padding: 12px;
-    background: #fffbf5;
-    border-radius: 12px;
+    padding: 10px;
+    background: linear-gradient(to right, #fafbff 0%, #f8f9fc 100%);
+    border-radius: 8px;
     transition: all 0.3s;
     cursor: pointer;
-    border: 1px solid #fff4e6;
+    border: 1px solid rgba(102, 126, 234, 0.08);
 }
 
 .mainpage-board-card-item:hover {
-    background: #fff4e6;
-    transform: translateX(3px);
+    background: linear-gradient(to right, #f5f6ff 0%, #f0f1fc 100%);
+    border-color: rgba(102, 126, 234, 0.2);
+    transform: translateX(4px);
 }
 
 .mainpage-board-card-post-title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -567,7 +665,7 @@ body {
     display: flex;
     justify-content: space-between;
     gap: 5px;
-    font-size: 12px;
+    font-size: 11px;
     color: #999;
     align-items: center;
 }
@@ -575,92 +673,77 @@ body {
 .mainpage-board-card-empty {
     text-align: center;
     color: #999;
-    padding: 30px 20px;
-    font-size: 14px;
+    padding: 24px 16px;
+    font-size: 13px;
 }
 
 /* 하단 배너 */
 .mainpage-bottom-banner {
-    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 80px 20px;
+    padding: 60px 20px;
     text-align: center;
     max-width: 1200px;
     margin: 20px auto;
-    border-radius: 30px;
-    box-shadow: 0 10px 40px rgba(255, 160, 100, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.25);
 }
 
 .mainpage-bottom-content h2 {
-    font-size: 36px;
-    margin-bottom: 15px;
+    font-size: 32px;
+    margin-bottom: 12px;
     font-weight: 700;
 }
 
 .mainpage-bottom-content p {
-    font-size: 18px;
-    margin-bottom: 30px;
+    font-size: 16px;
+    margin-bottom: 24px;
     opacity: 0.95;
 }
 
 .mainpage-btn-join {
     background: white;
-    color: #ff8a5b;
-    padding: 15px 50px;
+    color: #667eea;
+    padding: 14px 40px;
     border: none;
-    border-radius: 50px;
-    font-size: 18px;
+    border-radius: 8px;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(255, 138, 91, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .mainpage-btn-join:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 138, 91, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 /* 순위별 색상 - 조회수 TOP */
 .mainpage-top-section:nth-child(1) .mainpage-rank {
-    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
-}
-
-.mainpage-top-section:nth-child(1) .mainpage-post-tag {
-    background: linear-gradient(135deg, #ffb88c 0%, #ff9a76 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .mainpage-top-section:nth-child(1) .mainpage-section-title {
-    color: #ff8a5b;
-    border-bottom: 3px solid #ffd6a5;
+    color: #667eea;
 }
 
 /* 순위별 색상 - 좋아요 TOP */
 .mainpage-top-section:nth-child(2) .mainpage-rank {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-}
-
-.mainpage-top-section:nth-child(2) .mainpage-post-tag {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
 .mainpage-top-section:nth-child(2) .mainpage-section-title {
-    color: #ff6b9d;
-    border-bottom: 3px solid #ffd6e7;
+    color: #f5576c;
 }
 
 /* 순위별 색상 - 댓글 TOP */
 .mainpage-top-section:nth-child(3) .mainpage-rank {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-}
-
-.mainpage-top-section:nth-child(3) .mainpage-post-tag {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 .mainpage-top-section:nth-child(3) .mainpage-section-title {
-    color: #6dd5ed;
-    border-bottom: 3px solid #d4f1f4;
+    color: #4facfe;
 }
 
  /* =========================
@@ -689,8 +772,8 @@ body {
   z-index: 1;
   margin: 0 0 20px;
   text-align: center;
-  color: #ff8a5b;
-  text-shadow: 0 4px 20px rgba(255, 138, 91, 0.3);
+  color: #667eea;
+  text-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
   font-size: 42px;
   font-weight: 900;
   letter-spacing: -1px;
@@ -711,12 +794,12 @@ body {
   padding: 14px 32px;
   font-size: 18px;
   font-weight: 700;
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 50px;
+  border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(255, 154, 158, 0.3);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -724,7 +807,7 @@ body {
 
 .applegame #startBtn:hover{
   transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(255, 154, 158, 0.4);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.45);
 }
 
 .applegame #startBtn:active{ 
@@ -734,15 +817,13 @@ body {
 .applegame #score{
   font-family: 'Do Hyeon', sans-serif;
   font-size: 28px;
-  color: #ff8a5b;
-  text-shadow: 0 2px 10px rgba(255, 138, 91, 0.2);
+  color: #333;
   user-select: none;
   padding: 12px 24px;
-  border-radius: 50px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border: 2px solid #ffd6a5;
-  box-shadow: 0 8px 32px rgba(255, 160, 100, 0.1);
+  border-radius: 6px;
+  background: white;
+  border: 2px solid #e1e4e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   min-width: 160px;
   text-align: center;
   font-weight: 900;
@@ -761,21 +842,20 @@ body {
   transform: translateY(-50%);
   height: 16px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-radius: 50px;
+  background: white;
+  border-radius: 8px;
   overflow: hidden;
-  border: 2px solid #ffd6a5;
-  box-shadow: inset 0 2px 10px rgba(255, 160, 100, 0.1);
+  border: 2px solid #e1e4e8;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .applegame #timerBarFill{
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, #a8edea 0%, #fed6e3 100%);
-  border-radius: 50px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 6px;
   transition: width 1s linear;
-  box-shadow: 0 0 20px rgba(168, 237, 234, 0.4);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
   position: relative;
 }
 
@@ -807,12 +887,11 @@ body {
   position: relative;
   width: max-content;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border: 3px solid #ffe8d6;
-  border-radius: 30px;
+  background: white;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 12px;
   padding: 30px;
-  box-shadow: 0 30px 80px rgba(255, 160, 100, 0.2);
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
   overflow: visible;
   min-height: 520px;
 }
@@ -824,11 +903,11 @@ body {
   display: grid;
   grid-template-columns: repeat(17, 30px);
   gap: 5px;
-  background: linear-gradient(135deg, #fff4e6 0%, #ffe8d6 100%);
+  background: linear-gradient(to bottom, #fafbff 0%, #f8f9fc 100%);
   padding: 25px;
-  border: 4px solid #ffd6a5;
-  border-radius: 20px;
-  box-shadow: inset 0 0 30px rgba(255, 160, 100, 0.1);
+  border: 2px solid rgba(102, 126, 234, 0.15);
+  border-radius: 10px;
+  box-shadow: inset 0 0 20px rgba(102, 126, 234, 0.05);
   min-height: 420px;
 }
 
@@ -862,7 +941,7 @@ body {
   font-size: 26px;
   pointer-events: none;
   z-index: 0;
-  filter: drop-shadow(0 2px 4px rgba(255, 138, 91, 0.3));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .applegame .apple span{
@@ -884,14 +963,13 @@ body {
 
 .applegame #selectionBox{
   position: fixed;
-  border: 3px dashed #ff8a5b;
-  background: linear-gradient(135deg, rgba(255, 138, 91, 0.2), rgba(255, 154, 118, 0.2));
-  backdrop-filter: blur(5px);
+  border: 3px dashed #667eea;
+  background: rgba(102, 126, 234, 0.2);
   pointer-events: none;
   display: none !important;
   z-index: 1000;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(255, 138, 91, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
 }
 
 @keyframes vanish{
@@ -948,10 +1026,9 @@ body {
 }
 
 .applegame .scoreLogItem{
-  background: linear-gradient(135deg, rgba(168, 237, 234, 0.95), rgba(254, 214, 227, 0.95));
-  backdrop-filter: blur(10px);
-  border: 3px solid rgba(255, 255, 255, 0.8);
-  border-radius: 50px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid white;
+  border-radius: 8px;
   padding: 8px 20px;
   user-select: none;
   animation: logUpFade 1s forwards;
@@ -961,33 +1038,33 @@ body {
   align-items: center;
   gap: 10px;
   white-space: nowrap;
-  box-shadow: 0 10px 30px rgba(168, 237, 234, 0.3);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
   font-weight: 900;
 }
 
 .applegame .scoreLogItem.blue{
-  background: linear-gradient(135deg, rgba(255, 184, 140, 0.95), rgba(255, 154, 118, 0.95));
-  border: 3px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 10px 30px rgba(255, 184, 140, 0.3);
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border: 2px solid white;
+  box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
 }
 
 .applegame .scoreLogPoints{ 
   font-size: 26px; 
   min-width: 60px; 
   text-align: right;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .applegame .scoreLogApple{ 
   font-size: 30px; 
   line-height: 1; 
   user-select: none;
-  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .applegame .apple.selected{
   border: 4px solid #fff;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.8), inset 0 0 20px rgba(102, 126, 234, 0.5);
   box-sizing: border-box;
   transform: scale(1.15);
 }
@@ -1040,18 +1117,17 @@ body {
   place-items: center;
   z-index: 5000;
   padding: 20px;
-  background: rgba(255, 251, 245, 0.95);
+  background: rgba(248, 249, 252, 0.95);
   backdrop-filter: blur(15px);
-  border-radius: 30px;
+  border-radius: 12px;
 }
 
 .applegame-overlay-card{
   width: min(640px, 100%);
-  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,251,245,0.9));
-  backdrop-filter: blur(20px);
-  border: 3px solid #ffe8d6;
-  border-radius: 30px;
-  box-shadow: 0 30px 80px rgba(255, 160, 100, 0.2);
+  background: white;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 12px 48px rgba(102, 126, 234, 0.15);
   padding: 30px;
   text-align: left;
   position: relative;
@@ -1061,22 +1137,22 @@ body {
 .applegame-overlay-badge{
   display: inline-flex;
   align-items: center;
-  height: 36px;
-  padding: 0 20px;
-  border-radius: 50px;
-  background: linear-gradient(135deg, #ffb88c, #ff9a76);
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
-  font-weight: 900;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 5px 15px rgba(255, 184, 140, 0.3);
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .applegame-overlay-title{
   margin: 20px 0 15px;
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: -0.5px;
   color: #333;
 }
@@ -1084,93 +1160,93 @@ body {
 .applegame-overlay-desc{
   margin: 0 0 20px;
   color: #666;
-  font-weight: 600;
-  line-height: 1.7;
-  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  font-size: 15px;
 }
 
 .applegame-rulegrid{
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 12px;
   margin: 20px 0;
 }
 
 .applegame-rule{
-  background: linear-gradient(135deg, #fff4e6, #ffe8d6);
-  border: 2px solid #ffd6a5;
-  border-radius: 20px;
-  padding: 15px;
-  box-shadow: 0 5px 15px rgba(255, 214, 165, 0.2);
+  background: linear-gradient(to bottom, #fafbff 0%, #f8f9fc 100%);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  border-radius: 8px;
+  padding: 14px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.05);
 }
 
 .applegame-rule-k{
-  font-size: 13px;
-  color: #ff8a5b;
-  font-weight: 900;
-  margin-bottom: 8px;
+  font-size: 12px;
+  color: #667eea;
+  font-weight: 700;
+  margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .applegame-rule-v{
-  font-size: 14px;
+  font-size: 13px;
   color: #666;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.5;
 }
 
 .applegame-overlay-actions{
   display: flex;
-  gap: 15px;
+  gap: 12px;
   justify-content: flex-end;
   margin-top: 20px;
 }
 
 .applegame-overlay-primary{
-  height: 50px;
-  padding: 0 30px;
-  border-radius: 50px;
+  height: 48px;
+  padding: 0 28px;
+  border-radius: 8px;
   border: none;
-  background: linear-gradient(135deg, #ff9a9e, #fecfef);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
-  font-weight: 900;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 15px;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(255, 154, 158, 0.3);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
   transition: all 0.3s ease;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .applegame-overlay-primary:hover{
   transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(255, 154, 158, 0.4);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.45);
 }
 
 .applegame-overlay-ghost{
-  height: 50px;
+  height: 48px;
   padding: 0 24px;
-  border-radius: 50px;
-  border: 2px solid #ffd6a5;
-  background: rgba(255, 251, 245, 0.5);
-  color: #ff8a5b;
-  font-weight: 800;
-  font-size: 15px;
+  border-radius: 8px;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  background: white;
+  color: #667eea;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .applegame-overlay-ghost:hover{
-  background: rgba(255, 251, 245, 0.8);
-  border-color: #ffb88c;
+  background: linear-gradient(to bottom, #fafbff 0%, #f8f9fc 100%);
+  border-color: #667eea;
 }
 
 .applegame-overlay-foot{
   margin-top: 20px;
   font-size: 13px;
   color: #999;
-  font-weight: 600;
+  font-weight: 500;
   text-align: center;
 }
 
@@ -1181,7 +1257,7 @@ body {
     .mainpage-banner {
         padding: 60px 20px;
         margin: 10px;
-        border-radius: 20px;
+        border-radius: 6px;
     }
     
     .mainpage-banner-content h1 {
@@ -1189,12 +1265,12 @@ body {
     }
     
     .mainpage-banner-content p {
-        font-size: 16px;
+        font-size: 15px;
     }
     
     .mainpage-banner-buttons {
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
     }
     
     .mainpage-btn-primary,
@@ -1206,7 +1282,7 @@ body {
     .mainpage-features {
         padding: 50px 20px;
         margin: 10px;
-        border-radius: 20px;
+        border-radius: 6px;
     }
     
     .mainpage-features h2 {
@@ -1216,12 +1292,12 @@ body {
     
     .mainpage-feature-list {
         flex-direction: column;
-        gap: 20px;
+        gap: 16px;
     }
     
     .mainpage-feature-item {
         max-width: 100%;
-        padding: 25px;
+        padding: 24px;
     }
     
     .mainpage-notices {
@@ -1229,17 +1305,17 @@ body {
     }
     
     .mainpage-notices h2 {
-        font-size: 24px;
+        font-size: 22px;
     }
     
     .mainpage-notice-item {
-        padding: 15px;
+        padding: 14px;
         gap: 10px;
     }
     
     .mainpage-notice-badge {
-        padding: 5px 12px;
-        font-size: 12px;
+        padding: 4px 12px;
+        font-size: 11px;
     }
     
     .mainpage-notice-title {
@@ -1255,16 +1331,16 @@ body {
     }
     
     .mainpage-posts-header h2 {
-        font-size: 24px;
+        font-size: 22px;
     }
     
     .mainpage-top-container {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 12px;
     }
     
     .mainpage-top-section {
-        padding: 20px;
+        padding: 18px;
     }
     
     .mainpage-section-title {
@@ -1272,21 +1348,21 @@ body {
     }
     
     .mainpage-top-item {
-        padding: 12px;
+        padding: 11px;
     }
     
     .mainpage-rank {
-        width: 28px;
-        height: 28px;
-        font-size: 13px;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
     }
     
     .mainpage-item-content h4 {
-        font-size: 14px;
+        font-size: 13px;
     }
     
     .mainpage-post-info {
-        font-size: 12px;
+        font-size: 11px;
     }
     
     .mainpage-category-boards {
@@ -1294,26 +1370,26 @@ body {
     }
     
     .mainpage-boards-header h2 {
-        font-size: 24px;
+        font-size: 22px;
     }
     
     .mainpage-boards-container {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 12px;
     }
     
     .mainpage-board-card {
-        padding: 20px;
+        padding: 18px;
     }
     
     .mainpage-board-card-title {
-        font-size: 18px;
+        font-size: 17px;
     }
     
     .mainpage-bottom-banner {
         padding: 60px 20px;
         margin: 10px;
-        border-radius: 20px;
+        border-radius: 6px;
     }
     
     .mainpage-bottom-content h2 {
@@ -1321,12 +1397,12 @@ body {
     }
     
     .mainpage-bottom-content p {
-        font-size: 16px;
+        font-size: 15px;
     }
     
     .mainpage-btn-join {
-        padding: 15px 40px;
-        font-size: 16px;
+        padding: 14px 36px;
+        font-size: 15px;
     }
 }
 
@@ -1341,7 +1417,7 @@ body {
     
     .mainpage-banner-content p {
         font-size: 14px;
-        margin-bottom: 30px;
+        margin-bottom: 24px;
     }
     
     .mainpage-features {
@@ -1358,15 +1434,15 @@ body {
     }
     
     .mainpage-feature-icon {
-        font-size: 50px;
+        font-size: 32px;
     }
     
     .mainpage-feature-item h3 {
-        font-size: 20px;
+        font-size: 18px;
     }
     
     .mainpage-feature-item p {
-        font-size: 14px;
+        font-size: 13px;
     }
     
     .mainpage-notices {
@@ -1378,7 +1454,7 @@ body {
     }
     
     .mainpage-notices-header {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
     
     .mainpage-notice-item {
@@ -1400,37 +1476,37 @@ body {
     }
     
     .mainpage-top-section {
-        padding: 15px;
+        padding: 14px;
     }
     
     .mainpage-section-title {
         font-size: 15px;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
     
     .mainpage-top-item {
         padding: 10px;
-        gap: 10px;
+        gap: 8px;
     }
     
     .mainpage-rank {
-        width: 26px;
-        height: 26px;
-        font-size: 12px;
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
     }
     
     .mainpage-post-tag {
-        font-size: 11px;
-        padding: 3px 10px;
+        font-size: 10px;
+        padding: 2px 8px;
     }
     
     .mainpage-item-content h4 {
-        font-size: 13px;
+        font-size: 12px;
     }
     
     .mainpage-post-info {
-        font-size: 11px;
-        gap: 8px;
+        font-size: 10px;
+        gap: 6px;
     }
     
     .mainpage-category-boards {
@@ -1439,24 +1515,24 @@ body {
     
     .mainpage-boards-header h2 {
         font-size: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
     
     .mainpage-board-card {
-        padding: 15px;
+        padding: 14px;
     }
     
     .mainpage-board-card-title {
         font-size: 16px;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
     
     .mainpage-board-card-post-title {
-        font-size: 13px;
+        font-size: 12px;
     }
     
     .mainpage-board-card-info {
-        font-size: 11px;
+        font-size: 10px;
     }
     
     .mainpage-bottom-banner {
@@ -1475,8 +1551,8 @@ body {
     .mainpage-btn-join {
         width: 100%;
         max-width: 280px;
-        padding: 12px 30px;
-        font-size: 15px;
+        padding: 12px 28px;
+        font-size: 14px;
     }
 }
 

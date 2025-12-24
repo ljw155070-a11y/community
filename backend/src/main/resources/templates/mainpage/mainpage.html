@@ -208,7 +208,7 @@
         </div>
       </div>
     </section>
-
+	
     <!-- 하단 배너 (로그인 안 한 경우만 표시) -->
     <section class="mainpage-bottom-banner" th:if="${!isLoggedIn}">
       <div class="mainpage-bottom-content">
@@ -221,6 +221,62 @@
     <th:block th:include="common/footer"></th:block>
 
     <script th:inline="javascript">
+    // 카테고리 추가했을때 방법'새카테고리': { bg: '그라데이션 색상', shadow: '그림자 색상' }
+ // 카테고리별 색상 매핑
+    const categoryColors = {
+        '자유': { bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', shadow: 'rgba(102, 126, 234, 0.25)', text: '#667eea' },
+        '유머': { bg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', shadow: 'rgba(240, 147, 251, 0.25)', text: '#f5576c' },
+        '정보': { bg: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', shadow: 'rgba(79, 172, 254, 0.25)', text: '#4facfe' },
+        '질문': { bg: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', shadow: 'rgba(250, 112, 154, 0.25)', text: '#fa709a' },
+        '여행': { bg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', shadow: 'rgba(240, 147, 251, 0.25)', text: '#f5576c' },
+        '기타': { bg: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)', shadow: 'rgba(48, 207, 208, 0.25)', text: '#30cfd0' },
+        '개발': { bg: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', shadow: 'rgba(168, 237, 234, 0.25)', text: '#a8edea' },
+        '일상': { bg: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', shadow: 'rgba(252, 182, 159, 0.25)', text: '#fcb69f' },
+        '경제': { bg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', shadow: 'rgba(240, 147, 251, 0.25)', text: '#f5576c' },
+        '취미': { bg: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', shadow: 'rgba(79, 172, 254, 0.25)', text: '#4facfe' }
+    };
+
+    // 페이지 로드시 실행
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. 인기 게시글의 작은 카테고리 태그
+        const categoryTags = document.querySelectorAll('.mainpage-post-tag');
+        
+        categoryTags.forEach(tag => {
+            const categoryName = tag.textContent.trim();
+            
+            if (categoryColors[categoryName]) {
+                tag.style.background = categoryColors[categoryName].bg;
+                tag.style.boxShadow = `0 2px 8px ${categoryColors[categoryName].shadow}`;
+            }
+        });
+        
+        // 2. 카드 게시판의 카테고리 제목
+        const boardCards = document.querySelectorAll('.mainpage-board-card');
+        
+        boardCards.forEach(card => {
+            const titleElement = card.querySelector('.mainpage-board-card-title');
+            if (titleElement) {
+                const categoryName = titleElement.textContent.trim();
+                
+                if (categoryColors[categoryName]) {
+                    // 제목 글씨 색상 변경
+                    titleElement.style.color = categoryColors[categoryName].text;
+                    // 밑줄 색상 변경
+                    titleElement.style.background = `${categoryColors[categoryName].bg} left bottom no-repeat`;
+                    titleElement.style.backgroundSize = '100% 2px';
+                }
+            }
+        });
+    });
+
+
+
+
+
+
+
+
+	    
       const categoryPostsData = /*[[${categoryPosts}]]*/ {};
 
       function toggleCategory(button) {
