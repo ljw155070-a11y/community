@@ -23,7 +23,7 @@ public class MainController {
 
 	@Autowired
 	private MainService mainService;
-	
+
 	@Autowired
 	private BoardCategoryService boardCategoryService;
 
@@ -33,7 +33,7 @@ public class MainController {
 		// 로그인 여부 확인
 		Boolean isAuthenticated = (Boolean) request.getAttribute("isAuthenticated");
 		boolean isLoggedIn = isAuthenticated != null && isAuthenticated;
-		
+
 		model.addAttribute("isLoggedIn", isLoggedIn);
 
 		// 공지사항 (로그인 여부 상관없이 표시)
@@ -44,24 +44,22 @@ public class MainController {
 		List<PostVo> viewTopPosts = mainService.getViewTopPosts();
 		List<PostVo> likeTopPosts = mainService.getLikeTopPosts();
 		List<PostVo> commentTopPosts = mainService.getCommentTopPosts();
-		
+
 		model.addAttribute("viewTopPosts", viewTopPosts);
 		model.addAttribute("likeTopPosts", likeTopPosts);
 		model.addAttribute("commentTopPosts", commentTopPosts);
 
-		// 로그인 한 경우: 카테고리별 최신 게시글 추가
-		if (isLoggedIn) {
-			List<BoardCategoryDTO> categories = boardCategoryService.getActiveCategories();
-			Map<String, List<PostVo>> categoryPosts = new HashMap<>();
-			
-			for (BoardCategoryDTO category : categories) {
-				List<PostVo> posts = mainService.getRecentPostsByCategory(category.getCategoryId());
-				categoryPosts.put(category.getCategoryName(), posts);
-			}
-			
-			model.addAttribute("categories", categories);
-			model.addAttribute("categoryPosts", categoryPosts);
+		// 카테고리별 최신 게시글 (로그인 여부 상관없이 표시)
+		List<BoardCategoryDTO> categories = boardCategoryService.getActiveCategories();
+		Map<String, List<PostVo>> categoryPosts = new HashMap<>();
+
+		for (BoardCategoryDTO category : categories) {
+			List<PostVo> posts = mainService.getRecentPostsByCategory(category.getCategoryId());
+			categoryPosts.put(category.getCategoryName(), posts);
 		}
+
+		model.addAttribute("categories", categories);
+		model.addAttribute("categoryPosts", categoryPosts);
 
 		return "mainpage/mainpage";
 	}
