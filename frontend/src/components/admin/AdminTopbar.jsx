@@ -8,7 +8,7 @@ export default function AdminTopbar() {
       <div className="admin-topbar-inner">
         <nav className="admin-nav">
           <NavLink
-            to="/app/admin/dashboard"
+            to="/admin/dashboard"
             className={({ isActive }) =>
               `admin-nav-item ${isActive ? "active" : ""}`
             }
@@ -16,7 +16,7 @@ export default function AdminTopbar() {
             대시보드
           </NavLink>
           <NavLink
-            to="/app/admin/members"
+            to="/admin/members"
             className={({ isActive }) =>
               `admin-nav-item ${isActive ? "active" : ""}`
             }
@@ -24,7 +24,7 @@ export default function AdminTopbar() {
             회원 관리
           </NavLink>
           <NavLink
-            to="/app/admin/posts"
+            to="/admin/posts"
             className={({ isActive }) =>
               `admin-nav-item ${isActive ? "active" : ""}`
             }
@@ -32,7 +32,7 @@ export default function AdminTopbar() {
             게시글 관리
           </NavLink>
           <NavLink
-            to="/app/admin/reports"
+            to="/admin/reports"
             className={({ isActive }) =>
               `admin-nav-item ${isActive ? "active" : ""}`
             }
@@ -40,7 +40,7 @@ export default function AdminTopbar() {
             신고 관리
           </NavLink>
           <NavLink
-            to="/app/admin/settings"
+            to="/admin/settings"
             className={({ isActive }) =>
               `admin-nav-item ${isActive ? "active" : ""}`
             }

@@ -58,16 +58,16 @@ export default function AdminDashboard() {
         <div className="ap-panel">
           <div className="ap-panel-title">빠른 작업</div>
           <div className="ap-quick">
-            <a className="ap-quick-btn" href="/admin/members">
+            <a className="ap-quick-btn" href="/app/admin/members">
               <div className="qt">회원 관리</div>
             </a>
-            <a className="ap-quick-btn" href="/admin/posts">
+            <a className="ap-quick-btn" href="/app/admin/posts">
               <div className="qt">게시글 관리</div>
             </a>
-            <a className="ap-quick-btn" href="/admin/reports">
+            <a className="ap-quick-btn" href="/app/admin/reports">
               <div className="qt">신고 처리</div>
             </a>
-            <a className="ap-quick-btn" href="/admin/settings">
+            <a className="ap-quick-btn" href="/app/admin/settings">
               <div className="qt">운영 설정</div>
             </a>
           </div>
