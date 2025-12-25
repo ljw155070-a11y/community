@@ -11,12 +11,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
+import kr.co.community.backend.member.controller.MemberApiController;
 import kr.co.community.backend.post.dto.CommentDTO;
 import kr.co.community.backend.post.dto.PostDTO;
 import kr.co.community.backend.post.service.PostSsrService;
 import kr.co.community.backend.util.DateFormatUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/board")
@@ -77,7 +80,7 @@ public class PostSsrController {
         return "board/boardList";
     }
     /**
-     * 게시글 상세 페이지
+     * 게시글 상세 페이지 (이미지 포함)
      */
     @GetMapping("/postDetail/{postId}")
     public String getPostDetail(
@@ -87,7 +90,10 @@ public class PostSsrController {
             @RequestAttribute(value = "isAuthenticated", required = false) Boolean isAuthenticated
     ) {
         try {
+            // ✅ getPostDetail()에서 이미지도 함께 조회됨
             PostDTO post = postSsrService.getPostDetail(postId);
+            
+            boolean authenticated = (isAuthenticated != null && isAuthenticated);
             
             if (memberId != null) {
                 boolean isLiked = postSsrService.isPostLiked(postId, memberId);
@@ -106,8 +112,11 @@ public class PostSsrController {
             List<PostDTO> authorOtherPosts = postSsrService.getAuthorOtherPosts(post.getAuthorId(), postId, 3);
             Map<String, Object> authorStats = postSsrService.getAuthorStats(post.getAuthorId());
             
+            // ✅ Model에 추가 (post에 images가 이미 포함되어 있음)
+            model.addAttribute("isAuthenticated", authenticated);
+            model.addAttribute("memberId", memberId);
             model.addAttribute("dateUtil", DateFormatUtil.class);
-            model.addAttribute("post", post);
+            model.addAttribute("post", post);  // ← post.images 포함!
             model.addAttribute("prevPost", prevPost);
             model.addAttribute("nextPost", nextPost);
             model.addAttribute("popularPosts", popularPosts);
@@ -119,9 +128,10 @@ public class PostSsrController {
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "게시글을 불러오는데 실패했습니다.");
-            return "error/error";
+            return "redirect:/board";
         }
     }
+    
 
     /**
      * ✅ 댓글 작성 (SSR - Form Submit)

@@ -312,7 +312,70 @@
         background: #fef2f2;
         border-color: #dc2626;
     }
-    
+    /* 게시글 이미지 섹션 */
+	.post-images {
+	    padding: 2rem;
+	    border-bottom: 1px solid #e5e7eb;
+	}
+	
+	.image-gallery {
+	    display: grid;
+	    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	    gap: 1rem;
+	}
+	
+	.image-item {
+	    position: relative;
+	    border-radius: 8px;
+	    overflow: hidden;
+	    background: #f3f4f6;
+	}
+	
+	.post-image {
+	    width: 100%;
+	    height: auto;
+	    display: block;
+	    object-fit: cover;
+	    cursor: pointer;
+	    transition: transform 0.3s;
+	}
+	
+	.post-image:hover {
+	    transform: scale(1.05);
+	}
+	
+	/* 이미지 1개일 때 */
+	.image-gallery .image-item:only-child {
+	    grid-column: 1 / -1;
+	    max-width: 800px;
+	    margin: 0 auto;
+	}
+	
+	/* 이미지 모달 (클릭 시 크게 보기) */
+	.image-modal {
+	    display: none;
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    right: 0;
+	    bottom: 0;
+	    background: rgba(0, 0, 0, 0.9);
+	    z-index: 9999;
+	    padding: 2rem;
+	    cursor: pointer;
+	}
+	
+	.image-modal.active {
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	}
+	
+	.image-modal img {
+	    max-width: 90%;
+	    max-height: 90vh;
+	    object-fit: contain;
+	}
     .post-content {
         padding: 2rem;
         color: #374151;
@@ -565,6 +628,7 @@
     }
     
     .comment-action-btn {
+    	
         background: none;
         border: none;
         color: #9ca3af;
@@ -574,9 +638,12 @@
         transition: color 0.2s;
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 0.25rem;
     }
-    
+    .comment-action-btn span{
+    	margin-top: 2px;
+    }
     .comment-action-btn:hover {
         color: #2563eb;
     }
@@ -742,7 +809,15 @@
             display: none;
         }
     }
+    @media (max-width: 768px) {
+    .post-images {
+        padding: 1.5rem 1rem;
+    }
     
+    .image-gallery {
+        grid-template-columns: 1fr;
+    }
+}
     @media (max-width: 768px) {
         .main-layout {
             grid-template-columns: 1fr;
@@ -785,9 +860,15 @@
     <aside class="sidebar-left">
         <!-- 작성자 카드 -->
 		<div class="author-card">
-		    <div class="author-avatar-large" th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">김</div>
-		    <h3 class="author-name-large" th:text="${post.authorName}"></h3>
-		    <p class="author-bio">개발을 사랑하는 풀스택 개발자입니다.</p>
+		    <div class="author-avatar-large" 
+		         th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">김</div>
+		    <h3 class="author-name-large" th:text="${post.authorName}">작성자</h3>
+		    
+		    <!-- ✅ BIO 표시 -->
+		    <p class="author-bio" 
+		       th:text="${post.authorBio != null and !post.authorBio.isEmpty() ? post.authorBio : '자기소개가 없습니다.'}">
+		    </p>
+		    
 		    <div class="author-stats">
 		        <div class="stat-box">
 		            <span class="stat-value" th:text="${authorStats.postCount}">0</span>
@@ -874,7 +955,16 @@
 				    </button>
 				</div>
             </div>
-            
+            <!-- ✅ 게시글 이미지 섹션 (있을 경우만 표시) -->
+		    <div class="post-images" th:if="${post.images != null and !post.images.isEmpty()}">
+		        <div class="image-gallery">
+		            <div class="image-item" th:each="image : ${post.images}">
+		                <img th:src="@{/uploads/{saveName}(saveName=${image.saveName})}" 
+		                     th:alt="${image.origName}"
+		                     class="post-image">
+		            </div>
+		        </div>
+		    </div>
             <div class="post-content">
                 <p th:utext="${post.content}"></p>
             </div>
@@ -1059,13 +1149,13 @@
 <th:block th:include="common/footer"></th:block>
 
 <script>
-    const postId = /*[[${post.postId}]]*/ 1;
-    const isAuthenticated = /*[[${isAuthenticated}]]*/ false;
+	const postId = [[${post.postId}]];
+	const isAuthenticated = [[${isAuthenticated}]]; // boolean 그대로 받음
+	const memberId = [[${memberId}]]; // null 체크용
     
-    // ✅ 디버깅 로그 추가
-    console.log('postId:', postId);
-    console.log('isAuthenticated:', isAuthenticated);
-    console.log('isAuthenticated type:', typeof isAuthenticated);
+	console.log('postId:', postId);
+    console.log('isAuthenticated:', isAuthenticated, typeof isAuthenticated);
+    console.log('memberId:', memberId);
     
     // 좋아요 토글
     function toggleLike() {
@@ -1180,16 +1270,42 @@
     
     // 팔로우
     function followAuthor() {
+    	
         // ✅ 로그인 체크
         if (!isAuthenticated) {
             alert('로그인이 필요합니다.');
             window.location.href = '/app/login';
             return;
+        }else if(isAuthenticated){
+        	alert('팔로우 되었습니다!');
         }
+    }
+ 	// ✅ 이미지 클릭 시 모달로 크게 보기
+    function setupImageModal() {
+        const images = document.querySelectorAll('.post-image');
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        document.body.appendChild(modal);
         
-        alert('팔로우 되었습니다!');
+        images.forEach(img => {
+            img.addEventListener('click', function() {
+                const modalImg = document.createElement('img');
+                modalImg.src = this.src;
+                modalImg.alt = this.alt;
+                
+                modal.innerHTML = '';
+                modal.appendChild(modalImg);
+                modal.classList.add('active');
+            });
+        });
+        
+        modal.addEventListener('click', function() {
+            this.classList.remove('active');
+        });
     }
     
+    // 페이지 로드 시 실행
+    document.addEventListener('DOMContentLoaded', setupImageModal);
     // 게시글 수정
     function editPost() {
         window.location.href = `/board/edit/${postId}`;

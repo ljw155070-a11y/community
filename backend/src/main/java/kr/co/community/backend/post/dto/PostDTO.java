@@ -33,7 +33,7 @@ public class PostDTO {
 	// ✅ 추가 필드
 	private String category; // 카테고리명 (JOIN)
 	private String authorName; // 작성자명 (JOIN - NVL(NICKNAME, NAME))
-
+	 private String authorBio;
 	private List<CommentDTO> comments; // 댓글 리스트
 	private Boolean isLiked; // 좋아요 여부
 	private Boolean isBookmarked;

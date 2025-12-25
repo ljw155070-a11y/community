@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
 import kr.co.community.backend.post.dto.CommentDTO;
 import kr.co.community.backend.post.dto.PostDTO;
+import kr.co.community.backend.post.dto.PostImageDTO;
 import kr.co.community.backend.post.dto.PostListDTO;
 
 @Mapper
@@ -34,6 +35,8 @@ public interface PostSsrDao {
     void updateViewCount(@Param("postId") Long postId);
 
     List<CommentDTO> selectCommentsByPostId(@Param("postId") Long postId);
+    
+    List<PostImageDTO> selectImagesByPostId(Long postId);
     
     // ========== 댓글 작성 ==========
     void insertComment(CommentDTO commentDTO);
