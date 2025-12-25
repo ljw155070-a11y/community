@@ -16,8 +16,9 @@ export default function BoardEditPage() {
   const [categoryId, setCategoryId] = useState("");
   const [blocks, setBlocks] = useState([]);
 
-  const fileUrl = (saveName) =>
-    BACK ? `${BACK}/uploads/${saveName}` : `/uploads/${saveName}`;
+  // ✅ 핵심: 이미지 URL은 상대경로로(SSR이랑 동일하게 /uploads/...)
+  // (같은 도메인/포트에서 SPA가 붙는 구조면 이게 제일 안정적임)
+  const fileUrl = (saveName) => (saveName ? `/uploads/${saveName}` : "");
 
   useEffect(() => {
     (async () => {
@@ -32,48 +33,91 @@ export default function BoardEditPage() {
         setCategoryId(post?.categoryId ?? "");
 
         const serverBlocksMeta = post?.blocksMeta ?? null;
-        const images = post?.images ?? [];
+        const images = Array.isArray(post?.images) ? post.images : [];
 
+        // ✅ images를 imgId 기준으로 빠르게 찾기
+        const imgById = new Map(images.map((img) => [Number(img.imgId), img]));
+
+        // ✅ 1) blocksMeta 있으면 그걸 기준으로 블록 구성
         if (serverBlocksMeta) {
           const meta =
             typeof serverBlocksMeta === "string"
               ? JSON.parse(serverBlocksMeta)
               : serverBlocksMeta;
 
-          const rebuilt = meta.map((m) => {
-            if (m.type === "text")
-              return { id: uid(), type: "text", text: m.text || "" };
+          const usedImgIds = new Set();
 
-            // image saved
-            if (m.type === "image" && (m.imgId || m.saveName)) {
-              return {
-                id: uid(),
-                type: "image",
-                kind: "saved",
-                imgId: m.imgId,
-                saveName: m.saveName,
-                origName: m.origName,
-                url: m.saveName ? fileUrl(m.saveName) : "",
-              };
-            }
+          const rebuilt = (Array.isArray(meta) ? meta : [])
+            .map((m) => {
+              if (m?.type === "text") {
+                const t = (m.text ?? "").trim();
+                // ✅ 찌꺼기 빈 텍스트는 그냥 버리기
+                if (!t) return null;
+                return { id: uid(), type: "text", text: t };
+              }
 
-            return { id: uid(), type: "text", text: "" };
+              if (m?.type === "image") {
+                const imgId = m.imgId != null ? Number(m.imgId) : null;
+                const found = imgId != null ? imgById.get(imgId) : null;
+
+                const saveName = m.saveName || found?.saveName || "";
+                const origName = m.origName || found?.origName || "";
+
+                // ✅ saveName 없으면 이미지 블록 자체 버림(= 찌꺼기 제거)
+                if (!saveName) return null;
+
+                if (imgId != null) usedImgIds.add(imgId);
+                if (found?.imgId != null) usedImgIds.add(Number(found.imgId));
+
+                return {
+                  id: uid(),
+                  type: "image",
+                  kind: "saved",
+                  imgId: imgId ?? Number(found?.imgId),
+                  saveName,
+                  origName,
+                  url: fileUrl(saveName),
+                };
+              }
+
+              return null;
+            })
+            .filter(Boolean);
+
+          // ✅ 2) blocksMeta에 없는 “남은 이미지”만 뒤에 붙이기 (중복 방지)
+          const restImages = images.filter(
+            (img) => !usedImgIds.has(Number(img.imgId))
+          );
+
+          restImages.forEach((img) => {
+            if (!img?.saveName) return;
+            rebuilt.push({
+              id: uid(),
+              type: "image",
+              kind: "saved",
+              imgId: Number(img.imgId),
+              saveName: img.saveName,
+              origName: img.origName,
+              url: fileUrl(img.saveName),
+            });
           });
 
+          // ✅ 3) 결과가 비면 기본 텍스트 1개
           setBlocks(
             rebuilt.length
               ? rebuilt
               : [{ id: uid(), type: "text", text: post?.content ?? "" }]
           );
         } else {
-          // fallback: 텍스트 1개 + 이미지들
+          // ✅ blocksMeta 없으면 (구버전 글) : 텍스트 1개 + 이미지들
           const base = [{ id: uid(), type: "text", text: post?.content ?? "" }];
           images.forEach((img) => {
+            if (!img?.saveName) return;
             base.push({
               id: uid(),
               type: "image",
               kind: "saved",
-              imgId: img.imgId,
+              imgId: Number(img.imgId),
               saveName: img.saveName,
               origName: img.origName,
               url: fileUrl(img.saveName),
@@ -159,7 +203,7 @@ export default function BoardEditPage() {
     try {
       setSaving(true);
 
-      // 1) 새 이미지 업로드 (있으면)
+      // 1) 새 이미지 업로드
       const newImages = blocks.filter(
         (b) => b.type === "image" && b.kind === "new"
       );
@@ -172,10 +216,15 @@ export default function BoardEditPage() {
         });
       }
 
-      // 2) blocksMeta 만들기 (saved는 확정, new는 업로드 후 GET에서 다시 맞춰짐)
-      const blocksMeta = blocks.map((b) => {
-        if (b.type === "text") return { type: "text", text: b.text };
-        if (b.kind === "saved") {
+      // 2) blocksMeta 생성
+      // ✅ saved는 imgId/saveName/origName 반드시 넣는다
+      // ✅ new는 업로드 후에는 실제로 DB에 들어가므로, 원칙적으로는 저장 전에 다시 GET해서 붙이는 게 제일 깔끔하지만
+      //    지금은 최소 변경으로: new는 meta에 남겨두지 않고(또는 텍스트만 저장) -> 다음 GET 때 images로 보강되도록 한다.
+      const blocksMeta = blocks
+        .filter((b) => !(b.type === "image" && b.kind === "new")) // ✅ new 이미지는 meta에 남기지 않음(중복/빈 url 방지)
+        .map((b) => {
+          if (b.type === "text") return { type: "text", text: b.text };
+          // saved
           return {
             type: "image",
             kind: "saved",
@@ -183,19 +232,16 @@ export default function BoardEditPage() {
             saveName: b.saveName,
             origName: b.origName,
           };
-        }
-        // new
-        return { type: "image", kind: "new", origName: b.origName };
-      });
+        });
 
-      // 3) PUT 저장 (blocksMeta 저장이 핵심)
+      // 3) PUT 저장
       await axios.put(
         `${BACK}/post/${postId}`,
         {
           postId: Number(postId),
           categoryId: categoryId ? Number(categoryId) : null,
           title,
-          content: contentTextForSearch,
+          content: contentTextForSearch || " ", // ✅ 비어있으면 서버 validation 걸릴 수 있어서 안전하게
           blocksMeta: JSON.stringify(blocksMeta),
         },
         { withCredentials: true }
@@ -289,7 +335,7 @@ export default function BoardEditPage() {
           </div>
 
           <div className="bw-field">
-            <label className="bw-label">본문 (글+이미지 섞기)</label>
+            <label className="bw-label">본문</label>
             <PostBlocksEditor
               blocks={blocks}
               setBlocks={setBlocks}
@@ -331,6 +377,22 @@ export default function BoardEditPage() {
       </div>
     </div>
   );
+}
+
+function buildFallbackBlocks(post, images, fileUrl) {
+  const base = [{ id: uid(), type: "text", text: post?.content ?? "" }];
+  images.forEach((img) => {
+    base.push({
+      id: uid(),
+      type: "image",
+      kind: "saved",
+      imgId: img.imgId,
+      saveName: img.saveName,
+      origName: img.origName,
+      url: fileUrl(img.saveName),
+    });
+  });
+  return base;
 }
 
 function uid() {

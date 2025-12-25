@@ -68,9 +68,10 @@
                 <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
                 <h4 th:text="${post.title}">제목</h4>
                 <div class="mainpage-post-info">
-                  <span th:text="${post.nickname}">작성자</span>
-                  <span th:text="'👁 ' + ${post.viewCount}">조회수</span>
-                </div>
+				  <span th:text="${post.nickname}">작성자</span>
+				  <span th:text="'👁 ' + ${post.viewCount}">조회수</span>
+				  <span class="new-badge" th:if="${#dates.format(post.createdAt, 'yyyy-MM-dd') eq #dates.format(today, 'yyyy-MM-dd')}">NEW</span>
+				</div>
               </div>
             </div>
           </div>
@@ -90,9 +91,10 @@
                 <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
                 <h4 th:text="${post.title}">제목</h4>
                 <div class="mainpage-post-info">
-                  <span th:text="${post.nickname}">작성자</span>
-                  <span th:text="'❤ ' + ${post.likeCount}">좋아요</span>
-                </div>
+				  <span th:text="${post.nickname}">작성자</span>
+				  <span th:text="'❤ ' + ${post.likeCount}">좋아요</span>
+				  <span class="new-badge" th:if="${#dates.format(post.createdAt, 'yyyy-MM-dd') eq #dates.format(today, 'yyyy-MM-dd')}">NEW</span>
+				</div>
               </div>
             </div>
           </div>
@@ -112,9 +114,11 @@
                 <span class="mainpage-post-tag" th:text="${post.categoryName}">자유</span>
                 <h4 th:text="${post.title}">제목</h4>
                 <div class="mainpage-post-info">
-                  <span th:text="${post.nickname}">작성자</span>
-                  <span th:text="'💬 ' + ${post.commentCount}">댓글</span>
-                </div>
+				  <span th:text="${post.nickname}">작성자</span>
+				  <span th:text="'💬 ' + ${post.commentCount}">댓글</span>
+				  <span class="new-badge" th:if="${#dates.format(post.createdAt, 'yyyy-MM-dd') eq #dates.format(today, 'yyyy-MM-dd')}">NEW</span>
+				  
+				</div>				
               </div>
             </div>
           </div>
@@ -141,9 +145,12 @@
               <div class="mainpage-board-card-content">
                 <p class="mainpage-board-card-post-title" th:text="${post.title}">제목</p>
                 <div class="mainpage-board-card-info">
-                  <span th:text="${post.nickname}">작성자</span>
-                  <span th:text="${#dates.format(post.createdAt, 'MM.dd')}">날짜</span>
-                </div>
+				  <span th:text="${post.nickname}">작성자</span>
+				  <div class="mainpage-board-card-right">
+				    <span th:text="${#dates.format(post.createdAt, 'MM.dd')}">날짜</span>
+				    <span class="new-badge" th:if="${#dates.format(post.createdAt, 'yyyy-MM-dd') eq #dates.format(today, 'yyyy-MM-dd')}">NEW</span>
+				  </div>
+				</div>
               </div>
             </div>
 

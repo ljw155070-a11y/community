@@ -145,12 +145,6 @@ const Login = () => {
         </form>
 
         <div className="link-section">
-          <Link to="/find-id" className="link">
-            {" "}
-            {/* ✅ href → to, a → Link */}
-            아이디 찾기
-          </Link>
-          <span className="divider">|</span>
           <Link to="/find-password" className="link">
             {" "}
             {/* ✅ href → to, a → Link */}
