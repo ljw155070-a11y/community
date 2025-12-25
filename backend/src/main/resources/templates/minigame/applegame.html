@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>미니게임 - 사과게임</title>
+
+<link rel="stylesheet" href="/communityCss/applegame.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <th:block th:include="common/header"></th:block>
+
+  <section class="applegame" id="appleTop">
+    <h1>🍎 사과게임</h1>
+
+    <div class="applegame-controls">
+      <button id="startBtn" type="button">게임 시작</button>
+      <div id="score">Score : 0</div>
+      <div id="timerContainer" aria-label="남은 시간">
+        <div id="timerBar">
+          <div id="timerBarFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="applegame-board">
+      <div class="applegame-board-inner">
+        <div id="gameOverlay" class="applegame-overlay" aria-live="polite">
+          <div class="applegame-overlay-card">
+            <div class="applegame-overlay-badge">10 만들기 퍼즐</div>
+            <h2 class="applegame-overlay-title">드래그로 사과를 선택해서 합이 10이면 제거!</h2>
+            <p class="applegame-overlay-desc">
+              숫자가 적힌 사과들을 <b>드래그</b>로 영역 선택하세요.<br />
+              선택한 사과 숫자의 <b>합이 10</b>이면 사과가 사라지고 점수를 얻습니다.
+            </p>
+
+            <div class="applegame-rulegrid">
+              <div class="applegame-rule">
+                <div class="applegame-rule-k">조작</div>
+                <div class="applegame-rule-v">마우스 드래그(좌클릭)로 영역 선택</div>
+              </div>
+              <div class="applegame-rule">
+                <div class="applegame-rule-k">점수</div>
+                <div class="applegame-rule-v">제거한 개수의 <b>제곱</b> (예: 3개 → 9점)</div>
+              </div>
+              <div class="applegame-rule">
+                <div class="applegame-rule-k">시간</div>
+                <div class="applegame-rule-v"><b>120초</b> 제한</div>
+              </div>
+              <div class="applegame-rule">
+                <div class="applegame-rule-k">보너스</div>
+                <div class="applegame-rule-v">🍎+3 사과 클릭 시 <b>3점</b> 획득</div>
+              </div>
+            </div>
+
+            <div class="applegame-overlay-actions">
+              <button id="overlayStartBtn" type="button" class="applegame-overlay-primary">게임 시작</button>
+            </div>
+
+            <div class="applegame-overlay-foot">
+              팁: 많은 개수를 한 번에 맞추면 점수가 크게 올라가요.
+            </div>
+          </div>
+        </div>
+
+        <div id="game" aria-label="게임 보드">
+          <div id="scoreLogs"></div>
+        </div>
+
+        <div id="selectionBox"></div>
+      </div>
+    </div>
+  </section>
+
+  <th:block th:include="common/footer"></th:block>
+
+  <script>
+    (function () {
+      const game = document.getElementById("game");
+      const scoreDisplay = document.getElementById("score");
+      const timerBarFill = document.getElementById("timerBarFill");
+      const startBtn = document.getElementById("startBtn");
+
+      const overlay = document.getElementById("gameOverlay");
+      const overlayStartBtn = document.getElementById("overlayStartBtn");
+      const overlayHowBtn = document.getElementById("overlayHowBtn");
+
+      const selectionBox = document.getElementById("selectionBox");
+      const scoreLogs = document.getElementById("scoreLogs");
+
+      const COLS = 17;
+      const ROWS = 10;
+
+      let score = 0;
+      let timeLeft = 120;
+      let timer;
+
+      let startX = 0,
+        startY = 0;
+      let isDragging = false;
+
+      let applesGrid = [];
+      let currentSelected = [];
+      let isGameRunning = false;
+
+      const boardInner = document.querySelector(".applegame-board-inner");
+      const timeAppleContainer = document.createElement("div");
+      timeAppleContainer.style.position = "absolute";
+      timeAppleContainer.style.inset = "0";
+      timeAppleContainer.style.pointerEvents = "none";
+      timeAppleContainer.style.zIndex = "4500";
+      boardInner.appendChild(timeAppleContainer);
+
+      function showOverlay(mode, finalScore) {
+        overlay.style.display = "grid";
+
+        const title = overlay.querySelector(".applegame-overlay-title");
+        const desc = overlay.querySelector(".applegame-overlay-desc");
+        const badge = overlay.querySelector(".applegame-overlay-badge");
+        const foot = overlay.querySelector(".applegame-overlay-foot");
+
+        if (mode === "end") {
+          badge.textContent = "게임 종료";
+          title.textContent = `최종 점수: ${finalScore}점`;
+          desc.innerHTML = `다시 한 번 도전해볼까요?<br/>더 크게 묶을수록 점수가 제곱으로 올라가요!`;
+          foot.textContent = "팁: 4개(16점), 5개(25점)처럼 크게 맞추면 점수 폭발";
+          overlayStartBtn.textContent = "다시 하기";
+        } else {
+          badge.textContent = "10 만들기 퍼즐";
+          title.textContent = "드래그로 사과를 선택해서 합이 10이면 제거!";
+          desc.innerHTML = `숫자가 적힌 사과들을 <b>드래그</b>로 영역 선택하세요.<br/>선택한 사과 숫자의 <b>합이 10</b>이면 사과가 사라지고 점수를 얻습니다.`;
+          foot.textContent = "팁: 많은 개수를 한 번에 맞추면 점수가 크게 올라가요.";
+          overlayStartBtn.textContent = "게임 시작";
+        }
+      }
+
+      function hideOverlay() {
+        overlay.style.display = "none";
+      }
+
+      function generateApple(value) {
+        const apple = document.createElement("div");
+        apple.className = "apple";
+        apple.dataset.value = value;
+
+        const span = document.createElement("span");
+        span.textContent = value;
+        apple.appendChild(span);
+
+        return apple;
+      }
+
+      function renderGrid() {
+        const keepLogs = scoreLogs;
+        game.innerHTML = "";
+
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const apple = applesGrid[r][c];
+            if (apple) {
+              game.appendChild(apple);
+            } else {
+              const empty = document.createElement("div");
+              empty.style.width = "30px";
+              empty.style.height = "30px";
+              game.appendChild(empty);
+            }
+          }
+        }
+
+        if (!game.contains(keepLogs)) game.appendChild(keepLogs);
+      }
+
+      function addScoreLog(points) {
+        if (points <= 0) return;
+
+        scoreLogs.innerHTML = "";
+
+        const logItem = document.createElement("div");
+        logItem.className = "scoreLogItem";
+        if (points >= 6) logItem.classList.add("blue");
+
+        logItem.innerHTML =
+          `<span class="scoreLogPoints">+${points}</span>` +
+          `<span class="scoreLogApple">🍎</span>`;
+
+        scoreLogs.appendChild(logItem);
+      }
+
+      function updateScore() {
+        scoreDisplay.textContent = "Score : " + score;
+      }
+
+      function updateTimerBar() {
+        const percent = Math.max(0, (timeLeft / 120) * 100);
+        timerBarFill.style.width = percent + "%";
+      }
+
+      function clearSelectedBorders() {
+        currentSelected.forEach(({ apple }) => apple.classList.remove("selected"));
+        currentSelected = [];
+      }
+
+      function updateSelectedApples(boxLeft, boxTop, boxRight, boxBottom) {
+        clearSelectedBorders();
+        let newlySelected = [];
+
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const apple = applesGrid[r][c];
+            if (!apple) continue;
+
+            const rect = apple.getBoundingClientRect();
+            const isOverlap = !(
+              rect.right < boxLeft ||
+              rect.left > boxRight ||
+              rect.bottom < boxTop ||
+              rect.top > boxBottom
+            );
+
+            if (isOverlap) {
+              apple.classList.add("selected");
+              newlySelected.push({ r, c, apple });
+            }
+          }
+        }
+
+        currentSelected = newlySelected;
+      }
+
+      function startGame() {
+        hideOverlay();
+
+        timeAppleContainer.innerHTML = "";
+
+        applesGrid = [];
+        score = 0;
+        timeLeft = 120;
+        updateScore();
+        updateTimerBar();
+        scoreLogs.innerHTML = "";
+        currentSelected = [];
+        isGameRunning = true;
+
+        for (let r = 0; r < ROWS; r++) {
+          applesGrid[r] = [];
+          for (let c = 0; c < COLS; c++) {
+            const rand = Math.floor(Math.random() * 9) + 1;
+            applesGrid[r][c] = generateApple(rand);
+          }
+        }
+
+        renderGrid();
+
+        clearInterval(timer);
+        timer = setInterval(() => {
+          timeLeft--;
+          updateTimerBar();
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            isGameRunning = false;
+            showOverlay("end", score);
+          }
+        }, 1000);
+      }
+
+      function createTimeApple() {
+        if (!isGameRunning) return;
+        if (timeAppleContainer.childElementCount >= 3) return;
+
+        const apple = document.createElement("div");
+        apple.textContent = "🍎 +3";
+        apple.style.position = "absolute";
+        apple.style.fontSize = "46px";
+        apple.style.cursor = "pointer";
+        apple.style.userSelect = "none";
+        apple.style.color = "#d35400";
+        apple.style.fontWeight = "900";
+        apple.style.filter = "drop-shadow(0 0 1px rgba(0,0,0,0.3))";
+        apple.style.pointerEvents = "auto";
+        apple.style.zIndex = "4600";
+
+        const side = Math.random() < 0.5 ? "left" : "right";
+        const fromTop = Math.random() < 0.5;
+
+        if (side === "left") apple.style.left = "10px";
+        else apple.style.right = "10px";
+
+        if (fromTop) {
+          apple.style.top = "10px";
+          apple.style.animation = `timeAppleDown 1s linear forwards`;
+        } else {
+          apple.style.bottom = "10px";
+          apple.style.animation = `timeAppleUp 1s linear forwards`;
+        }
+
+        apple.addEventListener("animationend", () => {
+          if (apple.parentNode) timeAppleContainer.removeChild(apple);
+        });
+
+        apple.addEventListener("click", (e) => {
+          if (!isGameRunning) return;
+          if (apple.dataset.clicked) return;
+
+          e.stopPropagation();
+          apple.dataset.clicked = "true";
+
+          score += 3;
+          updateScore();
+          addScoreLog(3);
+
+          apple.style.animation = "";
+          apple.style.pointerEvents = "none";
+          apple.classList.add("growFade");
+
+          setTimeout(() => {
+            if (apple.parentNode) timeAppleContainer.removeChild(apple);
+          }, 600);
+        });
+
+        timeAppleContainer.appendChild(apple);
+      }
+
+      game.addEventListener("mousedown", (e) => {
+        if (!isGameRunning) return;
+        if (e.button !== 0) return;
+
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        selectionBox.style.left = startX + "px";
+        selectionBox.style.top = startY + "px";
+        selectionBox.style.width = "0px";
+        selectionBox.style.height = "0px";
+        selectionBox.style.display = "block";
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+
+        const currentX = e.clientX;
+        const currentY = e.clientY;
+
+        const x = Math.min(startX, currentX);
+        const y = Math.min(startY, currentY);
+        const width = Math.abs(startX - currentX);
+        const height = Math.abs(startY - currentY);
+
+        selectionBox.style.left = x + "px";
+        selectionBox.style.top = y + "px";
+        selectionBox.style.width = width + "px";
+        selectionBox.style.height = height + "px";
+
+        updateSelectedApples(x, y, x + width, y + height);
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (!isGameRunning) return;
+        if (!isDragging) return;
+
+        isDragging = false;
+        selectionBox.style.display = "none";
+
+        const selected = currentSelected;
+        const sum = selected.reduce((acc, obj) => acc + parseInt(obj.apple.dataset.value), 0);
+
+        if (sum === 10 && selected.length > 0) {
+          const points = selected.length ** 2;
+          score += points;
+          updateScore();
+          addScoreLog(points);
+
+          timeLeft += 5;
+          updateTimerBar();
+
+          createTimeApple();
+
+          selected.forEach(({ r, c, apple }) => {
+            apple.classList.add("vanish");
+            apple.addEventListener(
+              "animationend",
+              () => {
+                applesGrid[r][c] = null;
+                renderGrid();
+              },
+              { once: true }
+            );
+          });
+        }
+
+        clearSelectedBorders();
+      });
+
+      startBtn.addEventListener("click", () => startGame());
+      overlayStartBtn.addEventListener("click", () => startGame());
+      overlayHowBtn.addEventListener("click", () => showOverlay("intro", 0));
+
+      showOverlay("intro", 0);
+      updateTimerBar();
+      updateScore();
+    })();
+  </script>
+</body>
+</html>
