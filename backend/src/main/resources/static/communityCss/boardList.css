@@ -1,3 +1,4 @@
+/* boardList.css (전체) */
 /* =========================
    Board List - Clean UI (Full)
    - Card: content is light (no bold)
@@ -358,8 +359,8 @@ body{
 .bl-view-compact{ display: none; }
 
 .bl-card{
-  position: relative;       /* ✅ actions absolute 기준 */
-  overflow: visible;        /* ✅ 카드 밖으로 버튼 나가도 보이게 */
+  position: relative;
+  overflow: visible;
 
   background: rgba(255,255,255,0.92);
   border: 1px solid var(--line);
@@ -390,10 +391,10 @@ body{
   text-decoration: none;
 
   position: relative;
-  z-index: 1; /* ✅ 링크 레이어 */
+  z-index: 1;
 }
 
-/* ✅ 카드 제목: 과한 굵기 X (중간) */
+/* 카드 제목 */
 .bl-card-title{
   margin: 0 0 6px;
   font-size: 16px;
@@ -401,7 +402,7 @@ body{
   letter-spacing: -0.01em;
 }
 
-/* ✅ 카드 내용: 굵게 필요 없음 */
+/* 카드 내용 */
 .bl-card-desc{
   margin: 0 0 12px;
   color: var(--muted);
@@ -450,13 +451,12 @@ body{
   font-weight: 700;
 }
 
-/* ✅ Card edit overlay: 카드 밖 오른쪽 + 세로 중앙 */
+/* Card edit overlay */
 .bl-card-actions{
   position: absolute;
   top: 45%;
-  right: 32px; /* ✅ 카드 밖으로 빼기(원하면 더 크게/작게 조절) */
-
-  z-index: 5;           /* ✅ 링크보다 위 */
+  right: 32px;
+  z-index: 5;
   opacity: 0;
   pointer-events: none;
 
@@ -494,13 +494,11 @@ body{
 
 /* =========================
    Compact View (List)
-   - "딱딱/컴팩트/표" 느낌
-   - ✅ actions는 레이아웃에서 분리(overlay)
 ========================= */
 .bl-row{
-  position: relative;              /* ✅ overlay 기준 */
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 200px 170px auto; /* HTML 그대로 두되 */
+  grid-template-columns: 1fr 200px 170px auto;
   gap: 10px;
   align-items: center;
 
@@ -509,7 +507,6 @@ body{
   border-radius: var(--r12);
   padding: 10px 12px;
 
-  /* ✅ 버튼 공간을 항상 확보 -> 행마다 폭 안 바뀜 */
   padding-right: 72px;
 
   box-shadow: none;
@@ -539,7 +536,7 @@ body{
   min-width: 0;
 }
 
-/* ✅ 리스트 제목: 굵게 필요 없음 (보통) */
+/* 리스트 제목 */
 .bl-title-text{
   font-size: 14px;
   font-weight: 500;
@@ -584,7 +581,7 @@ body{
   font-size: 12px;
 }
 
-/* ✅ Compact edit actions: overlay */
+/* Compact edit actions: overlay */
 .bl-col-actions{
   position: absolute;
   top: 50%;
@@ -712,7 +709,6 @@ body{
   .bl-write-btn{ width: 100%; }
 
   .bl-row{
-    /* 모바일에서는 행이 2열 구조로 바뀌니 버튼 공간 과하게 잡지 않음 */
     padding-right: 12px;
     grid-template-columns: 1fr auto;
     gap: 8px;
@@ -728,7 +724,6 @@ body{
     justify-content: flex-start;
   }
 
-  /* 모바일에서는 hover 애매 -> 항상 보이게 + 아래로 내려오게 */
   .bl-col-actions{
     position: static;
     transform: none;
@@ -738,7 +733,6 @@ body{
     justify-content: flex-start;
   }
 
-  /* ✅ 모바일에서는 카드 밖으로 빼면 잘릴 수 있어서 카드 안쪽으로 */
   .bl-card-actions{
     top: 12px;
     right: 12px;
@@ -749,10 +743,9 @@ body{
   .bl-card:hover .bl-card-actions{
     transform: translateY(0);
   }
-  
-
 }
-  .bl-author{
+
+.bl-author{
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -780,4 +773,3 @@ body{
     rgba(255,255,255,0.78);
   border-color: rgba(37,99,235,0.18);
 }
-

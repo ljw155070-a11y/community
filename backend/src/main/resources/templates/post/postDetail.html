@@ -1,1351 +1,1254 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title th:text="${post.title} + ' - 커뮤니티'">게시글 - 커뮤니티</title>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${post.title} + ' - 커뮤니티'">게시글 - 커뮤니티</title>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-            'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-        background-color: #f9fafb;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
-    
+
     /* 메인 레이아웃 - 3단 구조 */
     .main-layout {
-        flex: 1;
-        max-width: 1400px;
-        width: 100%;
-        margin: 0 auto;
-        padding: 2rem 1rem;
-        display: grid;
-        grid-template-columns: 280px 1fr 320px;
-        gap: 2rem;
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      gap: 2rem;
     }
-    
+
     /* 좌측 사이드바 */
     .sidebar-left {
-        position: sticky;
-        top: 2rem;
-        height: fit-content;
+      position: sticky;
+      top: 2rem;
+      height: fit-content;
     }
-    
+
     .author-card {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
     }
-    
+
     .author-avatar-large {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        margin: 0 auto 1rem;
-        display: block;
-        border: 3px solid #e5e7eb;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: 700;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: block;
+      border: 3px solid #e5e7eb;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
     }
-    
+
     .author-name-large {
-        text-align: center;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #1f2937;
-        margin-bottom: 0.5rem;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
     }
-    
+
     .author-bio {
-        text-align: center;
-        font-size: 0.85rem;
-        color: #6b7280;
-        margin-bottom: 1rem;
-        line-height: 1.4;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+      line-height: 1.4;
     }
-    
+
     .author-stats {
-        display: flex;
-        justify-content: space-around;
-        padding: 1rem 0;
-        border-top: 1px solid #f3f4f6;
-        border-bottom: 1px solid #f3f4f6;
-        margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-around;
+      padding: 1rem 0;
+      border-top: 1px solid #f3f4f6;
+      border-bottom: 1px solid #f3f4f6;
+      margin-bottom: 1rem;
     }
-    
-    .stat-box {
-        text-align: center;
-    }
-    
+
+    .stat-box { text-align: center; }
+
     .stat-value {
-        display: block;
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #2563eb;
+      display: block;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #2563eb;
     }
-    
+
     .stat-label {
-        display: block;
-        font-size: 0.75rem;
-        color: #6b7280;
-        margin-top: 0.25rem;
+      display: block;
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
     }
-    
+
     .btn-follow {
-        width: 100%;
-        padding: 0.75rem;
-        background: #2563eb;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s;
+      width: 100%;
+      padding: 0.75rem;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    
-    .btn-follow:hover {
-        background: #1d4ed8;
-    }
-    
+
+    .btn-follow:hover { background: #1d4ed8; }
+
     .sidebar-section {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
     }
-    
+
     .sidebar-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #1f2937;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    
-    .related-list {
-        list-style: none;
-    }
-    
+
+    .related-list { list-style: none; }
+
     .related-list li {
-        margin-bottom: 0.75rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 1px solid #f3f4f6;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #f3f4f6;
     }
-    
+
     .related-list li:last-child {
-        margin-bottom: 0;
-        padding-bottom: 0;
-        border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
     }
-    
+
     .related-list a {
-        color: #374151;
-        text-decoration: none;
-        font-size: 0.9rem;
-        line-height: 1.4;
-        display: block;
-        transition: color 0.2s;
+      color: #374151;
+      text-decoration: none;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      display: block;
+      transition: color 0.2s;
     }
-    
-    .related-list a:hover {
-        color: #2563eb;
-    }
-    
+
+    .related-list a:hover { color: #2563eb; }
+
     /* 메인 컨텐츠 */
-    main {
-        min-width: 0;
-    }
-    
+    main { min-width: 0; }
+
     .back-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #6b7280;
-        text-decoration: none;
-        font-size: 0.9rem;
-        margin-bottom: 1.5rem;
-        padding: 0.5rem 0;
-        transition: color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #6b7280;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      padding: 0.5rem 0;
+      transition: color 0.2s;
     }
-    
-    .back-button:hover {
-        color: #2563eb;
-    }
-    
-    .back-button svg {
-        width: 16px;
-        height: 16px;
-    }
-    
+
+    .back-button:hover { color: #2563eb; }
+
+    .back-button svg { width: 16px; height: 16px; }
+
     .post-container {
-        background-color: white;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
-        margin-bottom: 1.5rem;
+      background-color: white;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
     }
-    
+
     .post-header {
-        padding: 2rem;
-        border-bottom: 1px solid #e5e7eb;
+      padding: 2rem;
+      border-bottom: 1px solid #e5e7eb;
     }
-    
+
     .post-category {
-        display: inline-block;
-        padding: 0.375rem 0.75rem;
-        background-color: #dbeafe;
-        color: #2563eb;
-        font-size: 0.8rem;
-        font-weight: 600;
-        border-radius: 6px;
-        margin-bottom: 1rem;
+      display: inline-block;
+      padding: 0.375rem 0.75rem;
+      background-color: #dbeafe;
+      color: #2563eb;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 6px;
+      margin-bottom: 1rem;
     }
-    
+
     .post-title {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1f2937;
-        margin-bottom: 1rem;
-        line-height: 1.4;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 1rem;
+      line-height: 1.4;
     }
-    
+
     .post-meta {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        color: #6b7280;
-        font-size: 0.9rem;
-        flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: #6b7280;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
     }
-    
+
     .author-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    
+
     .author-avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: 2px solid #e5e7eb;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 2px solid #e5e7eb;
     }
-    
-    .author-name {
-        font-weight: 500;
-        color: #1f2937;
-    }
-    
+
+    .author-name { font-weight: 500; color: #1f2937; }
+
     .post-stats {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-left: auto;
     }
-    
+
     .stat-item {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
     }
-    
-    .stat-item svg {
-        width: 16px;
-        height: 16px;
-    }
-    
+
+    .stat-item svg { width: 16px; height: 16px; }
+
     /* 수정/삭제 버튼 */
     .post-edit-actions {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid #f3f4f6;
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f3f4f6;
     }
-    
+
     .btn-edit, .btn-delete {
-        padding: 0.5rem 1rem;
-        border: 1px solid #e5e7eb;
-        background: white;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.2s;
+      padding: 0.5rem 1rem;
+      border: 1px solid #e5e7eb;
+      background: white;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    
+
     .btn-edit:hover {
-        background: #f9fafb;
-        border-color: #2563eb;
-        color: #2563eb;
+      background: #f9fafb;
+      border-color: #2563eb;
+      color: #2563eb;
     }
-    
-    .btn-delete {
-        color: #dc2626;
-    }
-    
+
+    .btn-delete { color: #dc2626; }
+
     .btn-delete:hover {
-        background: #fef2f2;
-        border-color: #dc2626;
+      background: #fef2f2;
+      border-color: #dc2626;
     }
-    /* 게시글 이미지 섹션 */
-	.post-images {
-	    padding: 2rem;
-	    border-bottom: 1px solid #e5e7eb;
-	}
-	
-	.image-gallery {
-	    display: grid;
-	    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-	    gap: 1rem;
-	}
-	
-	.image-item {
-	    position: relative;
-	    border-radius: 8px;
-	    overflow: hidden;
-	    background: #f3f4f6;
-	}
-	
-	.post-image {
-	    width: 100%;
-	    height: auto;
-	    display: block;
-	    object-fit: cover;
-	    cursor: pointer;
-	    transition: transform 0.3s;
-	}
-	
-	.post-image:hover {
-	    transform: scale(1.05);
-	}
-	
-	/* 이미지 1개일 때 */
-	.image-gallery .image-item:only-child {
-	    grid-column: 1 / -1;
-	    max-width: 800px;
-	    margin: 0 auto;
-	}
-	
-	/* 이미지 모달 (클릭 시 크게 보기) */
-	.image-modal {
-	    display: none;
-	    position: fixed;
-	    top: 0;
-	    left: 0;
-	    right: 0;
-	    bottom: 0;
-	    background: rgba(0, 0, 0, 0.9);
-	    z-index: 9999;
-	    padding: 2rem;
-	    cursor: pointer;
-	}
-	
-	.image-modal.active {
-	    display: flex;
-	    align-items: center;
-	    justify-content: center;
-	}
-	
-	.image-modal img {
-	    max-width: 90%;
-	    max-height: 90vh;
-	    object-fit: contain;
-	}
+
+    /* 이미지 모달 */
+    .image-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      padding: 2rem;
+      cursor: pointer;
+    }
+
+    .image-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-modal img {
+      max-width: 90%;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
     .post-content {
-        padding: 2rem;
-        color: #374151;
-        font-size: 1rem;
-        line-height: 1.8;
-        word-break: break-word;
+      padding: 2rem;
+      color: #374151;
+      font-size: 1rem;
+      line-height: 1.8;
+      word-break: break-word;
     }
-    
-    .post-content p {
-        margin-bottom: 1rem;
+
+    .post-content p { margin-bottom: 1rem; }
+
+    /* blocks 이미지 공통 */
+    .post-image {
+      width: auto;
+      max-width: 80%;
+      height: auto;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s;
+      display: inline-block;
     }
-    
+
+    .post-image:hover { transform: scale(1.02); }
+
     .post-actions {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1.5rem 2rem;
-        border-top: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.5rem 2rem;
+      border-top: 1px solid #e5e7eb;
     }
-    
+
     .action-button {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.625rem 1rem;
-        border: 1px solid #e5e7eb;
-        background-color: white;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        color: #6b7280;
-        cursor: pointer;
-        transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1rem;
+      border: 1px solid #e5e7eb;
+      background-color: white;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    
+
     .action-button:hover {
-        background-color: #f9fafb;
-        border-color: #d1d5db;
+      background-color: #f9fafb;
+      border-color: #d1d5db;
     }
-    
+
     .action-button.liked {
-        color: #ef4444;
-        border-color: #fecaca;
-        background-color: #fef2f2;
+      color: #ef4444;
+      border-color: #fecaca;
+      background-color: #fef2f2;
     }
-    
+
     .action-button.bookmarked {
-        color: #f59e0b;
-        border-color: #fed7aa;
-        background-color: #fffbeb;
+      color: #f59e0b;
+      border-color: #fed7aa;
+      background-color: #fffbeb;
     }
-    
-    .action-button svg {
-        width: 18px;
-        height: 18px;
-    }
-    
-    .share-button {
-        margin-left: auto;
-    }
-    
+
+    .action-button svg { width: 18px; height: 18px; }
+
+    .share-button { margin-left: auto; }
+
     /* 이전글/다음글 네비게이션 */
     .post-navigation {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
-        margin-bottom: 1.5rem;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
     }
-    
+
     .nav-item {
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid #f3f4f6;
-        transition: background 0.2s;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #f3f4f6;
+      transition: background 0.2s;
     }
-    
-    .nav-item:last-child {
-        border-bottom: none;
-    }
-    
-    .nav-item:hover {
-        background: #f9fafb;
-    }
-    
+
+    .nav-item:last-child { border-bottom: none; }
+
+    .nav-item:hover { background: #f9fafb; }
+
     .nav-label {
-        display: block;
-        font-size: 0.75rem;
-        color: #9ca3af;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
+      display: block;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
     }
-    
+
     .nav-link {
-        color: #374151;
-        text-decoration: none;
-        font-size: 0.95rem;
-        line-height: 1.4;
-        display: block;
+      color: #374151;
+      text-decoration: none;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      display: block;
     }
-    
-    .nav-link:hover {
-        color: #2563eb;
-    }
-    
+
+    .nav-link:hover { color: #2563eb; }
+
     .nav-empty {
-        color: #9ca3af;
-        font-style: italic;
+      color: #9ca3af;
+      font-style: italic;
     }
-    
+
     /* 댓글 섹션 */
     .comments-section {
-        background-color: white;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
+      background-color: white;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
     }
-    
+
     .comments-header {
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid #e5e7eb;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #e5e7eb;
     }
-    
+
     .comments-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1f2937;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
     }
-    
-    .comments-count {
-        color: #2563eb;
-    }
-    
+
+    .comments-count { color: #2563eb; }
+
     .comment-form {
-        padding: 2rem;
-        border-bottom: 1px solid #e5e7eb;
+      padding: 2rem;
+      border-bottom: 1px solid #e5e7eb;
     }
-    
+
     .comment-notice {
-        text-align: center;
-        padding: 2rem;
-        color: #6b7280;
-        border-bottom: 1px solid #e5e7eb;
+      text-align: center;
+      padding: 2rem;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
     }
-    
+
     .comment-notice a {
-        color: #2563eb;
-        text-decoration: none;
-        font-weight: 500;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
     }
-    
-    .comment-notice a:hover {
-        text-decoration: underline;
-    }
-    
+
+    .comment-notice a:hover { text-decoration: underline; }
+
     .comment-textarea {
-        width: 100%;
-        min-height: 100px;
-        padding: 1rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        font-family: inherit;
-        resize: vertical;
-        transition: border-color 0.2s;
+      width: 100%;
+      min-height: 100px;
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: border-color 0.2s;
     }
-    
+
     .comment-textarea:focus {
-        outline: none;
-        border-color: #2563eb;
+      outline: none;
+      border-color: #2563eb;
     }
-    
+
     .comment-form-actions {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 1rem;
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1rem;
     }
-    
+
     .submit-comment-btn {
-        padding: 0.75rem 1.5rem;
-        background-color: #2563eb;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.2s;
+      padding: 0.75rem 1.5rem;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
-    
-    .submit-comment-btn:hover {
-        background-color: #1d4ed8;
-    }
-    
+
+    .submit-comment-btn:hover { background-color: #1d4ed8; }
+
     .comment-item {
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid #f3f4f6;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #f3f4f6;
     }
-    
-    .comment-item:last-child {
-        border-bottom: none;
-    }
-    
+
+    .comment-item:last-child { border-bottom: none; }
+
     .comment-author {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
     }
-    
+
     .comment-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: 2px solid #e5e7eb;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 2px solid #e5e7eb;
     }
-    
-    .comment-author-info {
-        flex: 1;
-    }
-    
+
+    .comment-author-info { flex: 1; }
+
     .comment-author-name {
-        font-weight: 500;
-        color: #1f2937;
-        font-size: 0.95rem;
+      font-weight: 500;
+      color: #1f2937;
+      font-size: 0.95rem;
     }
-    
+
     .comment-date {
-        color: #9ca3af;
-        font-size: 0.85rem;
+      color: #9ca3af;
+      font-size: 0.85rem;
     }
-    
+
     .comment-content {
-        color: #374151;
-        line-height: 1.6;
-        margin-left: 3rem;
-        margin-bottom: 0.75rem;
+      color: #374151;
+      line-height: 1.6;
+      margin-left: 3rem;
+      margin-bottom: 0.75rem;
     }
-    
+
     .comment-actions-row {
-        margin-left: 3rem;
-        display: flex;
-        gap: 1rem;
-        align-items: center;
+      margin-left: 3rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
     }
-    
+
     .comment-action-btn {
-    	
-        background: none;
-        border: none;
-        color: #9ca3af;
-        font-size: 0.85rem;
-        cursor: pointer;
-        padding: 0.25rem 0.5rem;
-        transition: color 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.25rem;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
     }
-    .comment-action-btn span{
-    	margin-top: 2px;
-    }
-    .comment-action-btn:hover {
-        color: #2563eb;
-    }
-    
-    .comment-action-btn.liked {
-        color: #ef4444;
-    }
-    
+
+    .comment-action-btn span { margin-top: 2px; }
+
+    .comment-action-btn:hover { color: #2563eb; }
+
+    .comment-action-btn.liked { color: #ef4444; }
+
     .empty-comments {
-        padding: 3rem 2rem;
-        text-align: center;
-        color: #9ca3af;
+      padding: 3rem 2rem;
+      text-align: center;
+      color: #9ca3af;
     }
-    
+
     /* 우측 사이드바 */
     .sidebar-right {
-        position: sticky;
-        top: 2rem;
-        height: fit-content;
+      position: sticky;
+      top: 2rem;
+      height: fit-content;
     }
-    
-    .popular-list {
-        list-style: none;
-    }
-    
+
+    .popular-list { list-style: none; }
+
     .popular-item {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #f3f4f6;
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #f3f4f6;
     }
-    
+
     .popular-item:last-child {
-        margin-bottom: 0;
-        padding-bottom: 0;
-        border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
     }
-    
+
     .popular-rank {
-        flex-shrink: 0;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: #f3f4f6;
-        color: #6b7280;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 0.85rem;
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
     }
-    
+
     .popular-rank.top3 {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
     }
-    
-    .popular-content {
-        flex: 1;
-        min-width: 0;
-    }
-    
+
+    .popular-content { flex: 1; min-width: 0; }
+
     .popular-title {
-        display: block;
-        color: #374151;
-        text-decoration: none;
-        font-size: 0.9rem;
-        line-height: 1.4;
-        margin-bottom: 0.25rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+      display: block;
+      color: #374151;
+      text-decoration: none;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-bottom: 0.25rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    
-    .popular-title:hover {
-        color: #2563eb;
-    }
-    
+
+    .popular-title:hover { color: #2563eb; }
+
     .popular-stats {
-        display: flex;
-        gap: 0.75rem;
-        font-size: 0.75rem;
-        color: #9ca3af;
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
     }
-    
+
     .tags-cloud {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
-    
+
     .tag-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.5rem 0.75rem;
-        background: #f3f4f6;
-        border-radius: 16px;
-        color: #374151;
-        text-decoration: none;
-        font-size: 0.85rem;
-        transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.5rem 0.75rem;
+      background: #f3f4f6;
+      border-radius: 16px;
+      color: #374151;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
     }
-    
+
     .tag-item:hover {
-        background: #dbeafe;
-        color: #2563eb;
+      background: #dbeafe;
+      color: #2563eb;
     }
-    
-    .tag-count {
-        font-size: 0.75rem;
-        color: #9ca3af;
-    }
-    
+
     .ad-banner {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
-        border-radius: 8px;
-        color: white;
-        text-align: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 8px;
+      color: white;
+      text-align: center;
     }
-    
+
     .ad-label {
-        font-size: 0.7rem;
-        opacity: 0.8;
-        margin-bottom: 1rem;
+      font-size: 0.7rem;
+      opacity: 0.8;
+      margin-bottom: 1rem;
     }
-    
+
     .ad-banner h5 {
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
     }
-    
+
     .ad-banner p {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        margin-bottom: 1rem;
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 1rem;
     }
-    
+/* ✅ 블록 단위 개행(AAA/이미지/CCC/DDD/이미지) 보장 */
+.pd-block{
+  margin: 1.1rem 0;
+}
+
+/* ✅ 텍스트 내부 엔터(CCC\nDDD) 보존 */
+.pd-text{
+  white-space: pre-wrap;
+}
+
     .ad-btn {
-        padding: 0.625rem 1.25rem;
-        background: white;
-        color: #667eea;
-        border: none;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s;
+      padding: 0.625rem 1.25rem;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
     }
-    
-    .ad-btn:hover {
-        transform: translateY(-2px);
-    }
-    
+
+    .ad-btn:hover { transform: translateY(-2px); }
+
     /* 반응형 */
     @media (max-width: 1200px) {
-        .main-layout {
-            grid-template-columns: 1fr 320px;
-        }
-        
-        .sidebar-left {
-            display: none;
-        }
+      .main-layout { grid-template-columns: 1fr 320px; }
+      .sidebar-left { display: none; }
     }
-    @media (max-width: 768px) {
-    .post-images {
-        padding: 1.5rem 1rem;
-    }
-    
-    .image-gallery {
-        grid-template-columns: 1fr;
-    }
-}
-    @media (max-width: 768px) {
-        .main-layout {
-            grid-template-columns: 1fr;
-            padding: 1rem 0.5rem;
-        }
-        
-        .sidebar-right {
-            display: none;
-        }
-        
-        .post-header {
-            padding: 1.5rem 1rem;
-        }
-        
-        .post-title {
-            font-size: 1.5rem;
-        }
-        
-        .post-content {
-            padding: 1.5rem 1rem;
-        }
-        
-        .post-actions {
-            padding: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .comment-content, .comment-actions-row {
-            margin-left: 0;
-            margin-top: 0.5rem;
-        }
-    }
-</style>
-</head>
-<body>
-<th:block th:include="common/header"></th:block>
 
-<div class="main-layout">
+    @media (max-width: 768px) {
+      .main-layout { grid-template-columns: 1fr; padding: 1rem 0.5rem; }
+      .sidebar-right { display: none; }
+      .post-header { padding: 1.5rem 1rem; }
+      .post-title { font-size: 1.5rem; }
+      .post-content { padding: 1.5rem 1rem; }
+      .post-actions { padding: 1rem; flex-wrap: wrap; }
+      .comment-content, .comment-actions-row { margin-left: 0; margin-top: 0.5rem; }
+      .post-image { max-width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <th:block th:include="common/header"></th:block>
+
+  <div class="main-layout">
     <!-- 좌측 사이드바 -->
     <aside class="sidebar-left">
-        <!-- 작성자 카드 -->
-		<div class="author-card">
-		    <div class="author-avatar-large" 
-		         th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">김</div>
-		    <h3 class="author-name-large" th:text="${post.authorName}">작성자</h3>
-		    
-		    <!-- ✅ BIO 표시 -->
-		    <p class="author-bio" 
-		       th:text="${post.authorBio != null and !post.authorBio.isEmpty() ? post.authorBio : '자기소개가 없습니다.'}">
-		    </p>
-		    
-		    <div class="author-stats">
-		        <div class="stat-box">
-		            <span class="stat-value" th:text="${authorStats.postCount}">0</span>
-		            <span class="stat-label">게시글</span>
-		        </div>
-		        <div class="stat-box">
-		            <span class="stat-value" th:text="${authorStats.commentCount}">0</span>
-		            <span class="stat-label">댓글</span>
-		        </div>
-		    </div>
-		    <button class="btn-follow" onclick="followAuthor()">팔로우</button>
-		</div>
-		
-		<!-- 작성자의 다른 글 -->
-		<div class="sidebar-section">
-		    <h4 class="sidebar-title">✍️ 작성자의 다른 글</h4>
-		    <ul class="related-list">
-		        <li th:if="${authorOtherPosts == null or authorOtherPosts.isEmpty()}">
-		            <span style="color: #9ca3af; font-size: 0.85rem;">다른 글이 없습니다.</span>
-		        </li>
-		        <li th:each="otherPost : ${authorOtherPosts}">
-		            <a th:href="@{/board/postDetail/{id}(id=${otherPost.postId})}" th:text="${otherPost.title}">게시글 제목</a>
-		        </li>
-		    </ul>
-		</div>
+      <!-- 작성자 카드 -->
+      <div class="author-card">
+        <div class="author-avatar-large"
+             th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">김</div>
+        <h3 class="author-name-large" th:text="${post.authorName}">작성자</h3>
+
+        <!-- BIO -->
+        <p class="author-bio"
+           th:text="${post.authorBio != null and !post.authorBio.isEmpty() ? post.authorBio : '자기소개가 없습니다.'}">
+        </p>
+
+        <div class="author-stats">
+          <div class="stat-box">
+            <span class="stat-value" th:text="${authorStats.postCount}">0</span>
+            <span class="stat-label">게시글</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value" th:text="${authorStats.commentCount}">0</span>
+            <span class="stat-label">댓글</span>
+          </div>
+        </div>
+        <button class="btn-follow" onclick="followAuthor()">팔로우</button>
+      </div>
+
+      <!-- 작성자의 다른 글 -->
+      <div class="sidebar-section">
+        <h4 class="sidebar-title">✍️ 작성자의 다른 글</h4>
+        <ul class="related-list">
+          <li th:if="${authorOtherPosts == null or authorOtherPosts.isEmpty()}">
+            <span style="color:#9ca3af; font-size:0.85rem;">다른 글이 없습니다.</span>
+          </li>
+          <li th:each="otherPost : ${authorOtherPosts}">
+            <a th:href="@{/board/postDetail/{id}(id=${otherPost.postId})}"
+               th:text="${otherPost.title}">게시글 제목</a>
+          </li>
+        </ul>
+      </div>
     </aside>
-    
+
     <!-- 메인 컨텐츠 -->
     <main>
-        <a href="/board" class="back-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            목록으로
-        </a>
-        
-        <!-- 게시글 컨테이너 -->
-        <div class="post-container">
-            <div class="post-header">
-                <span class="post-category" th:text="${post.category}"></span>
-                <h1 class="post-title" th:text="${post.title}"></h1>
-                
-                <div class="post-meta">
-                    <div class="author-info">
-                        <div class="author-avatar" th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}"></div>
-                        <span class="author-name" th:text="${post.authorName}"></span>
-                    </div>
-                    <span class="post-date">
-                        <span th:text="${dateUtil != null ? dateUtil.formatDate(post.createdAt) : '0000.00.00'}"></span>
-                        <span th:text="${dateUtil != null ? dateUtil.formatTime(post.createdAt) : '00:00'}"></span>
-                    </span>
-                    <div class="post-stats">
-                        <span class="stat-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                            <span th:text="${post.viewCount}"></span>
-                        </span>
-                        <span class="stat-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                            <span th:text="${post.commentCount}"></span>
-                        </span>
-                    </div>
-                </div>
-                
-				<!-- 수정/삭제 버튼 (작성자만 보임) -->
-				<div class="post-edit-actions" th:if="${isAuthenticated and memberId == post.authorId}">
-				    <button class="btn-edit" onclick="editPost()">
-				        <svg style="width: 14px; height: 14px; display: inline; vertical-align: middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-				            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-				        </svg>
-				        수정
-				    </button>
-				    <button class="btn-delete" onclick="deletePost()">
-				        <svg style="width: 14px; height: 14px; display: inline; vertical-align: middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				            <polyline points="3 6 5 6 21 6"></polyline>
-				            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-				        </svg>
-				        삭제
-				    </button>
-				</div>
+      <a href="/board" class="back-button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        목록으로
+      </a>
+
+      <!-- 게시글 컨테이너 -->
+      <div class="post-container">
+        <div class="post-header">
+          <span class="post-category" th:text="${post.category}"></span>
+          <h1 class="post-title" th:text="${post.title}"></h1>
+
+          <div class="post-meta">
+            <div class="author-info">
+              <div class="author-avatar"
+                   th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}"></div>
+              <span class="author-name" th:text="${post.authorName}"></span>
             </div>
-            <!-- ✅ 게시글 이미지 섹션 (있을 경우만 표시) -->
-		    <div class="post-images" th:if="${post.images != null and !post.images.isEmpty()}">
-		        <div class="image-gallery">
-		            <div class="image-item" th:each="image : ${post.images}">
-		                <img th:src="@{/uploads/{saveName}(saveName=${image.saveName})}" 
-		                     th:alt="${image.origName}"
-		                     class="post-image">
-		            </div>
-		        </div>
-		    </div>
-            <div class="post-content">
-                <p th:utext="${post.content}"></p>
+
+            <span class="post-date">
+              <span th:text="${dateUtil != null ? dateUtil.formatDate(post.createdAt) : '0000.00.00'}"></span>
+              <span th:text="${dateUtil != null ? dateUtil.formatTime(post.createdAt) : '00:00'}"></span>
+            </span>
+
+            <div class="post-stats">
+              <span class="stat-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span th:text="${post.viewCount}"></span>
+              </span>
+
+              <span class="stat-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span th:text="${post.commentCount}"></span>
+              </span>
             </div>
-            
-            <div class="post-actions">
-                <button class="action-button" id="likeButton" 
-                        th:classappend="${post.isLiked} ? 'liked' : ''"
-                        onclick="toggleLike()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                    <span id="likeCount" th:text="${post.likeCount != null ? post.likeCount : 0}">0</span>
-                </button>
-                
-                <button class="action-button" id="bookmarkButton" th:classappend="${post.isBookmarked != null and post.isBookmarked} ? 'bookmarked' : ''" onclick="toggleBookmark()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    북마크
-                </button>
-                
-                <button class="action-button share-button" onclick="sharePost()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="18" cy="5" r="3"></circle>
-                        <circle cx="6" cy="12" r="3"></circle>
-                        <circle cx="18" cy="19" r="3"></circle>
-                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                    </svg>
-                    공유
-                </button>
-                
-                <button class="action-button" onclick="reportPost()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                        <line x1="12" y1="9" x2="12" y2="13"></line>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                    신고
-                </button>
-            </div>
+          </div>
+
+          <!-- 수정/삭제 버튼 (작성자만 보임) -->
+          <div class="post-edit-actions" th:if="${isAuthenticated and memberId == post.authorId}">
+            <button class="btn-edit" onclick="editPost()">
+              <svg style="width:14px; height:14px; display:inline; vertical-align:middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              수정
+            </button>
+            <button class="btn-delete" onclick="deletePost()">
+              <svg style="width:14px; height:14px; display:inline; vertical-align:middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              삭제
+            </button>
+          </div>
         </div>
-        
-        <!-- 이전글/다음글 -->
-        <div class="post-navigation">
-            <div class="nav-item">
-                <span class="nav-label">이전글</span>
-                <a href="#" class="nav-link" th:if="${prevPost != null}" th:href="@{/board/postDetail/{id}(id=${prevPost.postId})}" th:text="${prevPost.title}">이전 게시글 제목</a>
-                <span class="nav-empty" th:if="${prevPost == null}">이전 글이 없습니다</span>
-            </div>
-            <div class="nav-item">
-                <span class="nav-label">다음글</span>
-                <a href="#" class="nav-link" th:if="${nextPost != null}" th:href="@{/board/postDetail/{id}(id=${nextPost.postId})}" th:text="${nextPost.title}">다음 게시글 제목</a>
-                <span class="nav-empty" th:if="${nextPost == null}">다음 글이 없습니다</span>
-            </div>
-        </div>
-        
-		<!-- 댓글 섹션 -->
-		<div class="comments-section">
-		    <div class="comments-header">
-		        <h2 class="comments-title">
-		            댓글 <span class="comments-count" th:text="${post.commentCount}">0</span>
-		        </h2>
-		    </div>
-		    
-		    <!-- ✅ 로그인 안했을 때: 로그인 안내 -->
-		    <div th:unless="${isAuthenticated}" class="comment-notice">
-		        댓글을 작성하려면 <a href="/app/login">로그인</a>이 필요합니다.
-		    </div>
-		    
-		    <div class="comments-list">
-		        <div th:if="${post.comments != null and !post.comments.isEmpty()}">
-		            <div class="comment-item" th:each="comment : ${post.comments}">
-		                <div class="comment-author">
-		                    <div class="comment-avatar" th:text="${comment.authorName != null ? comment.authorName.substring(0, 1) : 'U'}">홍</div>
-		                    <div class="comment-author-info">
-		                        <div class="comment-author-name" th:text="${comment.authorName}">홍길동</div>
-		                        <div class="comment-date" th:text="${dateUtil != null ? dateUtil.formatDateTime(comment.createdAt) : '0000.00.00 00:00'}"></div>
-		                    </div>
-		                </div>
-		                <div class="comment-content" th:text="${comment.content}">댓글 내용</div>
-		                
-		                <!-- ✅ 로그인 했을 때만 댓글 액션 버튼 표시 -->
-		                <div class="comment-actions-row" th:if="${isAuthenticated}">
-		                    <button class="comment-action-btn" onclick="toggleCommentLike(this)">
-		                        <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-		                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-		                        </svg>
-		                        좋아요 <span>0</span>
-		                    </button>
-		                    <button class="comment-action-btn" onclick="replyComment()">답글</button>
-		                </div>
-		            </div>
-		        </div>
-		        
-		        <!-- 댓글 작성 폼 -->
-			<div th:if="${isAuthenticated}" class="comment-form">
-			     <form th:action="@{/board/postDetail/{postId}/comments(postId=${post.postId})}" method="post">
-			        <textarea 
-			            name="content" 
-			            class="comment-textarea" 
-			            placeholder="댓글을 작성해주세요"
-			            maxlength="500"
-			            required></textarea>
-			        <div class="comment-form-actions">
-			            <button type="submit" class="submit-comment-btn">댓글 작성</button>
-			        </div>
-			    </form>
-			</div>
-			
-			<!-- 성공/에러 메시지 표시 -->
-			<div th:if="${successMessage}" class="alert alert-success" style="margin: 1rem 2rem; padding: 1rem; background: #d1fae5; color: #065f46; border-radius: 8px;">
-			    <span th:text="${successMessage}"></span>
-			</div>
-			
-			<div th:if="${errorMessage}" class="alert alert-error" style="margin: 1rem 2rem; padding: 1rem; background: #fee2e2; color: #991b1b; border-radius: 8px;">
-			    <span th:text="${errorMessage}"></span>
-			</div>
-		        
-		        <div th:if="${post.comments == null or post.comments.isEmpty()}" class="empty-comments">
-		            첫 번째 댓글을 작성해보세요!
-		        </div>
-		    </div>
-		</div>
-    </main>
-    
-    <!-- 우측 사이드바 -->
-    <aside class="sidebar-right">
-	    <!-- 인기 게시글 -->
-	    <div class="sidebar-section">
-	        <h4 class="sidebar-title">🔥 인기 게시글</h4>
-	        <ul class="popular-list">
-	            <!-- 데이터가 있을 때 -->
-	            <li class="popular-item" th:each="popular, iter : ${popularPosts}">
-	                <span class="popular-rank" 
-	                      th:classappend="${iter.index < 3} ? 'top3' : ''" 
-	                      th:text="${iter.index + 1}">1</span>
-	                <div class="popular-content">
-	                    <a th:href="@{/board/postDetail/{id}(id=${popular.postId})}" 
-	                       class="popular-title" 
-	                       th:text="${popular.title}">게시글 제목</a>
-	                    <div class="popular-stats">
-	                        <span th:text="'👁 ' + ${popular.viewCount}">👁 0</span>
-	                        <span th:text="'❤ ' + ${popular.likeCount}">❤ 0</span>
-	                    </div>
-	                </div>
-	            </li>
-	            
-	            <!-- 데이터가 없을 때 -->
-	            <li th:if="${popularPosts == null or popularPosts.isEmpty()}" 
-	                style="padding: 2rem; text-align: center; color: #9ca3af;">
-	                인기 게시글이 없습니다
-	            </li>
-	        </ul>
-	    </div>
-	    
-	    <!-- 실시간 태그 -->
-	    <div class="sidebar-section">
-	        <h4 class="sidebar-title">🏷 실시간 태그</h4>
-	        <div class="tags-cloud">
-	            <a href="#" class="tag-item">#React</a>
-	            <a href="#" class="tag-item">#SpringBoot</a>
-	            <a href="#" class="tag-item">#Node.js</a>
-	            <a href="#" class="tag-item">#Oracle</a>
-	            <a href="#" class="tag-item">#JavaScript</a>
-	            <a href="#" class="tag-item">#CSS</a>
-	        </div>
-	    </div>
-	    
-	    <!-- 광고 배너 -->
-	    <div class="sidebar-section">
-	        <div class="ad-banner">
-	            <p class="ad-label">Advertisement</p>
-	            <h5>커뮤니티 프리미엄</h5>
-	            <p>광고 없이 더 쾌적하게!</p>
-	            <button class="ad-btn">자세히 보기</button>
-	        </div>
-	    </div>
-    </aside>
+
+        <!-- ✅ 본문 (blocksMeta 기반 blocks 우선, 없으면 content fallback) -->
+<div class="post-content">
+  <!-- ✅ controller에서 내려준 blocks 사용 -->
+  <th:block th:if="${blocks != null and !blocks.isEmpty()}">
+    <th:block th:each="block : ${blocks}">
+
+      <!-- ✅ TEXT BLOCK : 엔터(개행) 유지 -> white-space:pre-wrap 로 처리 -->
+      <div class="pd-block" th:if="${block.type == 'text'}">
+        <div class="pd-text" th:text="${block.text}"></div>
+      </div>
+
+      <div class="pd-block pd-img-wrap" th:if="${block.type == 'image'}">
+  <img class="post-image"
+       th:src="@{/uploads/{name}(name=${block.saveName})}"
+       th:alt="${block.origName}">
 </div>
 
-<th:block th:include="common/footer"></th:block>
+    </th:block>
+  </th:block>
 
-<script>
-	const postId = [[${post.postId}]];
-	const isAuthenticated = [[${isAuthenticated}]]; // boolean 그대로 받음
-	const memberId = [[${memberId}]]; // null 체크용
-    
-	console.log('postId:', postId);
+  <!-- ✅ blocks 없으면 fallback -->
+  <th:block th:unless="${blocks != null and !blocks.isEmpty()}">
+    <div class="pd-block">
+      <div class="pd-text" th:text="${post.content}"></div>
+    </div>
+
+    <!-- 구버전 글: images가 있으면 같이 보여주기(원하면) -->
+    <th:block th:if="${post.images != null and !post.images.isEmpty()}">
+      <div class="pd-block pd-img-wrap" th:each="img : ${post.images}">
+        <img class="post-image"
+             th:src="@{/uploads/{name}(name=${img.saveName})}"
+             th:alt="${img.origName}">
+      </div>
+    </th:block>
+  </th:block>
+</div>
+
+
+        <div class="post-actions">
+          <button class="action-button" id="likeButton"
+                  th:classappend="${post.isLiked} ? 'liked' : ''"
+                  onclick="toggleLike()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span id="likeCount" th:text="${post.likeCount != null ? post.likeCount : 0}">0</span>
+          </button>
+
+          <button class="action-button" id="bookmarkButton"
+                  th:classappend="${post.isBookmarked != null and post.isBookmarked} ? 'bookmarked' : ''"
+                  onclick="toggleBookmark()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            북마크
+          </button>
+
+          <button class="action-button share-button" onclick="sharePost()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            공유
+          </button>
+
+          <button class="action-button" onclick="reportPost()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            신고
+          </button>
+        </div>
+      </div>
+
+      <!-- 이전글/다음글 -->
+      <div class="post-navigation">
+        <div class="nav-item">
+          <span class="nav-label">이전글</span>
+          <a class="nav-link" th:if="${prevPost != null}"
+             th:href="@{/board/postDetail/{id}(id=${prevPost.postId})}"
+             th:text="${prevPost.title}">이전 게시글 제목</a>
+          <span class="nav-empty" th:if="${prevPost == null}">이전 글이 없습니다</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-label">다음글</span>
+          <a class="nav-link" th:if="${nextPost != null}"
+             th:href="@{/board/postDetail/{id}(id=${nextPost.postId})}"
+             th:text="${nextPost.title}">다음 게시글 제목</a>
+          <span class="nav-empty" th:if="${nextPost == null}">다음 글이 없습니다</span>
+        </div>
+      </div>
+
+      <!-- 댓글 섹션 -->
+      <div class="comments-section">
+        <div class="comments-header">
+          <h2 class="comments-title">
+            댓글 <span class="comments-count" th:text="${post.commentCount}">0</span>
+          </h2>
+        </div>
+
+        <!-- 로그인 안했을 때 -->
+        <div th:unless="${isAuthenticated}" class="comment-notice">
+          댓글을 작성하려면 <a href="/app/login">로그인</a>이 필요합니다.
+        </div>
+
+        <div class="comments-list">
+          <div th:if="${post.comments != null and !post.comments.isEmpty()}">
+            <div class="comment-item" th:each="comment : ${post.comments}">
+              <div class="comment-author">
+                <div class="comment-avatar"
+                     th:text="${comment.authorName != null ? comment.authorName.substring(0, 1) : 'U'}">홍</div>
+                <div class="comment-author-info">
+                  <div class="comment-author-name" th:text="${comment.authorName}">홍길동</div>
+                  <div class="comment-date"
+                       th:text="${dateUtil != null ? dateUtil.formatDateTime(comment.createdAt) : '0000.00.00 00:00'}"></div>
+                </div>
+              </div>
+
+              <div class="comment-content" th:text="${comment.content}">댓글 내용</div>
+
+              <!-- 로그인 했을 때만 -->
+              <div class="comment-actions-row" th:if="${isAuthenticated}">
+                <button class="comment-action-btn" onclick="toggleCommentLike(this)">
+                  <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                  좋아요 <span>0</span>
+                </button>
+                <button class="comment-action-btn" onclick="replyComment()">답글</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 댓글 작성 폼 -->
+          <div th:if="${isAuthenticated}" class="comment-form">
+            <form th:action="@{/board/postDetail/{postId}/comments(postId=${post.postId})}" method="post">
+              <textarea name="content" class="comment-textarea"
+                        placeholder="댓글을 작성해주세요" maxlength="500" required></textarea>
+              <div class="comment-form-actions">
+                <button type="submit" class="submit-comment-btn">댓글 작성</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- 성공/에러 메시지 -->
+          <div th:if="${successMessage}" class="alert alert-success"
+               style="margin: 1rem 2rem; padding: 1rem; background: #d1fae5; color: #065f46; border-radius: 8px;">
+            <span th:text="${successMessage}"></span>
+          </div>
+
+          <div th:if="${errorMessage}" class="alert alert-error"
+               style="margin: 1rem 2rem; padding: 1rem; background: #fee2e2; color: #991b1b; border-radius: 8px;">
+            <span th:text="${errorMessage}"></span>
+          </div>
+
+          <div th:if="${post.comments == null or post.comments.isEmpty()}" class="empty-comments">
+            첫 번째 댓글을 작성해보세요!
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 우측 사이드바 -->
+    <aside class="sidebar-right">
+      <!-- 인기 게시글 -->
+      <div class="sidebar-section">
+        <h4 class="sidebar-title">🔥 인기 게시글</h4>
+        <ul class="popular-list">
+          <li class="popular-item" th:each="popular, iter : ${popularPosts}">
+            <span class="popular-rank"
+                  th:classappend="${iter.index < 3} ? 'top3' : ''"
+                  th:text="${iter.index + 1}">1</span>
+            <div class="popular-content">
+              <a th:href="@{/board/postDetail/{id}(id=${popular.postId})}"
+                 class="popular-title"
+                 th:text="${popular.title}">게시글 제목</a>
+              <div class="popular-stats">
+                <span th:text="'👁 ' + ${popular.viewCount}">👁 0</span>
+                <span th:text="'❤ ' + ${popular.likeCount}">❤ 0</span>
+              </div>
+            </div>
+          </li>
+
+          <li th:if="${popularPosts == null or popularPosts.isEmpty()}"
+              style="padding: 2rem; text-align: center; color: #9ca3af;">
+            인기 게시글이 없습니다
+          </li>
+        </ul>
+      </div>
+
+      <!-- 실시간 태그 -->
+      <div class="sidebar-section">
+        <h4 class="sidebar-title">🏷 실시간 태그</h4>
+        <div class="tags-cloud">
+          <a href="#" class="tag-item">#React</a>
+          <a href="#" class="tag-item">#SpringBoot</a>
+          <a href="#" class="tag-item">#Node.js</a>
+          <a href="#" class="tag-item">#Oracle</a>
+          <a href="#" class="tag-item">#JavaScript</a>
+          <a href="#" class="tag-item">#CSS</a>
+        </div>
+      </div>
+
+      <!-- 광고 배너 -->
+      <div class="sidebar-section">
+        <div class="ad-banner">
+          <p class="ad-label">Advertisement</p>
+          <h5>커뮤니티 프리미엄</h5>
+          <p>광고 없이 더 쾌적하게!</p>
+          <button class="ad-btn">자세히 보기</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <th:block th:include="common/footer"></th:block>
+
+  <script>
+    const postId = [[${post.postId}]];
+    const isAuthenticated = [[${isAuthenticated}]];
+    const memberId = [[${memberId}]];
+
+    console.log('postId:', postId);
     console.log('isAuthenticated:', isAuthenticated, typeof isAuthenticated);
     console.log('memberId:', memberId);
-    
+
     // 좋아요 토글
     function toggleLike() {
-        // ✅ 로그인 체크
-        if (!isAuthenticated) {
-            alert('로그인이 필요합니다.');
-            window.location.href = '/app/login';
-            return;
+      if (!isAuthenticated) {
+        alert('로그인이 필요합니다.');
+        window.location.href = '/app/login';
+        return;
+      }
+
+      const button = document.getElementById('likeButton');
+      const countSpan = document.getElementById('likeCount');
+
+      fetch(`/board/postDetail/${postId}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          button.classList.toggle('liked');
+          countSpan.textContent = data.likeCount;
+        } else {
+          alert(data.message || '좋아요 처리에 실패했습니다.');
+          if (data.message && data.message.includes('로그인')) window.location.href = '/app/login';
         }
-        
-        const button = document.getElementById('likeButton');
-        const countSpan = document.getElementById('likeCount');
-        
-        fetch(`/board/postDetail/${postId}/like`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                button.classList.toggle('liked');
-                countSpan.textContent = data.likeCount;
-            } else {
-                alert(data.message || '좋아요 처리에 실패했습니다.');
-                if (data.message && data.message.includes('로그인')) {
-                    window.location.href = '/app/login';
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('좋아요 처리 중 오류가 발생했습니다.');
-        });
+      })
+      .catch(err => {
+        console.error(err);
+        alert('좋아요 처리 중 오류가 발생했습니다.');
+      });
     }
-    
+
     // 북마크 토글
     function toggleBookmark() {
-        // ✅ 로그인 체크
-        if (!isAuthenticated) {
-            alert('로그인이 필요합니다.');
-            window.location.href = '/app/login';
-            return;
-        }
-        
-        const button = document.getElementById('bookmarkButton');
-        
-        fetch(`/board/postDetail/${postId}/bookmark`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                button.classList.toggle('bookmarked');
-                alert(data.message);
-            } else {
-                alert(data.message || '북마크 처리에 실패했습니다.');
-                if (data.message && data.message.includes('로그인')) {
-                    window.location.href = '/app/login';
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('북마크 처리 중 오류가 발생했습니다.');
-        });
-    }
-    
-    // 공유하기
-    function sharePost() {
-        if (navigator.share) {
-            navigator.share({
-                title: /*[[${post.title}]]*/ '게시글',
-                url: window.location.href
-            });
+      if (!isAuthenticated) {
+        alert('로그인이 필요합니다.');
+        window.location.href = '/app/login';
+        return;
+      }
+
+      const button = document.getElementById('bookmarkButton');
+
+      fetch(`/board/postDetail/${postId}/bookmark`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          button.classList.toggle('bookmarked');
+          alert(data.message);
         } else {
-            navigator.clipboard.writeText(window.location.href);
-            alert('링크가 복사되었습니다!');
+          alert(data.message || '북마크 처리에 실패했습니다.');
+          if (data.message && data.message.includes('로그인')) window.location.href = '/app/login';
         }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('북마크 처리 중 오류가 발생했습니다.');
+      });
     }
-    
-    // 신고하기
+
+    // 공유
+    function sharePost() {
+      if (navigator.share) {
+        navigator.share({
+          title: /*[[${post.title}]]*/ '게시글',
+          url: window.location.href
+        });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('링크가 복사되었습니다!');
+      }
+    }
+
+    // 신고
     function reportPost() {
-        // ✅ 로그인 체크
-        if (!isAuthenticated) {
-            alert('로그인이 필요합니다.');
-            window.location.href = '/app/login';
-            return;
-        }
-        
-        if (confirm('이 게시글을 신고하시겠습니까?')) {
-            fetch(`/board/postDetail/${postId}/report`, {
-                method: 'POST',
-                credentials: 'include'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('신고가 접수되었습니다.');
-                } else {
-                    alert(data.message || '신고 처리에 실패했습니다.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('신고 처리 중 오류가 발생했습니다.');
-            });
-        }
+      if (!isAuthenticated) {
+        alert('로그인이 필요합니다.');
+        window.location.href = '/app/login';
+        return;
+      }
+
+      if (!confirm('이 게시글을 신고하시겠습니까?')) return;
+
+      fetch(`/board/postDetail/${postId}/report`, {
+        method: 'POST',
+        credentials: 'include'
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) alert('신고가 접수되었습니다.');
+        else alert(data.message || '신고 처리에 실패했습니다.');
+      })
+      .catch(err => {
+        console.error(err);
+        alert('신고 처리 중 오류가 발생했습니다.');
+      });
     }
-    
+
     // 팔로우
     function followAuthor() {
-    	
-        // ✅ 로그인 체크
-        if (!isAuthenticated) {
-            alert('로그인이 필요합니다.');
-            window.location.href = '/app/login';
-            return;
-        }else if(isAuthenticated){
-        	alert('팔로우 되었습니다!');
-        }
+      if (!isAuthenticated) {
+        alert('로그인이 필요합니다.');
+        window.location.href = '/app/login';
+        return;
+      }
+      alert('팔로우 되었습니다!');
     }
- 	// ✅ 이미지 클릭 시 모달로 크게 보기
+
+    // 이미지 모달 (blocks 이미지에도 class="post-image" 붙어있음)
     function setupImageModal() {
-        const images = document.querySelectorAll('.post-image');
-        const modal = document.createElement('div');
-        modal.className = 'image-modal';
-        document.body.appendChild(modal);
-        
-        images.forEach(img => {
-            img.addEventListener('click', function() {
-                const modalImg = document.createElement('img');
-                modalImg.src = this.src;
-                modalImg.alt = this.alt;
-                
-                modal.innerHTML = '';
-                modal.appendChild(modalImg);
-                modal.classList.add('active');
-            });
+      const images = document.querySelectorAll('.post-image');
+      const modal = document.createElement('div');
+      modal.className = 'image-modal';
+      document.body.appendChild(modal);
+
+      images.forEach(img => {
+        img.addEventListener('click', function() {
+          const modalImg = document.createElement('img');
+          modalImg.src = this.src;
+          modalImg.alt = this.alt;
+
+          modal.innerHTML = '';
+          modal.appendChild(modalImg);
+          modal.classList.add('active');
         });
-        
-        modal.addEventListener('click', function() {
-            this.classList.remove('active');
-        });
+      });
+
+      modal.addEventListener('click', function() {
+        this.classList.remove('active');
+      });
     }
-    
-    // 페이지 로드 시 실행
+
     document.addEventListener('DOMContentLoaded', setupImageModal);
+
     // 게시글 수정
     function editPost() {
-        window.location.href = `/board/edit/${postId}`;
+      window.location.href = `/board/edit/${postId}`;
     }
-    
+
     // 게시글 삭제
     function deletePost() {
-        if (confirm('정말 삭제하시겠습니까?')) {
-            fetch(`/board/delete/${postId}`, {
-                method: 'POST',
-                credentials: 'include'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('삭제되었습니다.');
-                    window.location.href = '/board';
-                } else {
-                    alert(data.message || '삭제 실패');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('삭제 중 오류가 발생했습니다.');
-            });
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+
+      fetch(`/board/delete/${postId}`, {
+        method: 'POST',
+        credentials: 'include'
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('삭제되었습니다.');
+          window.location.href = '/board';
+        } else {
+          alert(data.message || '삭제 실패');
         }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('삭제 중 오류가 발생했습니다.');
+      });
     }
-    
-    // 댓글 좋아요
+
+    // 댓글 좋아요(임시)
     function toggleCommentLike(button) {
-        button.classList.toggle('liked');
-        const countSpan = button.querySelector('span');
-        const currentCount = parseInt(countSpan.textContent);
-        countSpan.textContent = button.classList.contains('liked') ? currentCount + 1 : currentCount - 1;
+      button.classList.toggle('liked');
+      const countSpan = button.querySelector('span');
+      const currentCount = parseInt(countSpan.textContent, 10);
+      countSpan.textContent = button.classList.contains('liked') ? currentCount + 1 : currentCount - 1;
     }
-    
-    // 답글
+
+    // 답글(임시)
     function replyComment() {
-        alert('답글 기능은 준비 중입니다!');
+      alert('답글 기능은 준비 중입니다!');
     }
-</script>
+  </script>
 </body>
 </html>

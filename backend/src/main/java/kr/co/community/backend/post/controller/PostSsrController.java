@@ -10,10 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
-import kr.co.community.backend.member.controller.MemberApiController;
 import kr.co.community.backend.post.dto.CommentDTO;
 import kr.co.community.backend.post.dto.PostDTO;
+import kr.co.community.backend.post.dto.PostImageDTO;
 import kr.co.community.backend.post.service.PostSsrService;
 import kr.co.community.backend.util.DateFormatUtil;
 import lombok.RequiredArgsConstructor;
@@ -36,18 +39,16 @@ public class PostSsrController {
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             Model model
     ) {
-
         List<BoardCategoryDTO> categories = postSsrService.getActiveCategories();
 
-        int size = 20; // 화면 카드 기준
+        int size = 20;
         Map<String, Object> listResult = postSsrService.getPostList(categoryId, q, sort, page, size);
 
         int totalPages = (int) listResult.get("totalPages");
         int currentPage = (int) listResult.get("page");
 
-        // ✅ 페이지네이션: 5개씩 노출 + 현재 페이지가 중앙에 오도록
         int window = 5;
-        int half = window / 2; // 3
+        int half = window / 2;
 
         int startPage = Math.max(1, currentPage - half);
         int endPage = startPage + window - 1;
@@ -57,12 +58,11 @@ public class PostSsrController {
             startPage = Math.max(1, endPage - window + 1);
         }
 
-        // ✅ 이전/다음: -5 / +5 점프
         int prevPage = Math.max(1, currentPage - 5);
         int nextPage = Math.min(totalPages, currentPage + 5);
 
         model.addAttribute("categories", categories);
-        model.addAttribute("selectedCategoryId", categoryId); // null이면 전체
+        model.addAttribute("selectedCategoryId", categoryId);
         model.addAttribute("q", q == null ? "" : q);
         model.addAttribute("sort", sort);
 
@@ -71,7 +71,6 @@ public class PostSsrController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("total", listResult.get("total"));
 
-        // ✅ pagination 관련
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("prevPage", prevPage);
@@ -79,8 +78,9 @@ public class PostSsrController {
 
         return "board/boardList";
     }
+
     /**
-     * 게시글 상세 페이지 (이미지 포함)
+     * ✅ 게시글 상세 페이지 (blocksMeta 기반 블록 렌더링)
      */
     @GetMapping("/postDetail/{postId}")
     public String getPostDetail(
@@ -90,48 +90,192 @@ public class PostSsrController {
             @RequestAttribute(value = "isAuthenticated", required = false) Boolean isAuthenticated
     ) {
         try {
-            // ✅ getPostDetail()에서 이미지도 함께 조회됨
             PostDTO post = postSsrService.getPostDetail(postId);
-            
+
             boolean authenticated = (isAuthenticated != null && isAuthenticated);
-            
+
             if (memberId != null) {
                 boolean isLiked = postSsrService.isPostLiked(postId, memberId);
                 boolean isBookmarked = postSsrService.isBookmarked(postId, memberId);
-                
+
                 post.setIsLiked(isLiked);
                 post.setIsBookmarked(isBookmarked);
             } else {
                 post.setIsLiked(false);
                 post.setIsBookmarked(false);
             }
-            
+
             PostDTO prevPost = postSsrService.getPrevPost(postId, post.getCategoryId());
             PostDTO nextPost = postSsrService.getNextPost(postId, post.getCategoryId());
             List<PostDTO> popularPosts = postSsrService.getViewTopPosts(4);
             List<PostDTO> authorOtherPosts = postSsrService.getAuthorOtherPosts(post.getAuthorId(), postId, 3);
             Map<String, Object> authorStats = postSsrService.getAuthorStats(post.getAuthorId());
-            
-            // ✅ Model에 추가 (post에 images가 이미 포함되어 있음)
+
+            log.info("[SSR] postId={}, blocksMeta={}", postId, post.getBlocksMeta());
+            log.info("[SSR] images.size={}", post.getImages() == null ? 0 : post.getImages().size());
+
             model.addAttribute("isAuthenticated", authenticated);
             model.addAttribute("memberId", memberId);
             model.addAttribute("dateUtil", DateFormatUtil.class);
-            model.addAttribute("post", post);  // ← post.images 포함!
+
+            model.addAttribute("post", post);
+            model.addAttribute("blocks", buildBlocksForView(post)); // ✅ 핵심
+
             model.addAttribute("prevPost", prevPost);
             model.addAttribute("nextPost", nextPost);
             model.addAttribute("popularPosts", popularPosts);
             model.addAttribute("authorOtherPosts", authorOtherPosts);
             model.addAttribute("authorStats", authorStats);
-            
+
             return "post/postDetail";
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorMessage", "게시글을 불러오는데 실패했습니다.");
+            log.error("postDetail fail. postId={}", postId, e);
             return "redirect:/board";
         }
     }
-    
+
+    /**
+     * ✅ blocksMeta 기반으로 "텍스트/이미지" 블록을 순서대로 재구성한다.
+     * - text: 그대로
+     * - image: (우선) saveName 있으면 그거 사용
+     *         없으면 imgId로 post.images에서 찾기
+     *         없으면 fileIndex로 post.images[index]에서 찾기
+     *
+     * ✅ blocksMeta 없으면 fallback: content + images를 순서대로 보여줌(구버전 글)
+     */
+    private List<Map<String, Object>> buildBlocksForView(PostDTO post) {
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        List<PostImageDTO> images = post.getImages() == null ? new ArrayList<>() : post.getImages();
+
+        Map<Long, PostImageDTO> imgMap = new HashMap<>();
+        for (PostImageDTO img : images) {
+            if (img != null && img.getImgId() != null) {
+                imgMap.put(img.getImgId(), img);
+            }
+        }
+
+        String blocksMeta = post.getBlocksMeta();
+
+        // ✅ blocksMeta 없으면 fallback(구버전): text 1개 + images 전부
+        if (blocksMeta == null || blocksMeta.isBlank()) {
+            if (post.getContent() != null && !post.getContent().isBlank()) {
+                Map<String, Object> t = new HashMap<>();
+                t.put("type", "text");
+                t.put("text", post.getContent());
+                result.add(t);
+            }
+            // ✅ 구버전: 이미지도 같이
+            for (PostImageDTO imgDto : images) {
+                if (imgDto == null) continue;
+                if (imgDto.getSaveName() == null || imgDto.getSaveName().isBlank()) continue;
+
+                Map<String, Object> img = new HashMap<>();
+                img.put("type", "image");
+                img.put("saveName", imgDto.getSaveName());
+                img.put("origName", imgDto.getOrigName());
+                result.add(img);
+            }
+            return result;
+        }
+
+        try {
+            ObjectMapper om = new ObjectMapper();
+            List<Map<String, Object>> metaList =
+                    om.readValue(blocksMeta, new TypeReference<List<Map<String, Object>>>() {});
+
+            for (Map<String, Object> m : metaList) {
+                if (m == null) continue;
+
+                String type = String.valueOf(m.get("type"));
+
+                // ✅ TEXT
+                if ("text".equals(type)) {
+                    String text = m.get("text") == null ? "" : m.get("text").toString();
+                    if (text.trim().isEmpty()) continue;
+
+                    Map<String, Object> t = new HashMap<>();
+                    t.put("type", "text");
+                    t.put("text", text);
+                    result.add(t);
+                    continue;
+                }
+
+                // ✅ IMAGE
+                if ("image".equals(type)) {
+                    String saveName = m.get("saveName") == null ? "" : m.get("saveName").toString();
+                    String origName = m.get("origName") == null ? "" : m.get("origName").toString();
+
+                    // 1) saveName
+                    if (saveName != null && !saveName.isBlank()) {
+                        Map<String, Object> img = new HashMap<>();
+                        img.put("type", "image");
+                        img.put("saveName", saveName);
+                        img.put("origName", origName);
+                        result.add(img);
+                        continue;
+                    }
+
+                    // 2) imgId
+                    if (m.get("imgId") != null) {
+                        Long imgId = Long.valueOf(m.get("imgId").toString());
+                        PostImageDTO imgDto = imgMap.get(imgId);
+                        if (imgDto != null && imgDto.getSaveName() != null && !imgDto.getSaveName().isBlank()) {
+                            Map<String, Object> img = new HashMap<>();
+                            img.put("type", "image");
+                            img.put("saveName", imgDto.getSaveName());
+                            img.put("origName", (origName == null || origName.isBlank()) ? imgDto.getOrigName() : origName);
+                            result.add(img);
+                            continue;
+                        }
+                    }
+
+                    // 3) fileIndex
+                    if (m.get("fileIndex") != null) {
+                        int fileIndex = Integer.parseInt(m.get("fileIndex").toString());
+                        if (fileIndex >= 0 && fileIndex < images.size()) {
+                            PostImageDTO imgDto = images.get(fileIndex);
+                            if (imgDto != null && imgDto.getSaveName() != null && !imgDto.getSaveName().isBlank()) {
+                                Map<String, Object> img = new HashMap<>();
+                                img.put("type", "image");
+                                img.put("saveName", imgDto.getSaveName());
+                                img.put("origName", (origName == null || origName.isBlank()) ? imgDto.getOrigName() : origName);
+                                result.add(img);
+                                continue;
+                            }
+                        }
+                    }
+
+                    log.warn("[SSR] image block skipped. postId={}, meta={}", post.getPostId(), m);
+                }
+            }
+
+        } catch (Exception e) {
+            log.warn("blocksMeta parse fail. postId={}, blocksMeta={}", post.getPostId(), blocksMeta, e);
+
+            // fallback: content + images
+            if (post.getContent() != null && !post.getContent().isBlank()) {
+                Map<String, Object> t = new HashMap<>();
+                t.put("type", "text");
+                t.put("text", post.getContent());
+                result.add(t);
+            }
+            for (PostImageDTO imgDto : images) {
+                if (imgDto == null) continue;
+                if (imgDto.getSaveName() == null || imgDto.getSaveName().isBlank()) continue;
+
+                Map<String, Object> img = new HashMap<>();
+                img.put("type", "image");
+                img.put("saveName", imgDto.getSaveName());
+                img.put("origName", imgDto.getOrigName());
+                result.add(img);
+            }
+        }
+
+        log.info("[SSR] built blocks.size={}, blocks={}", result.size(), result);
+        return result;
+    }
 
     /**
      * ✅ 댓글 작성 (SSR - Form Submit)
@@ -144,39 +288,32 @@ public class PostSsrController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            // 로그인 체크
             if (memberId == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "로그인이 필요합니다.");
                 return "redirect:/app/login";
             }
-            
-            // 댓글 내용 검증
+
             if (content == null || content.trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "댓글 내용을 입력해주세요.");
                 return "redirect:/board/postDetail/" + postId;
             }
-            
-            // 댓글 생성
+
             CommentDTO commentDTO = new CommentDTO();
             commentDTO.setPostId(postId);
             commentDTO.setAuthorId(memberId);
             commentDTO.setContent(content.trim());
-            
+
             postSsrService.createComment(commentDTO);
-            
             redirectAttributes.addFlashAttribute("successMessage", "댓글이 작성되었습니다.");
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("createComment fail. postId={}", postId, e);
             redirectAttributes.addFlashAttribute("errorMessage", "댓글 작성 중 오류가 발생했습니다.");
         }
-        
+
         return "redirect:/board/postDetail/" + postId;
     }
 
-    /**
-     * 좋아요 토글 API
-     */
     @PostMapping("/postDetail/{postId}/like")
     @ResponseBody
     public Map<String, Object> toggleLike(
@@ -184,31 +321,26 @@ public class PostSsrController {
             @RequestAttribute(value = "memberId", required = false) Long memberId
     ) {
         Map<String, Object> result = new HashMap<>();
-        
         try {
             if (memberId == null) {
                 result.put("success", false);
                 result.put("message", "로그인이 필요합니다.");
                 return result;
             }
-            
+
             int newLikeCount = postSsrService.toggleLike(postId, memberId);
-            
+
             result.put("success", true);
             result.put("likeCount", newLikeCount);
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("toggleLike fail. postId={}, memberId={}", postId, memberId, e);
             result.put("success", false);
             result.put("message", "좋아요 처리 중 오류가 발생했습니다.");
         }
-        
         return result;
     }
 
-    /**
-     * 북마크 토글 API
-     */
     @PostMapping("/postDetail/{postId}/bookmark")
     @ResponseBody
     public Map<String, Object> toggleBookmark(
@@ -216,32 +348,27 @@ public class PostSsrController {
             @RequestAttribute(value = "memberId", required = false) Long memberId
     ) {
         Map<String, Object> result = new HashMap<>();
-        
         try {
             if (memberId == null) {
                 result.put("success", false);
                 result.put("message", "로그인이 필요합니다.");
                 return result;
             }
-            
+
             boolean isBookmarked = postSsrService.toggleBookmark(postId, memberId);
-            
+
             result.put("success", true);
             result.put("isBookmarked", isBookmarked);
             result.put("message", isBookmarked ? "북마크에 추가되었습니다." : "북마크가 해제되었습니다.");
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("toggleBookmark fail. postId={}, memberId={}", postId, memberId, e);
             result.put("success", false);
             result.put("message", "북마크 처리 중 오류가 발생했습니다.");
         }
-        
         return result;
     }
 
-    /**
-     * 게시글 삭제 API
-     */
     @PostMapping("/delete/{postId}")
     @ResponseBody
     public Map<String, Object> deletePost(
@@ -249,36 +376,26 @@ public class PostSsrController {
             @RequestAttribute(value = "memberId", required = false) Long memberId
     ) {
         Map<String, Object> result = new HashMap<>();
-        
         try {
             if (memberId == null) {
                 result.put("success", false);
                 result.put("message", "로그인이 필요합니다.");
                 return result;
             }
-            
+
             boolean deleted = postSsrService.deletePost(postId, memberId);
-            
-            if (deleted) {
-                result.put("success", true);
-                result.put("message", "삭제되었습니다.");
-            } else {
-                result.put("success", false);
-                result.put("message", "삭제 권한이 없습니다.");
-            }
-            
+
+            result.put("success", deleted);
+            result.put("message", deleted ? "삭제되었습니다." : "삭제 권한이 없습니다.");
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("deletePost fail. postId={}, memberId={}", postId, memberId, e);
             result.put("success", false);
             result.put("message", "삭제 중 오류가 발생했습니다.");
         }
-        
         return result;
     }
 
-    /**
-     * 신고 API
-     */
     @PostMapping("/postDetail/{postId}/report")
     @ResponseBody
     public Map<String, Object> reportPost(
@@ -286,23 +403,21 @@ public class PostSsrController {
             @RequestAttribute(value = "memberId", required = false) Long memberId
     ) {
         Map<String, Object> result = new HashMap<>();
-        
         try {
             if (memberId == null) {
                 result.put("success", false);
                 result.put("message", "로그인이 필요합니다.");
                 return result;
             }
-            
+
             result.put("success", true);
             result.put("message", "신고가 접수되었습니다.");
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("reportPost fail. postId={}", postId, e);
             result.put("success", false);
             result.put("message", "신고 처리 중 오류가 발생했습니다.");
         }
-        
         return result;
     }
 }

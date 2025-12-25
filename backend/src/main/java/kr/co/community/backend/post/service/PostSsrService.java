@@ -1,11 +1,14 @@
 package kr.co.community.backend.post.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.community.backend.category.dto.BoardCategoryDTO;
 import kr.co.community.backend.post.dao.PostSsrDao;
@@ -36,7 +39,7 @@ public class PostSsrService {
     ) {
         if (page < 1) page = 1;
 
-        // ✅ sort가 null로 들어오는 케이스 방어(컨트롤러 defaultValue가 있어서 보통 필요 없지만 안전용)
+        // ✅ sort null/blank 방어
         if (sort == null || sort.isBlank()) sort = "LATEST";
 
         int total = postSsrDao.countPostList(categoryId, q);
@@ -60,25 +63,31 @@ public class PostSsrService {
         return result;
     }
 
+    /**
+     * ✅ 게시글 상세 (SSR) - blocksMeta 기반으로 text/image 순서대로 blocks 구성
+     * ✅ text는 개행(\n)을 <br/>로 변환해서 SSR에서 줄바꿈 유지
+     *
+     * ⚠️ 주의: 템플릿에서 text 출력은 th:utext 사용해야 <br/>가 실제 줄바꿈으로 반영됨.
+     */
     @Transactional
     public PostDTO getPostDetail(Long postId) {
         PostDTO post = postSsrDao.selectPostById(postId);
+        if (post == null) throw new IllegalArgumentException("게시글 없음");
 
-        if (post == null) {
-        	throw new IllegalArgumentException("게시글 ID " + postId + "를 찾을 수 없습니다.");
-        }
-
+        // 조회수 증가
         postSsrDao.updateViewCount(postId);
-        post.setViewCount(post.getViewCount() + 1);
+        post.setViewCount((post.getViewCount() == null ? 0 : post.getViewCount()) + 1);
 
-        // ✅ 댓글 목록 조회
-        List<CommentDTO> comments = postSsrDao.selectCommentsByPostId(postId);
-        post.setComments(comments);
+        // 댓글
+        post.setComments(postSsrDao.selectCommentsByPostId(postId));
 
-        // ✅ 이미지 목록 조회
+        // 이미지 (fileIndex가 이 리스트 순서를 믿음 → 정렬 OK 이미 너 해둠)
         List<PostImageDTO> images = postSsrDao.selectImagesByPostId(postId);
         post.setImages(images);
-        
+
+        // ✅ 여기서 blocksMeta 파싱/변환 하지 마라
+        // 컨트롤러 buildBlocksForView()가 fileIndex/imgId/saveName까지 다 처리함
+
         return post;
     }
     /**
@@ -87,15 +96,16 @@ public class PostSsrService {
     @Transactional
     public void createComment(CommentDTO commentDTO) {
         log.info("댓글 작성: postId={}, authorId={}", commentDTO.getPostId(), commentDTO.getAuthorId());
-        
+
         // 1. 댓글 삽입
         postSsrDao.insertComment(commentDTO);
-        
+
         // 2. 게시글의 댓글 수 증가
         postSsrDao.incrementCommentCount(commentDTO.getPostId());
-        
+
         log.info("댓글 작성 완료: commentId={}", commentDTO.getCommentId());
     }
+
     public boolean isPostLiked(Long postId, Long memberId) {
         if (memberId == null) return false;
         return postSsrDao.selectPostLikeExists(postId, memberId) > 0;
@@ -103,8 +113,8 @@ public class PostSsrService {
 
     @Transactional
     public int toggleLike(Long postId, Long memberId) {
-    	log.debug("좋아요 토글: postId={}, memberId={}", postId, memberId);
-        
+        log.debug("좋아요 토글: postId={}, memberId={}", postId, memberId);
+
         int likeExists = postSsrDao.selectPostLikeExists(postId, memberId);
 
         if (likeExists > 0) {
@@ -119,7 +129,7 @@ public class PostSsrService {
 
         int newCount = postSsrDao.selectLikeCount(postId);
         log.debug("새 좋아요 수: {}", newCount);
-        
+
         return newCount;
     }
 
@@ -177,15 +187,16 @@ public class PostSsrService {
 
     @Transactional
     public boolean deletePost(Long postId, Long memberId) {
-    	PostDTO post = postSsrDao.selectPostById(postId);
+        PostDTO post = postSsrDao.selectPostById(postId);
 
         if (post == null) {
             throw new IllegalArgumentException("게시글을 찾을 수 없습니다.");
         }
-        
+
         if (!post.getAuthorId().equals(memberId)) {
             throw new IllegalStateException("삭제 권한이 없습니다.");
         }
+
         postSsrDao.updateIsDeleted(postId);
         return true;
     }

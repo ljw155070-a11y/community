@@ -2,6 +2,7 @@ package kr.co.community.backend.post.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.type.Alias;
 
@@ -39,4 +40,5 @@ public class PostDTO {
 	private Boolean isBookmarked;
 	private List<PostImageDTO> images;
 	private String blocksMeta; // JSON 문자열 저장용
+	 private List<Map<String, Object>> blocks;   // ✅ SSR/CSR 공용 렌더 순서
 }
