@@ -53,7 +53,7 @@ public class MemberApiController {
             // 응답 데이터
             Map<String, Object> result = new HashMap<>();
             result.put("success", true);
-            result.put("message", "로그인 성공");
+            result.put("message", "로그인 성공. 다른 기기에서 로그인한 경우 해당 기기는 자동 로그아웃됩니다.");
             result.put("token", token);
             result.put("user", Map.of(
                 "memberId", member.getMemberId(),
