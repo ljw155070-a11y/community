@@ -140,7 +140,7 @@ const Header = () => {
                   <div className="dropdown-divider"></div>
 
                   <a
-                    href="#"
+                    href="/mainpage"
                     className="dropdown-item logout"
                     onClick={handleLogout}
                   >
