@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>미니게임 - 사과게임</title>
 
-<link rel="stylesheet" href="/communityCss/applegame.css" />
+  <link rel="stylesheet" href="/communityCss/applegame.css" />
   <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet" />
 </head>
 
@@ -68,12 +68,15 @@
           <div id="scoreLogs"></div>
         </div>
 
-        <div id="selectionBox"></div>
+        <!-- ✅ selectionBox는 여기서 제거 (body 끝으로 이동) -->
       </div>
     </div>
   </section>
 
   <th:block th:include="common/footer"></th:block>
+
+  <!-- ✅ 드래그 박스는 body 직속으로 (fixed 기준 꼬임 방지) -->
+  <div id="selectionBox" aria-hidden="true"></div>
 
   <script>
     (function () {
@@ -84,9 +87,11 @@
 
       const overlay = document.getElementById("gameOverlay");
       const overlayStartBtn = document.getElementById("overlayStartBtn");
-      const overlayHowBtn = document.getElementById("overlayHowBtn");
 
       const selectionBox = document.getElementById("selectionBox");
+      // ✅ 안전장치: 무조건 body에 붙여 fixed 기준을 뷰포트로 고정
+      document.body.appendChild(selectionBox);
+
       const scoreLogs = document.getElementById("scoreLogs");
 
       const COLS = 17;
@@ -96,8 +101,7 @@
       let timeLeft = 120;
       let timer;
 
-      let startX = 0,
-        startY = 0;
+      let startX = 0, startY = 0;
       let isDragging = false;
 
       let applesGrid = [];
@@ -105,11 +109,10 @@
       let isGameRunning = false;
 
       const boardInner = document.querySelector(".applegame-board-inner");
+
+      /* ✅ 보너스 사과가 움직일 "전용 레이어" */
       const timeAppleContainer = document.createElement("div");
-      timeAppleContainer.style.position = "absolute";
-      timeAppleContainer.style.inset = "0";
-      timeAppleContainer.style.pointerEvents = "none";
-      timeAppleContainer.style.zIndex = "4500";
+      timeAppleContainer.className = "timeAppleLayer";
       boardInner.appendChild(timeAppleContainer);
 
       function showOverlay(mode, finalScore) {
@@ -129,7 +132,9 @@
         } else {
           badge.textContent = "10 만들기 퍼즐";
           title.textContent = "드래그로 사과를 선택해서 합이 10이면 제거!";
-          desc.innerHTML = `숫자가 적힌 사과들을 <b>드래그</b>로 영역 선택하세요.<br/>선택한 사과 숫자의 <b>합이 10</b>이면 사과가 사라지고 점수를 얻습니다.`;
+          desc.innerHTML =
+            `숫자가 적힌 사과들을 <b>드래그</b>로 영역 선택하세요.<br/>` +
+            `선택한 사과 숫자의 <b>합이 10</b>이면 사과가 사라지고 점수를 얻습니다.`;
           foot.textContent = "팁: 많은 개수를 한 번에 맞추면 점수가 크게 올라가요.";
           overlayStartBtn.textContent = "게임 시작";
         }
@@ -162,8 +167,7 @@
               game.appendChild(apple);
             } else {
               const empty = document.createElement("div");
-              empty.style.width = "30px";
-              empty.style.height = "30px";
+              empty.className = "apple-empty";
               game.appendChild(empty);
             }
           }
@@ -265,35 +269,20 @@
         }, 1000);
       }
 
+      /* ✅ 보너스 사과 (움직이도록 class/animation 사용) */
       function createTimeApple() {
         if (!isGameRunning) return;
         if (timeAppleContainer.childElementCount >= 3) return;
 
         const apple = document.createElement("div");
+        apple.className = "timeApple";
         apple.textContent = "🍎 +3";
-        apple.style.position = "absolute";
-        apple.style.fontSize = "46px";
-        apple.style.cursor = "pointer";
-        apple.style.userSelect = "none";
-        apple.style.color = "#d35400";
-        apple.style.fontWeight = "900";
-        apple.style.filter = "drop-shadow(0 0 1px rgba(0,0,0,0.3))";
-        apple.style.pointerEvents = "auto";
-        apple.style.zIndex = "4600";
 
         const side = Math.random() < 0.5 ? "left" : "right";
         const fromTop = Math.random() < 0.5;
 
-        if (side === "left") apple.style.left = "10px";
-        else apple.style.right = "10px";
-
-        if (fromTop) {
-          apple.style.top = "10px";
-          apple.style.animation = `timeAppleDown 1s linear forwards`;
-        } else {
-          apple.style.bottom = "10px";
-          apple.style.animation = `timeAppleUp 1s linear forwards`;
-        }
+        apple.classList.add(side);
+        apple.classList.add(fromTop ? "down" : "up");
 
         apple.addEventListener("animationend", () => {
           if (apple.parentNode) timeAppleContainer.removeChild(apple);
@@ -310,13 +299,13 @@
           updateScore();
           addScoreLog(3);
 
-          apple.style.animation = "";
-          apple.style.pointerEvents = "none";
+          apple.classList.remove("up", "down");
           apple.classList.add("growFade");
+          apple.style.pointerEvents = "none";
 
           setTimeout(() => {
             if (apple.parentNode) timeAppleContainer.removeChild(apple);
-          }, 600);
+          }, 700);
         });
 
         timeAppleContainer.appendChild(apple);
@@ -395,7 +384,6 @@
 
       startBtn.addEventListener("click", () => startGame());
       overlayStartBtn.addEventListener("click", () => startGame());
-      overlayHowBtn.addEventListener("click", () => showOverlay("intro", 0));
 
       showOverlay("intro", 0);
       updateTimerBar();
