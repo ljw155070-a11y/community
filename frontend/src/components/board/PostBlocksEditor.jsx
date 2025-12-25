@@ -101,8 +101,9 @@ export default function PostBlocksEditor({
     <div className="pe-editor" onDrop={onDrop} onDragOver={onDragOver}>
       <div className="pe-toolbar">
         <button className="pe-btn" type="button" onClick={addTextBlock}>
-          + 글 블록
+          + 텍스트 추가
         </button>
+
         <button
           className="pe-btn pe-btn-primary"
           type="button"
@@ -122,12 +123,9 @@ export default function PostBlocksEditor({
             e.target.value = "";
           }}
         />
-        <div className="pe-hint">이미지는 드래그&드롭도 가능</div>
-      </div>
 
-      <div className="pe-dropzone">
-        <div className="pe-dropzone-text">
-          🖼 이미지를 여기로 드래그하면 바로 추가돼
+        <div className="pe-hint">
+          이미지는 드래그 앤 드롭으로도 추가할 수 있습니다.
         </div>
       </div>
 
@@ -137,10 +135,10 @@ export default function PostBlocksEditor({
             <div className="pe-block-head">
               <div className="pe-block-type">
                 {b.type === "text"
-                  ? "TEXT"
+                  ? "텍스트"
                   : b.kind === "saved"
-                  ? "IMAGE"
-                  : "NEW IMAGE"}
+                  ? "이미지"
+                  : "새 이미지"}
               </div>
 
               <div className="pe-block-actions">
@@ -149,14 +147,17 @@ export default function PostBlocksEditor({
                   type="button"
                   disabled={idx === 0}
                   onClick={() => move(idx, idx - 1)}
+                  aria-label="위로 이동"
                 >
                   ↑
                 </button>
+
                 <button
                   className="pe-mini"
                   type="button"
                   disabled={idx === blocks.length - 1}
                   onClick={() => move(idx, idx + 1)}
+                  aria-label="아래로 이동"
                 >
                   ↓
                 </button>
@@ -172,12 +173,14 @@ export default function PostBlocksEditor({
             </div>
 
             {b.type === "text" ? (
-              <textarea
-                className="pe-textarea"
-                value={b.text}
-                onChange={(e) => updateText(b.id, e.target.value)}
-                placeholder="여기에 글을 입력하세요..."
-              />
+              <div className="pe-text">
+                <textarea
+                  className="pe-textarea"
+                  value={b.text}
+                  onChange={(e) => updateText(b.id, e.target.value)}
+                  placeholder="내용을 입력하세요."
+                />
+              </div>
             ) : (
               <div className="pe-image">
                 <img
@@ -189,9 +192,9 @@ export default function PostBlocksEditor({
                     {b.origName || b.saveName}
                   </span>
                   {b.kind === "saved" ? (
-                    <span className="pe-badge">저장됨</span>
+                    <span className="pe-badge">등록됨</span>
                   ) : (
-                    <span className="pe-badge pe-badge-warn">업로드 예정</span>
+                    <span className="pe-badge pe-badge-warn">업로드 대기</span>
                   )}
                 </div>
               </div>
@@ -201,7 +204,8 @@ export default function PostBlocksEditor({
 
         {blocks.length === 0 && (
           <div className="pe-empty">
-            아직 본문 블록이 없어. <b>+ 글 블록</b>부터 추가해봐.
+            본문이 비어 있습니다. <b>+ 텍스트 추가</b> 또는 <b>+ 이미지 추가</b>
+            를 선택하세요.
           </div>
         )}
       </div>
