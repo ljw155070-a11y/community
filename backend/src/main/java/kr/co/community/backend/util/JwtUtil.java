@@ -70,6 +70,7 @@ public class JwtUtil {
 
     /**
      * JWT 토큰에서 만료시간 추출
+     * (중복 로그인 처리 시 DB에 저장하기 위해 추가)
      */
     public Date getExpirationFromToken(String token) {
         Claims claims = parseToken(token);

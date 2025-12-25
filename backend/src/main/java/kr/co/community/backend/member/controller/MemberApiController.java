@@ -7,7 +7,6 @@ import kr.co.community.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +21,9 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
+    /**
+     * 로그인 API
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @RequestBody Map<String, String> loginRequest,
@@ -33,23 +35,25 @@ public class MemberApiController {
 
             log.info("🔐 API 로그인 요청: {}", email);
 
+            // 로그인 처리 및 JWT 토큰 생성
             String token = memberService.login(email, password);
+            
+            // 회원 정보 조회
             MemberDTO member = memberService.getMemberByEmail(email);
 
-            // ✅ ResponseCookie 사용
-            ResponseCookie cookie = ResponseCookie.from("accessToken", token)
-                    .httpOnly(true)
-                    .secure(false)  // 개발: false, 프로덕션: true
-                    .path("/")
-                    .maxAge(60 * 60 * 24)
-                    .sameSite("Lax")
-                    .build();
+            // HttpOnly 쿠키에 JWT 토큰 저장
+            Cookie cookie = new Cookie("accessToken", token);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60 * 24);  // 24시간
+            // cookie.setSecure(true);  // HTTPS 환경에서 활성화
             
-            response.addHeader("Set-Cookie", cookie.toString());
+            response.addCookie(cookie);
 
+            // 응답 데이터 로그인 중복
             Map<String, Object> result = new HashMap<>();
             result.put("success", true);
-            result.put("message", "로그인 성공. 다른 기기에서 로그인한 경우 해당 기기는 자동 로그아웃됩니다.");
+            result.put("message", "로그인 성공. 다른 기기에서 로그인한 경우 해당 기기는 자동 로그아웃됩니다.");  // 중복 로그인 알림 메시지 추가
             result.put("token", token);
             result.put("user", Map.of(
                 "memberId", member.getMemberId(),
@@ -59,6 +63,7 @@ public class MemberApiController {
             ));
 
             log.info("✅ API 로그인 성공: {}", email);
+
             return ResponseEntity.ok(result);
 
         } catch (Exception e) {
@@ -70,7 +75,7 @@ public class MemberApiController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
     }
-
+    
     /**
      * 로그아웃 API
      */
@@ -78,16 +83,14 @@ public class MemberApiController {
     public ResponseEntity<?> logout(HttpServletResponse response) {
         log.info("🚪 로그아웃 요청");
         
-        ResponseCookie cookie = ResponseCookie.from("accessToken", "")
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(0)
-                .sameSite("Lax")
-                .build();
+        // 쿠키 삭제
+        Cookie cookie = new Cookie("accessToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
         
-        response.addHeader("Set-Cookie", cookie.toString());
-        
+        response.addCookie(cookie);
+
         Map<String, Object> result = new HashMap<>();
         result.put("success", true);
         result.put("message", "로그아웃 성공");

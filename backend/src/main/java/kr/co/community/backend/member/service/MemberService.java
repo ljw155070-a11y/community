@@ -24,7 +24,7 @@ public class MemberService {
     private final MemberDao memberDao;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final LoginSessionMapper loginSessionMapper;
+    private final LoginSessionMapper loginSessionMapper;  // 중복 로그인 처리를 위해 추가
 
     // =========================
     // 중복 체크
