@@ -1,5 +1,5 @@
 // authUtils.js
-import Swal from "sweetalert2"; // 자동 로그아웃 알림을 위해 추가
+import Swal from "sweetalert2";
 
 const API_BASE_URL = `${import.meta.env.VITE_BACK_SERVER}/api/member`;
 
@@ -19,20 +19,25 @@ const withAuthHeader = (headers = {}) => {
   return token ? { ...headers, Authorization: `Bearer ${token}` } : headers;
 };
 
-// 401 에러 체크 - 다른 기기에서 로그인 시 자동 로그아웃 처리
+// 401 에러 체크 함수 - 로그인 상태일 때만 알림 표시
 const checkAuthError = async (response) => {
   if (response.status === 401) {
-    clearAccessToken();
-    localStorage.removeItem("loginUser");
+    // ⭐ 수정: 토큰이 있을 때만 알림 표시
+    const hasToken = getAccessToken() || localStorage.getItem("loginUser");
 
-    Swal.fire({
-      icon: "warning",
-      title: "로그아웃되었습니다",
-      text: "다른 기기에서 로그인하여 자동 로그아웃되었습니다.",
-      confirmButtonText: "확인",
-    }).then(() => {
-      window.location.href = "/mainpage";
-    });
+    if (hasToken) {
+      clearAccessToken();
+      localStorage.removeItem("loginUser");
+
+      Swal.fire({
+        icon: "warning",
+        title: "로그아웃되었습니다",
+        text: "다른 기기에서 로그인하여 자동 로그아웃되었습니다.",
+        confirmButtonText: "확인",
+      }).then(() => {
+        window.location.href = "/mainpage";
+      });
+    }
 
     throw new Error("Unauthorized");
   }
@@ -88,7 +93,7 @@ export const getCurrentUserAPI = async () => {
       credentials: "include",
     });
 
-    // 401 에러 체크 - 다른 기기에서 로그인했으면 자동 로그아웃
+    // 401 에러 체크
     await checkAuthError(res);
 
     // 쿠키로 성공하면 그대로 반환
