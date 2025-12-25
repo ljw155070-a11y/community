@@ -35,7 +35,7 @@ public class MainController {
 		boolean isLoggedIn = isAuthenticated != null && isAuthenticated;
 
 		model.addAttribute("isLoggedIn", isLoggedIn);
-		model.addAttribute("isAuthenticated", isLoggedIn);
+		model.addAttribute("isAuthenticated", isAuthenticated);
 		// 공지사항 (로그인 여부 상관없이 표시)
 		List<NoticeVo> noticeList = mainService.getNoticeList();
 		model.addAttribute("noticeList", noticeList);
