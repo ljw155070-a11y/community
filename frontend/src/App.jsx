@@ -22,7 +22,7 @@ import Settings from "./components/settings/Settings";
 
 import { loginUserState } from "./components/utils/authState";
 import { getCurrentUserAPI } from "./components/utils/authUtils";
-import FindId from "./components/common/FindId";
+
 import FindPassword from "./components/common/FindPassword";
 
 function App() {
@@ -49,7 +49,7 @@ function App() {
           {/* 너 라우팅 기준 (Header에서 /app/login 쓰고 싶으면 여기도 맞춰야 함) */}
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/find-id" element={<FindId />} />
+
           <Route path="/find-password" element={<FindPassword />} />
 
           <Route path="/boardwrite" element={<BoardWrite />} />
