@@ -1,4 +1,6 @@
 // authUtils.js
+import Swal from "sweetalert2";
+
 const API_BASE_URL = `${import.meta.env.VITE_BACK_SERVER}/api/member`;
 
 // ✅ (추가) 토큰 저장 키 (이름만 추가, 기존 함수명 변경 없음)
@@ -15,6 +17,31 @@ const clearAccessToken = () => localStorage.removeItem(ACCESS_TOKEN_KEY);
 const withAuthHeader = (headers = {}) => {
   const token = getAccessToken();
   return token ? { ...headers, Authorization: `Bearer ${token}` } : headers;
+};
+
+// 401 에러 체크 함수 - 로그인 상태일 때만 알림 표시
+const checkAuthError = async (response) => {
+  if (response.status === 401) {
+    // ⭐ 수정: 토큰이 있을 때만 알림 표시
+    const hasToken = getAccessToken() || localStorage.getItem("loginUser");
+
+    if (hasToken) {
+      clearAccessToken();
+      localStorage.removeItem("loginUser");
+
+      Swal.fire({
+        icon: "warning",
+        title: "로그아웃되었습니다",
+        text: "다른 기기에서 로그인하여 자동 로그아웃되었습니다.",
+        confirmButtonText: "확인",
+      }).then(() => {
+        window.location.href = "/mainpage";
+      });
+    }
+
+    throw new Error("Unauthorized");
+  }
+  return response;
 };
 
 // ✅ 로그인 (쿠키 저장됨 + 토큰도 저장)
@@ -66,13 +93,17 @@ export const getCurrentUserAPI = async () => {
       credentials: "include",
     });
 
+    // 401 에러 체크
+    await checkAuthError(res);
+
     // 쿠키로 성공하면 그대로 반환
     if (res.ok) {
       const data = await res.json();
       return data.success ? data.user : null;
     }
   } catch (e) {
-    // ignore
+    if (e.message === "Unauthorized") throw e;
+    // ignore other errors
   }
 
   // 2) Bearer 기반 fallback
@@ -85,10 +116,14 @@ export const getCurrentUserAPI = async () => {
       headers: withAuthHeader(),
     });
 
+    // 401 에러 체크
+    await checkAuthError(res2);
+
     if (!res2.ok) return null;
     const data2 = await res2.json();
     return data2.success ? data2.user : null;
   } catch (e) {
+    if (e.message === "Unauthorized") throw e;
     return null;
   }
 };

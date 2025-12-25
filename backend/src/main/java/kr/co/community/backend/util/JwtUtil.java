@@ -17,7 +17,7 @@ public class JwtUtil {
     public JwtUtil(@Value("${jwt.secret-key}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
-    
+
     /**
      * JWT 토큰 생성
      */
@@ -69,6 +69,15 @@ public class JwtUtil {
     }
 
     /**
+     * JWT 토큰에서 만료시간 추출
+     * (중복 로그인 처리 시 DB에 저장하기 위해 추가)
+     */
+    public Date getExpirationFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.getExpiration();
+    }
+
+    /**
      * JWT 토큰 파싱
      */
     private Claims parseToken(String token) {
@@ -83,7 +92,7 @@ public class JwtUtil {
      * JWT 토큰 유효성 검증
      */
     public boolean validateToken(String token) {
-    	try {
+        try {
             parseToken(token);
             return true;
         } catch (ExpiredJwtException e) {

@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.community.backend.util.JwtUtil;
+import kr.co.community.backend.member.dao.LoginSessionMapper;
 import kr.co.community.backend.member.dao.MemberDao;
+import kr.co.community.backend.member.dto.LoginSessionDTO;
 import kr.co.community.backend.member.dto.MemberDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ public class MemberService {
     private final MemberDao memberDao;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final LoginSessionMapper loginSessionMapper;  // 중복 로그인 처리를 위해 추가
 
     // =========================
     // 중복 체크
@@ -155,17 +158,34 @@ public class MemberService {
             throw new RuntimeException("비활성화된 계정입니다.");
         }
 
-        // 4) 마지막 로그인 시간 업데이트
+        // 4) 중복 로그인 체크 - 기존 세션 삭제
+        LoginSessionDTO existSession = loginSessionMapper.findByMemberId(member.getMemberId());
+        if (existSession != null) {
+            loginSessionMapper.deleteByMemberId(member.getMemberId());
+            log.info("🔄 기존 세션 삭제: memberId={}", member.getMemberId());
+        }
+
+        // 5) 마지막 로그인 시간 업데이트
         // ※ 아래 DAO 메서드가 실제로 있어야 함 (없으면 DAO/Mapper에 추가 필요)
         memberDao.updateLastLoginAt(member.getMemberId());
 
-        // 5) JWT 토큰 생성
+        // 6) JWT 토큰 생성
         String token = jwtUtil.generateToken(
             member.getMemberId(),
             member.getEmail(),
             member.getName(),
             member.getNickname()
         );
+
+        // 7) 새 세션 저장
+        LoginSessionDTO newSession = new LoginSessionDTO();
+        newSession.setMemberId(member.getMemberId());
+        newSession.setToken(token);
+        newSession.setLoginIp("127.0.0.1"); // IP는 Controller에서 받아올 수 있음
+        newSession.setExpireTime(jwtUtil.getExpirationFromToken(token));
+        
+        loginSessionMapper.save(newSession);
+        log.info("💾 새 세션 저장: memberId={}", member.getMemberId());
 
         log.info("✅ 로그인 성공: {} (memberId={})", email, member.getMemberId());
         return token;

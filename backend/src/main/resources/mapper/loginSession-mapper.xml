@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.community.backend.member.dao.LoginSessionMapper">
+    
+    <!-- 회원 ID로 세션 조회 -->
+    <select id="findByMemberId" resultType="loginSession">
+        SELECT SESSION_ID as sessionId,
+               MEMBER_ID as memberId,
+               TOKEN as token,
+               LOGIN_IP as loginIp,
+               LOGIN_TIME as loginTime,
+               EXPIRE_TIME as expireTime
+        FROM LOGIN_SESSION
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+    
+    <!-- 세션 저장 -->
+    <insert id="save">
+        INSERT INTO LOGIN_SESSION (
+            SESSION_ID, MEMBER_ID, TOKEN, LOGIN_IP, LOGIN_TIME, EXPIRE_TIME
+        ) VALUES (
+            SESSION_SEQ.NEXTVAL, #{memberId}, #{token}, #{loginIp}, SYSDATE, #{expireTime}
+        )
+    </insert>
+    
+    <!-- 회원 ID로 세션 삭제 -->
+    <delete id="deleteByMemberId">
+        DELETE FROM LOGIN_SESSION
+        WHERE MEMBER_ID = #{memberId}
+    </delete>
+    
+</mapper>

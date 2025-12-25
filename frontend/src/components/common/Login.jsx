@@ -3,6 +3,7 @@ import { useSetRecoilState } from "recoil";
 import { Link } from "react-router-dom";
 import { loginUserState } from "../utils/authState";
 import { loginAPI } from "../utils/authUtils";
+import Swal from "sweetalert2"; // 중복 로그인 알림을 위해 추가
 import "./login.css";
 
 const Login = () => {
@@ -49,10 +50,16 @@ const Login = () => {
       // (선택) rememberMe는 지금 UI만. 진짜 자동로그인은 서버 쿠키/리프레시로 설계
       // localStorage.setItem("rememberMe", rememberMe ? "true" : "false");
 
-      alert("로그인 성공!");
-
-      // ✅ SSR 페이지로 이동
-      window.location.href = "/mainpage";
+      // 중복 로그인 알림 메시지를 스윗얼럿으로 표시
+      Swal.fire({
+        icon: "success",
+        title: "로그인 성공",
+        text: data.message,
+        confirmButtonText: "확인",
+      }).then(() => {
+        // ✅ SSR 페이지로 이동
+        window.location.href = "/mainpage";
+      });
     } catch (error) {
       setErrors({ general: error?.message || "서버 연결에 실패했습니다" });
     } finally {
