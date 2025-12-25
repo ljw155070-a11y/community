@@ -17,7 +17,7 @@ public class PostService {
 
     private final PostDao postDao;
 
-    private final Path uploadDir = Paths.get("C:/upload/community");
+    private final Path uploadDir = Paths.get("C:/uploads/community");
 
     // ✅ 글 생성 (텍스트만)
     public Long write(PostDTO dto) {
