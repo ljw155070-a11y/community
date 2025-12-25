@@ -11,6 +11,7 @@ import kr.co.community.backend.category.dto.BoardCategoryDTO;
 import kr.co.community.backend.post.dao.PostSsrDao;
 import kr.co.community.backend.post.dto.CommentDTO;
 import kr.co.community.backend.post.dto.PostDTO;
+import kr.co.community.backend.post.dto.PostImageDTO;
 import kr.co.community.backend.post.dto.PostListDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,9 +71,14 @@ public class PostSsrService {
         postSsrDao.updateViewCount(postId);
         post.setViewCount(post.getViewCount() + 1);
 
+        // ✅ 댓글 목록 조회
         List<CommentDTO> comments = postSsrDao.selectCommentsByPostId(postId);
         post.setComments(comments);
 
+        // ✅ 이미지 목록 조회
+        List<PostImageDTO> images = postSsrDao.selectImagesByPostId(postId);
+        post.setImages(images);
+        
         return post;
     }
     /**

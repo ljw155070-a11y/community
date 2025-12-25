@@ -18,9 +18,13 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        // ✅ 쿠키 + Authorization(Bearer) 둘 다 지원 (기존 유지)
         String token = extractToken(request);
-
+        
+        // ✅ 디버깅 로그 추가
+        System.out.println("========== AuthInterceptor ==========");
+        System.out.println("URL: " + request.getRequestURI());
+        System.out.println("토큰: " + (token != null ? "있음 (" + token.substring(0, 20) + "...)" : "없음"));
+        
         if (token != null && jwtUtil.validateToken(token)) {
             try {
                 Long memberId = jwtUtil.getMemberIdFromToken(token);
@@ -33,20 +37,22 @@ public class AuthInterceptor implements HandlerInterceptor {
                 request.setAttribute("name", name);
                 request.setAttribute("nickname", nickname);
                 request.setAttribute("isAuthenticated", true);
-
-                // ✅ 추가(핵심): boardList.html에서 쓰는 이름 그대로 맞춰줌
                 request.setAttribute("loginMemberId", memberId);
 
+                System.out.println("✅ 인증 성공: memberId=" + memberId + ", nickname=" + nickname);
                 log.debug("✅ Authenticated: memberId={}, email={}", memberId, email);
             } catch (Exception e) {
+                System.out.println("❌ JWT 파싱 실패: " + e.getMessage());
                 log.error("❌ JWT 파싱 실패", e);
                 request.setAttribute("isAuthenticated", false);
             }
         } else {
+            System.out.println("🔓 비인증 요청 (토큰 없거나 유효하지 않음)");
             request.setAttribute("isAuthenticated", false);
             log.debug("🔓 Non-authenticated request");
         }
-
+        System.out.println("====================================");
+        
         return true;
     }
 

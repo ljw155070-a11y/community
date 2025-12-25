@@ -119,14 +119,32 @@
 		P.CREATED_AT AS createdAt,
 		P.UPDATED_AT AS updatedAt,
 		C.CATEGORY_NAME AS category,
-		NVL(M.NICKNAME, M.NAME) AS authorName
+		NVL(M.NICKNAME, M.NAME) AS authorName,
+		M.BIO AS authorBio
 		FROM POST P
 		LEFT JOIN BOARD_CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
 		LEFT JOIN MEMBER M ON P.AUTHOR_ID = M.MEMBER_ID
 		WHERE P.POST_ID = #{postId}
 		AND P.IS_DELETED = 'N'
 	</select>
-
+	
+	<!-- ✅ 게시글의 이미지 조회 (정렬 순서대로) -->
+	<select id="selectImagesByPostId" parameterType="long"
+		resultType="kr.co.community.backend.post.dto.PostImageDTO">
+		SELECT
+		IMG_ID AS imgId,
+		POST_ID AS postId,
+		ORIG_NAME AS origName,
+		SAVE_NAME AS saveName,
+		CONTENT_TYPE AS contentType,
+		FILE_SIZE AS fileSize,
+		SORT_NO AS sortNo,
+		CREATED_AT AS createdAt
+		FROM POST_IMAGE
+		WHERE POST_ID = #{postId}
+		ORDER BY SORT_NO ASC, IMG_ID ASC
+	</select>
+	
 	<!-- 조회수 증가 -->
 	<update id="updateViewCount" parameterType="long">
 		UPDATE POST
