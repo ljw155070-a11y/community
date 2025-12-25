@@ -35,16 +35,13 @@ public class MainController {
 		boolean isLoggedIn = isAuthenticated != null && isAuthenticated;
 
 		model.addAttribute("isLoggedIn", isLoggedIn);
-<<<<<<< HEAD
-		model.addAttribute("isAuthenticated", isAuthenticated);
-=======
 		model.addAttribute("isAuthenticated", isLoggedIn);
 		
 		
 		// 오늘 날짜 추가
 	    model.addAttribute("today", new java.util.Date());
 	    
->>>>>>> wjsgusdn
+
 		// 공지사항 (로그인 여부 상관없이 표시)
 		List<NoticeVo> noticeList = mainService.getNoticeList();
 		model.addAttribute("noticeList", noticeList);
