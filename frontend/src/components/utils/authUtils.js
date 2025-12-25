@@ -54,7 +54,7 @@ export const logoutAPI = async (setLoginUser) => {
 
     setLoginUser(null);
     localStorage.removeItem("loginUser");
-    window.location.href = "/login";
+    window.location.href = "/mainpage";
   }
 };
 

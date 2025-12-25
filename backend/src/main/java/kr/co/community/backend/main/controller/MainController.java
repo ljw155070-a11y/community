@@ -36,6 +36,12 @@ public class MainController {
 
 		model.addAttribute("isLoggedIn", isLoggedIn);
 		model.addAttribute("isAuthenticated", isLoggedIn);
+		
+		
+		// 오늘 날짜 추가
+	    model.addAttribute("today", new java.util.Date());
+	    
+
 		// 공지사항 (로그인 여부 상관없이 표시)
 		List<NoticeVo> noticeList = mainService.getNoticeList();
 		model.addAttribute("noticeList", noticeList);
