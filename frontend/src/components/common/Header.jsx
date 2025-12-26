@@ -1,17 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
 
-import { Link, useLocation } from "react-router-dom"; // ⭐ useLocation 추가
+import { Link, useLocation } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
 import { logoutAPI, getCurrentUserAPI } from "../utils/authUtils";
-import axios from "axios";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
-  const location = useLocation(); // ⭐ 추가
+  const location = useLocation();
 
   const loginUser = useRecoilValue(loginUserState);
   const setLoginUser = useSetRecoilState(loginUserState);
@@ -23,26 +21,15 @@ const Header = () => {
     logoutAPI(setLoginUser);
   };
 
-  /**
-   * ⭐ [중복 로그인] 페이지 이동할 때마다 로그인 상태 체크
-   *
-   * CSR 페이지에서만 작동 (SSR 페이지는 SSR header.html이 담당)
-   *
-   * 제외 페이지:
-   * - /login, /signup: 로그인/회원가입 페이지에서는 체크 안 함
-   *   (이미 로그아웃된 상태라 알림 불필요)
-   */
+  // 페이지 이동할 때마다 로그인 상태 체크
   useEffect(() => {
-    // ⭐ 로그인/회원가입 페이지에서는 체크 안 함
-    // - 이미 알림 떴고 로그아웃된 상태
-    // - 다시 체크하면 알림 중복 표시됨
+    // 로그인/회원가입 페이지에서는 체크 안 함
     if (location.pathname === "/login" || location.pathname === "/signup") {
       return;
     }
 
     (async () => {
       try {
-        // API 호출해서 현재 로그인 상태 확인
         const me = await getCurrentUserAPI();
         if (me) {
           setLoginUser(me);
@@ -50,33 +37,12 @@ const Header = () => {
           setLoginUser(null);
         }
       } catch (e) {
-        // Unauthorized 에러 = checkAuthError에서 알림 표시함
         console.log("인증 체크 에러:", e.message);
       }
     })();
-  }, [location.pathname, setLoginUser]); // ⭐ 페이지 이동할 때마다 실행
+  }, [location.pathname, setLoginUser]);
 
-  const loadUnreadCount = async () => {
-    try {
-      const memberId = loginUser?.memberId;
-      if (!memberId) return;
-
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACK_SERVER}/alert/list/${memberId}`,
-        { withCredentials: true }
-      );
-
-      const count = response.data.filter((a) => a.isRead === "N").length;
-      setUnreadCount(count);
-    } catch (error) {
-      console.error("알림 개수 불러오기 실패:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (loginUser) loadUnreadCount();
-  }, [loginUser]);
-
+  // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -105,17 +71,14 @@ const Header = () => {
           <a href="/notice" className="nav-link">
             공지사항
           </a>
-          {/* ✅ HTML 헤더에 있던 미니게임 메뉴 추가 */}
           <a href="/minigame/apple" className="nav-link">
             미니게임
           </a>
         </nav>
 
         <div className="header-right">
-          {/* ✅ loginUser가 없으면(null) 비로그인 상태 */}
           {!loginUser ? (
             <>
-              {/* ✅ HTML처럼 button 태그 + onclick으로 변경 (원래는 Link였음) */}
               <button
                 className="btn-login"
                 onClick={() => (window.location.href = "/app/login")}
@@ -131,32 +94,11 @@ const Header = () => {
             </>
           ) : (
             <>
-              {/* ✅ 알림 아이콘 - 변경 없음 */}
-              <Link to="/alert" className="notification-link">
-                <svg
-                  className="notification-icon"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-                {/* ✅ 숫자 제거하고 빨간 점만 표시 (HTML처럼) */}
-                {unreadCount > 0 && (
-                  <span className="notification-badge"></span>
-                )}
-              </Link>
-
               <div className="profile-dropdown" ref={dropdownRef}>
                 <button className="profile-button" onClick={toggleDropdown}>
                   <span className="profile-name">
                     {loginUser.nickname || loginUser.name}
                   </span>
-                  {/* ✅ HTML처럼 아래 화살표 아이콘 추가 (원래 없었음) */}
                   <svg
                     width="12"
                     height="12"
@@ -172,7 +114,6 @@ const Header = () => {
                 <div
                   className={`dropdown-menu ${isDropdownOpen ? "active" : ""}`}
                 >
-                  {/* ✅ 내 프로필에 사람 모양 아이콘 추가 (원래 없었음) */}
                   <Link to="/profile" className="dropdown-item">
                     <svg
                       width="16"
@@ -188,7 +129,6 @@ const Header = () => {
                     <span>내 프로필</span>
                   </Link>
 
-                  {/* ✅ 설정에 톱니바퀴 아이콘 추가 (원래 없었음) */}
                   <Link to="/settings" className="dropdown-item">
                     <svg
                       width="16"
@@ -204,7 +144,6 @@ const Header = () => {
                     <span>설정</span>
                   </Link>
 
-                  {/* ✅ HTML에 있던 내 게시글 메뉴 추가 (원래 없었음) */}
                   <a href="/my-posts" className="dropdown-item">
                     <svg
                       width="16"
@@ -220,10 +159,8 @@ const Header = () => {
                     <span>내 게시글</span>
                   </a>
 
-                  {/* ✅ 구분선 - 변경 없음 */}
                   <div className="dropdown-divider"></div>
 
-                  {/* ✅ 로그아웃에 나가기 아이콘 추가 (원래 없었음) */}
                   <a
                     href="/mainpage"
                     className="dropdown-item logout"
