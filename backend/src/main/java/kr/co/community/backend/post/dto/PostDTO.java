@@ -41,4 +41,5 @@ public class PostDTO {
 	private List<PostImageDTO> images;
 	private String blocksMeta; // JSON 문자열 저장용
 	 private List<Map<String, Object>> blocks;   // ✅ SSR/CSR 공용 렌더 순서
+	 private String authorProfileImage;
 }

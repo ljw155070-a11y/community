@@ -14,7 +14,7 @@ const MyPage = () => {
     email: loginUser?.email || "",
     nickname: loginUser?.nickname || "",
     joinDate: "",
-    profileImage: "", // ✅ 서버 저장된 이미지 URL
+    profileImage: "",
     stats: {
       postsWritten: 0,
       commentsWritten: 0,
@@ -30,8 +30,14 @@ const MyPage = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
-  // ✅ 업로드 파일 URL 만들기 (WebMvcConfig의 /uploads/** 매핑 사용)
+  // ✅ 업로드 파일 URL 만들기
   const fileUrl = (saveName) => (saveName ? `/uploads/${saveName}` : "");
+
+  // ✅ SSR 상세 페이지로 이동
+  const goSsrPostDetail = (postId) => {
+    if (!postId) return;
+    window.location.href = `/board/postDetail/${postId}`;
+  };
 
   // ✅ 회원 정보 + 통계
   useEffect(() => {
@@ -50,7 +56,7 @@ const MyPage = () => {
             email: member.email || "",
             nickname: member.nickname || "",
             joinDate: member.createdAt || "",
-            profileImage: fileUrl(member.profileImage), // ✅ DB에 저장된 파일명
+            profileImage: fileUrl(member.profileImage),
             stats: {
               postsWritten: stats?.postsWritten || 0,
               commentsWritten: stats?.commentsWritten || 0,
@@ -123,9 +129,6 @@ const MyPage = () => {
   }, [memberId]);
 
   const getCurrentTabData = () => {
-    console.log(posts);
-    console.log(comments);
-    console.log(likedPosts);
     switch (activeTab) {
       case "작성한 글":
         return posts;
@@ -138,7 +141,7 @@ const MyPage = () => {
     }
   };
 
-  // ✅ 프로필 이미지 업로드(서버 저장)
+  // ✅ 프로필 이미지 업로드
   const handleProfileImageChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -165,7 +168,6 @@ const MyPage = () => {
         return;
       }
 
-      // ✅ 서버가 저장한 파일명으로 화면 업데이트
       setUserData((prev) => ({
         ...prev,
         profileImage: fileUrl(data.saveName),
@@ -286,10 +288,21 @@ const MyPage = () => {
           </div>
 
           <div className="posts-list">
+            {/* ✅ 작성한 글 (클릭 → SSR 상세) */}
             {activeTab === "작성한 글" &&
               posts.length > 0 &&
               posts.map((post) => (
-                <div key={post.POSTID} className="post-item">
+                <div
+                  key={post.POSTID}
+                  className="post-item"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => goSsrPostDetail(post.POSTID)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && goSsrPostDetail(post.POSTID)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
                   <div className="post-header">
                     <span className="post-category">{post.CATEGORY}</span>
                     <span className="post-date">{post.CREATEDAT}</span>
@@ -308,26 +321,47 @@ const MyPage = () => {
                 </div>
               ))}
 
+            {/* ✅ 작성한 댓글 (클릭 → 해당 게시글 SSR 상세) */}
             {activeTab === "작성한 댓글" &&
               comments.length > 0 &&
-              comments.map((comment) => (
-                <div key={comment.COMMENTID} className="post-item">
+              comments.map((c) => (
+                <div
+                  key={c.COMMENTID}
+                  className="post-item"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => goSsrPostDetail(c.POSTID)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && goSsrPostDetail(c.POSTID)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
                   <div className="post-header">
-                    <span className="post-category">{comment.CATEGORY}</span>
-                    <span className="post-date">{comment.CREATEDAT}</span>
+                    <span className="post-category">{c.CATEGORY}</span>
+                    <span className="post-date">{c.CREATEDAT}</span>
                   </div>
                   <h3 className="post-title">
-                    <span className="comment-label">[댓글]</span>{" "}
-                    {comment.POSTTITLE}
+                    <span className="comment-label">[댓글]</span> {c.POSTTITLE}
                   </h3>
-                  <p className="post-content">{comment.CONTENT}</p>
+                  <p className="post-content">{c.CONTENT}</p>
                 </div>
               ))}
 
+            {/* ✅ 좋아요한 글 (클릭 → SSR 상세) */}
             {activeTab === "좋아요한 글" &&
               likedPosts.length > 0 &&
               likedPosts.map((post) => (
-                <div key={post.POSTID} className="post-item">
+                <div
+                  key={post.POSTID}
+                  className="post-item"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => goSsrPostDetail(post.POSTID)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && goSsrPostDetail(post.POSTID)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
                   <div className="post-header">
                     <span className="post-category">{post.CATEGORY}</span>
                     <span className="post-date">{post.CREATEDAT}</span>
