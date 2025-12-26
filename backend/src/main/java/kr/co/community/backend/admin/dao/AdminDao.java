@@ -27,4 +27,17 @@ public interface AdminDao {
 
     int countReportsFiltered(String status);
     List<AdminReportDTO> selectReports(String status, int size, int offset);
+
+ // ========== 방문자 통계 추가 ==========
+    
+    // 오늘 방문자 수 (IP 중복 제거)
+    int countTodayVisitors();
+    
+    // 총 누적 방문자 수 (IP 중복 제거)
+    int countTotalVisitors();
+    
+    // 방문 기록 저장
+    void insertVisitHistory(String visitIp, String userAgent);
+
+
 }
