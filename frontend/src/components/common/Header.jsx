@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom"; // ⭐ useLocation 추가
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
 import { logoutAPI, getCurrentUserAPI } from "../utils/authUtils";
@@ -10,6 +10,7 @@ const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
+  const location = useLocation(); // ⭐ 추가
 
   const loginUser = useRecoilValue(loginUserState);
   const setLoginUser = useSetRecoilState(loginUserState);
@@ -21,6 +22,7 @@ const Header = () => {
     logoutAPI(setLoginUser);
   };
 
+  // ⭐ 수정: location 변경될 때마다 체크
   useEffect(() => {
     if (!loginUser) {
       (async () => {
@@ -28,12 +30,11 @@ const Header = () => {
           const me = await getCurrentUserAPI();
           if (me) setLoginUser(me);
         } catch (e) {
-          // ⭐ 수정: 에러를 그냥 던져서 알림이 뜨도록 함
-          // 에러 무시하지 않음
+          // 에러 무시하지 않음 (알림 표시됨)
         }
       })();
     }
-  }, []);
+  }, [location.pathname]); // ⭐ 수정: location.pathname 의존성 추가
 
   const loadUnreadCount = async () => {
     try {
