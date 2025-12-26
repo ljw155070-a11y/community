@@ -22,5 +22,6 @@ public class MemberDTO {
 	  private String createdAt;		//가입일
 	  private String updatedAt;		//수정일
 	  private String lastLoginAt;	//마지막 로그인 날짜
+	  private String profileImage;
 }
 
