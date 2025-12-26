@@ -21,19 +21,25 @@ const withAuthHeader = (headers = {}) => {
 
 // 401 에러 체크 함수
 const checkAuthError = async (response) => {
+  console.log("1️⃣ checkAuthError 호출됨, status:", response.status);
+
   if (response.status === 401) {
-    // ⭐ 순서 변경: 삭제 전에 먼저 체크
+    console.log("2️⃣ 401 에러 감지");
+
     const hasToken = getAccessToken();
     const hasLoginUser = localStorage.getItem("loginUser");
 
-    // ⭐ 즉시 삭제 (알림 띄우기 전에)
+    console.log("3️⃣ hasToken:", hasToken);
+    console.log("4️⃣ hasLoginUser:", hasLoginUser);
+
     const shouldShowAlert = hasToken || hasLoginUser;
+    console.log("5️⃣ shouldShowAlert:", shouldShowAlert);
 
     clearAccessToken();
     localStorage.removeItem("loginUser");
 
-    // ⭐ 알림은 나중에
     if (shouldShowAlert) {
+      console.log("6️⃣ 알림 표시!");
       Swal.fire({
         icon: "warning",
         title: "로그아웃되었습니다",
@@ -42,6 +48,8 @@ const checkAuthError = async (response) => {
       }).then(() => {
         window.location.href = "/mainpage";
       });
+    } else {
+      console.log("7️⃣ 알림 안 띄움");
     }
 
     throw new Error("Unauthorized");
