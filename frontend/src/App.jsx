@@ -31,30 +31,9 @@ function App() {
   useEffect(() => {
     (async () => {
       try {
-<<<<<<< HEAD
         const user = await getCurrentUserAPI();
         setLoginUser(user);
-=======
-        // ⭐ localStorage 또는 sessionStorage에서 복원 시도
-        const savedUser =
-          localStorage.getItem("loginUser") ||
           sessionStorage.getItem("loginUser");
-
-        if (savedUser) {
-          // 저장된 정보가 있으면 먼저 복원
-          setLoginUser(JSON.parse(savedUser));
-        }
-
-        // 서버와 세션 동기화
-        const user = await getCurrentUserAPI();
-        setLoginUser(user);
-
-        // ⭐ 서버에서 세션 없으면 저장소도 클리어
-        if (!user) {
-          localStorage.removeItem("loginUser");
-          sessionStorage.removeItem("loginUser");
-        }
->>>>>>> 62458d6ab412570b850c1f23544f4b7fa33dd28a
       } catch (e) {
         if (e.message !== "Unauthorized") {
           setLoginUser(null);
