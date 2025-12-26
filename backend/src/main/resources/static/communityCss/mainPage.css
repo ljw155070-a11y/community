@@ -29,15 +29,16 @@ body {
     z-index: 50;
 }
 
- .new-badge {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 4px;
+.new-badge {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
 }
+
 .mainpage-side-ad {
     position: fixed;
     top: 150px;
@@ -492,6 +493,9 @@ body {
     margin-bottom: 6px;
     color: #333;
     font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* 게시글 정보 */
@@ -656,8 +660,15 @@ body {
     transition: all 0.3s;
     cursor: pointer;
     border: 1px solid rgba(102, 126, 234, 0.08);
+    display: flex;
+
 }
 
+.mainpage-board-card-content {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+}
 .mainpage-board-card-item:hover {
     background: linear-gradient(to right, #f5f6ff 0%, #f0f1fc 100%);
     border-color: rgba(102, 126, 234, 0.2);
@@ -672,6 +683,9 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: #333;
+    width: 100%;
+    display: block;
+    max-width: 250px;
 }
 
 .mainpage-board-card-info {
@@ -763,8 +777,6 @@ body {
 .mainpage-top-section:nth-child(3) .mainpage-section-title {
     color: #4facfe;
 }
-
- 
 
 /* =========================
    반응형 - 태블릿 (768px 이하)
@@ -1070,6 +1082,4 @@ body {
         padding: 12px 28px;
         font-size: 14px;
     }
-   
-    
 }
