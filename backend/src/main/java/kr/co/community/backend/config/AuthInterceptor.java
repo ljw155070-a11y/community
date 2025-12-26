@@ -11,13 +11,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * SSR 페이지 접근 시 인증 체크
+ * 
+ * ⭐ [중복 로그인] DB 토큰 검증 추가
+ * - 쿠키의 토큰이 DB에 있는지 확인
+ * - 없으면 비인증 처리 (다른 기기에서 로그인함)
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuthInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
-    private final LoginSessionMapper loginSessionMapper;  // 중복 로그인 체크를 위해 추가
+    private final LoginSessionMapper loginSessionMapper;  // ⭐ 중복 로그인 체크를 위해 추가
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -30,9 +37,12 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         if (token != null && jwtUtil.validateToken(token)) {
             try {
+                // JWT에서 회원 ID 추출
                 Long memberId = jwtUtil.getMemberIdFromToken(token);
                 
-                // DB에서 토큰 확인 - 다른 기기에서 로그인했으면 DB에 토큰이 없거나 다름
+                // ⭐ [중복 로그인] DB에서 토큰 확인
+                // - DB에 저장된 토큰과 쿠키의 토큰 비교
+                // - 다르면 비인증 처리 (다른 기기에서 로그인함)
                 LoginSessionDTO session = loginSessionMapper.findByMemberId(memberId);
                 if (session == null || !token.equals(session.getToken())) {
                     System.out.println("❌ DB에 토큰 없음 (다른 곳에서 로그인됨)");
@@ -41,10 +51,12 @@ public class AuthInterceptor implements HandlerInterceptor {
                     return true;
                 }
                 
+                // 토큰에서 사용자 정보 추출
                 String email = jwtUtil.getEmailFromToken(token);
                 String name = jwtUtil.getNameFromToken(token);
                 String nickname = jwtUtil.getNicknameFromToken(token);
 
+                // Request에 사용자 정보 저장 (Thymeleaf에서 사용)
                 request.setAttribute("memberId", memberId);
                 request.setAttribute("email", email);
                 request.setAttribute("name", name);

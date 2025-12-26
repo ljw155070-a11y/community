@@ -3,7 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.community.backend.member.dao.LoginSessionMapper">
     
-    <!-- 회원 ID로 세션 조회 -->
+     <!-- 회원 ID로 세션 조회 -->
+    <!-- 중복 로그인 체크 및 토큰 유효성 검증에 사용 -->
     <select id="findByMemberId" resultType="loginSession">
         SELECT SESSION_ID as sessionId,
                MEMBER_ID as memberId,
@@ -16,15 +17,27 @@
     </select>
     
     <!-- 세션 저장 -->
+    <!-- 로그인 성공 시 새 세션 생성 -->
     <insert id="save">
         INSERT INTO LOGIN_SESSION (
-            SESSION_ID, MEMBER_ID, TOKEN, LOGIN_IP, LOGIN_TIME, EXPIRE_TIME
+            SESSION_ID,           -- 시퀀스로 자동 생성
+            MEMBER_ID,           -- 회원 ID
+            TOKEN,               -- JWT 토큰
+            LOGIN_IP,            -- 로그인 IP
+            LOGIN_TIME,          -- 현재 시간 (SYSDATE)
+            EXPIRE_TIME          -- 토큰 만료 시간
         ) VALUES (
-            SESSION_SEQ.NEXTVAL, #{memberId}, #{token}, #{loginIp}, SYSDATE, #{expireTime}
+            SESSION_SEQ.NEXTVAL, 
+            #{memberId}, 
+            #{token}, 
+            #{loginIp}, 
+            SYSDATE, 
+            #{expireTime}
         )
     </insert>
     
     <!-- 회원 ID로 세션 삭제 -->
+    <!-- 다른 기기에서 로그인 시 기존 세션 제거 -->
     <delete id="deleteByMemberId">
         DELETE FROM LOGIN_SESSION
         WHERE MEMBER_ID = #{memberId}

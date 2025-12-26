@@ -134,43 +134,79 @@
             }
         }
 
-     // ⭐ 수정: 페이지 로드 시 로그인 상태 체크
-   async function checkLoginStatus() {
-    const currentPath = window.location.pathname;
-    if (currentPath === '/app/login' || currentPath === '/app/signup') {
-        return;
-    }
-    
-    try {
-        const response = await fetch('/api/member/me', {
-            credentials: 'include'
-        });
-        
-        if (response.status === 401) {
-            const hasLoginUser = localStorage.getItem('loginUser');
-            const alreadyShown = sessionStorage.getItem('logoutAlertShown');  // ⭐ 추가
+        /**
+         * ⭐ [중복 로그인] SSR 페이지 로드 시 로그인 상태 체크
+         * 
+         * SSR 페이지에서만 작동 (CSR 페이지는 React Header가 담당)
+         * 
+         * 동작 방식:
+         * 1. 페이지 로드 시 /api/member/me 호출
+         * 2. 401 에러 나면 = DB에 토큰 없음 (다른 기기에서 로그인함)
+         * 3. localStorage에 로그인 정보 있으면 알림 표시
+         * 4. sessionStorage에 플래그 저장 (알림 중복 방지)
+         * 
+         * 제외 페이지:
+         * - /app/login, /app/signup: 이미 로그아웃된 상태라 체크 불필요
+         * - /app/settings, /app/profile, /app/alert: CSR 페이지라 React Header가 담당
+         */
+        async function checkLoginStatus() {
+            // ⭐ 제외 페이지 체크
+            // - 로그인/회원가입: 이미 알림 떴고 로그아웃된 상태
+            // - 설정/프로필/알림: CSR 페이지라 React Header에서 체크함
+            const currentPath = window.location.pathname;
+            if (currentPath === '/app/login' || 
+                currentPath === '/app/signup' ||
+                currentPath === '/app/settings' ||
+                currentPath === '/app/profile' ||
+                currentPath === '/app/alert') {
+                return;  // 체크 안 함
+            }
             
-            if (hasLoginUser && !alreadyShown) {  // ⭐ 수정
-                localStorage.removeItem('loginUser');
-                sessionStorage.setItem('logoutAlertShown', 'true');  // ⭐ 추가
-                
-                Swal.fire({
-                    icon: 'warning',
-                    title: '로그아웃되었습니다',
-                    text: '다른 기기에서 로그인하여 자동 로그아웃되었습니다.',
-                    confirmButtonText: '확인',
-                    allowOutsideClick: false
-                }).then(() => {
-                    window.location.reload();
+            try {
+                // ⭐ 로그인 상태 확인 API 호출
+                const response = await fetch('/api/member/me', {
+                    credentials: 'include'  // 쿠키 전송
                 });
+                
+                // ⭐ 401 에러 = DB에 토큰 없음 (다른 기기에서 로그인함)
+                if (response.status === 401) {
+                    // localStorage에 로그인 정보 확인
+                    const hasLoginUser = localStorage.getItem('loginUser');
+                    
+                    // ⭐ [알림 중복 방지]
+                    // sessionStorage = 브라우저 탭 닫으면 자동 삭제
+                    const alreadyShown = sessionStorage.getItem('logoutAlertShown');
+                    
+                    // ⭐ 알림 표시 조건
+                    // - 로그인 정보가 있었음 (로그인 상태였음)
+                    // - 아직 알림 안 띄웠음
+                    if (hasLoginUser && !alreadyShown) {
+                        // 즉시 삭제 (알림 표시 전에 삭제)
+                        localStorage.removeItem('loginUser');
+                        
+                        // ⭐ 알림 표시했다고 표시 (세션 동안 유지)
+                        sessionStorage.setItem('logoutAlertShown', 'true');
+                        
+                        // ⭐ 스윗얼럿으로 알림 표시
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '로그아웃되었습니다',
+                            text: '다른 기기에서 로그인하여 자동 로그아웃되었습니다.',
+                            confirmButtonText: '확인',
+                            allowOutsideClick: false  // 외부 클릭 막기
+                        }).then(() => {
+                            // 페이지 새로고침 (로그아웃 상태로 갱신)
+                            window.location.reload();
+                        });
+                    }
+                }
+            } catch (e) {
+                console.log('로그인 상태 체크 에러:', e);
             }
         }
-    } catch (e) {
-        console.log('로그인 상태 체크 에러:', e);
-    }
-}
 
-        // 페이지 로드 시 실행
+        // ⭐ 페이지 로드 시 실행
+        // DOMContentLoaded = HTML 로드 완료 후 실행
         document.addEventListener('DOMContentLoaded', checkLoginStatus);
     </script>
 </body>

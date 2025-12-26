@@ -133,6 +133,12 @@ public class MemberService {
 
     /**
      * 로그인 (JWT 토큰 반환)
+     * 
+     * [중복 로그인] 처리 흐름:
+     * 1. 이메일/비밀번호 확인
+     * 2. 기존 세션 삭제 (다른 기기에서 로그인한 경우)
+     * 3. JWT 토큰 생성
+     * 4. 새 세션 DB에 저장
      */
     @Transactional
     public String login(String email, String password) {
@@ -158,7 +164,9 @@ public class MemberService {
             throw new RuntimeException("비활성화된 계정입니다.");
         }
 
-        // 4) 중복 로그인 체크 - 기존 세션 삭제
+        // ⭐ 4) [중복 로그인] 기존 세션 삭제
+        // - DB에서 이 회원의 세션 조회
+        // - 있으면 삭제 (기존 기기에서 자동 로그아웃됨)
         LoginSessionDTO existSession = loginSessionMapper.findByMemberId(member.getMemberId());
         if (existSession != null) {
             loginSessionMapper.deleteByMemberId(member.getMemberId());
@@ -166,7 +174,6 @@ public class MemberService {
         }
 
         // 5) 마지막 로그인 시간 업데이트
-        // ※ 아래 DAO 메서드가 실제로 있어야 함 (없으면 DAO/Mapper에 추가 필요)
         memberDao.updateLastLoginAt(member.getMemberId());
 
         // 6) JWT 토큰 생성
@@ -177,7 +184,9 @@ public class MemberService {
             member.getNickname()
         );
 
-        // 7) 새 세션 저장
+        // ⭐ 7) [중복 로그인] 새 세션 저장
+        // - 새로 생성한 토큰을 DB에 저장
+        // - 이 토큰만 유효하게 됨
         LoginSessionDTO newSession = new LoginSessionDTO();
         newSession.setMemberId(member.getMemberId());
         newSession.setToken(token);

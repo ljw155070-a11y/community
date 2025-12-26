@@ -70,11 +70,14 @@ public class JwtUtil {
 
     /**
      * JWT 토큰에서 만료시간 추출
-     * (중복 로그인 처리 시 DB에 저장하기 위해 추가)
+     * 
+     * [중복 로그인] DB에 세션 저장할 때 만료시간 필요해서 추가
+     * - 로그인 시 새 세션 저장할 때 사용
+     * - LOGIN_SESSION.EXPIRE_TIME에 저장됨
      */
     public Date getExpirationFromToken(String token) {
         Claims claims = parseToken(token);
-        return claims.getExpiration();
+        return claims.getExpiration();  // 토큰의 만료 시간 반환
     }
 
     /**
