@@ -19,13 +19,22 @@ const withAuthHeader = (headers = {}) => {
   return token ? { ...headers, Authorization: `Bearer ${token}` } : headers;
 };
 
-// 401 에러 체크 함수 - 로그인 상태일 때만 알림 표시
+// 401 에러 체크 함수
 const checkAuthError = async (response) => {
   if (response.status === 401) {
-    // ⭐ 수정: 토큰이 있을 때만 알림 표시
-    const hasToken = getAccessToken() || localStorage.getItem("loginUser");
+    // ⭐ 수정: loginUser 상태도 확인
+    const hasToken = getAccessToken();
+    const hasLoginUser = localStorage.getItem("loginUser");
 
-    if (hasToken) {
+    console.log(
+      "401 감지 - hasToken:",
+      hasToken,
+      "hasLoginUser:",
+      hasLoginUser
+    ); // 디버깅
+
+    // 토큰이나 loginUser 중 하나라도 있으면 알림 표시
+    if (hasToken || hasLoginUser) {
       clearAccessToken();
       localStorage.removeItem("loginUser");
 
