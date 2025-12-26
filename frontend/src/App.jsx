@@ -31,10 +31,6 @@ function App() {
   useEffect(() => {
     (async () => {
       try {
-<<<<<<< HEAD
-        const user = await getCurrentUserAPI();
-        setLoginUser(user);
-=======
         // ⭐ localStorage 또는 sessionStorage에서 복원 시도
         const savedUser =
           localStorage.getItem("loginUser") ||
@@ -54,7 +50,6 @@ function App() {
           localStorage.removeItem("loginUser");
           sessionStorage.removeItem("loginUser");
         }
->>>>>>> 62458d6ab412570b850c1f23544f4b7fa33dd28a
       } catch (e) {
         if (e.message !== "Unauthorized") {
           setLoginUser(null);
@@ -64,7 +59,6 @@ function App() {
       }
     })();
   }, [setLoginUser]);
-
   return (
     <div className="wrap">
       <Header />
