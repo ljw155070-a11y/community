@@ -773,3 +773,136 @@ body{
     rgba(255,255,255,0.78);
   border-color: rgba(37,99,235,0.18);
 }
+
+/* ✅ 카드뷰: 썸네일을 왼쪽으로 */
+.bl-view-card .bl-card-link{
+  display: grid;
+  grid-template-columns: 260px 1fr; /* 왼쪽 thumb, 오른쪽 내용 */
+  grid-template-areas:
+    "thumb  title"
+    "thumb  desc"
+    "thumb  bottom";
+  gap: 10px 16px;
+  text-decoration: none;
+}
+
+/* thumb 영역 */
+.bl-view-card .bl-card-thumb{
+  grid-area: thumb;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  align-self: start;
+}
+
+/* title/desc/bottom 영역 지정 (혹시 기존에 안 먹으면 확실히 박아줌) */
+.bl-view-card .bl-card-title{ grid-area: title; }
+.bl-view-card .bl-card-desc{ grid-area: desc; }
+.bl-view-card .bl-card-bottom{ grid-area: bottom; }
+
+/* 모바일에서는 기존처럼 위로 올림 */
+@media (max-width: 860px){
+  .bl-view-card .bl-card-link{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "thumb"
+      "title"
+      "desc"
+      "bottom";
+  }
+}
+
+/* =========================
+   FIX 1) 카드뷰: 썸네일을 왼쪽으로
+========================= */
+.bl-view-card .bl-card-link{
+  /* 기존: 1fr 260px (오른쪽) */
+  grid-template-columns: 260px 1fr;
+  grid-template-areas:
+    "thumb  title"
+    "thumb  desc"
+    "thumb  bottom";
+  gap: 10px 16px;
+}
+
+/* 카드뷰 썸네일 박스 */
+.bl-view-card .bl-card-thumb{
+  grid-area: thumb;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  margin: 0;
+  align-self: start;
+}
+
+/* 모바일에서는 위로 올라오게(기존과 동일) */
+@media (max-width: 860px){
+  .bl-view-card .bl-card-link{
+    grid-template-columns: 1fr;
+    grid-template-areas: "thumb" "title" "desc" "bottom";
+  }
+  .bl-view-card .bl-card-thumb{
+    height: 180px;
+    min-height: 180px;
+    max-height: 180px;
+  }
+}
+
+
+/* =========================
+   FIX 2) 리스트뷰: NEW와 조회수(👁) 겹침 방지
+   - 컬럼 폭을 넓히고, 텍스트가 길면 줄임표 처리
+========================= */
+
+/* 바깥 row 그리드 폭 확장 */
+.bl-row{
+  /* 기존: 1fr 200px 170px auto */
+  grid-template-columns: 1fr 230px 210px auto;
+}
+
+/* 링크 내부 그리드도 동일하게 */
+.bl-row-link{
+  grid-template-columns: 1fr 230px 210px;
+}
+
+/* meta 영역이 길어지면 침범하지 않게 */
+.bl-col-meta{
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* metrics 영역은 최소 폭 확보 + 우측 정렬 유지 */
+.bl-col-metrics{
+  min-width: 210px;
+  justify-content: flex-end;
+}
+
+/* NEW가 너무 붙어 보이면 살짝 띄움 */
+.bl-new--sm{
+  margin-left: 6px;
+}
+
+/* ✅ 카드뷰: 무조건 그리드 적용 + 썸네일 왼쪽 강제 */
+.bl-view-card .bl-card-link{
+  display: grid !important;
+  grid-template-columns: 260px 1fr !important;
+  grid-template-areas:
+    "thumb  title"
+    "thumb  desc"
+    "thumb  bottom" !important;
+  gap: 10px 16px !important;
+}
+
+/* ✅ 각 영역 강제 지정 */
+.bl-view-card .bl-card-thumb{ grid-area: thumb !important; }
+.bl-view-card .bl-card-title{ grid-area: title !important; }
+.bl-view-card .bl-card-desc{ grid-area: desc !important; }
+.bl-view-card .bl-card-bottom{ grid-area: bottom !important; }
+
+/* ✅ 혹시 thumb가 오른쪽으로 밀리는 경우 방지 */
+.bl-view-card .bl-card-thumb{
+  margin: 0 !important;
+  align-self: start !important;
+}
+

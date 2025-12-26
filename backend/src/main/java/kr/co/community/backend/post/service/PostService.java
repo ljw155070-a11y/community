@@ -137,4 +137,11 @@ public class PostService {
             Files.deleteIfExists(uploadDir.resolve(img.getSaveName()));
         } catch (Exception ignored) {}
     }
+    public void deletePost(Long postId) {
+        if (postId == null) throw new IllegalArgumentException("postId는 필수입니다.");
+
+        int rows = postDao.deletePost(postId);
+        if (rows != 1) throw new RuntimeException("게시글 삭제 실패");
+    }
+
 }
