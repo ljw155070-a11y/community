@@ -1,19 +1,10 @@
 import { atom, selector } from "recoil";
 
+// persist 효과 제거 - 수동으로 관리
 export const loginUserState = atom({
   key: "loginUserState",
   default: null,
-  effects: [
-    ({ setSelf, onSet }) => {
-      const savedUser = localStorage.getItem("loginUser");
-      if (savedUser) setSelf(JSON.parse(savedUser));
-      onSet((newValue, _, isReset) => {
-        isReset || newValue === null
-          ? localStorage.removeItem("loginUser")
-          : localStorage.setItem("loginUser", JSON.stringify(newValue));
-      });
-    },
-  ],
+  // effects 제거
 });
 
 export const isAuthenticatedState = selector({

@@ -32,15 +32,31 @@ function App() {
   useEffect(() => {
     (async () => {
       try {
-        const user = await getCurrentUserAPI(); // success면 user, 아니면 null
-        setLoginUser(user); // null이면 자동 로그아웃 상태로 맞춰짐
+        // ⭐ localStorage 또는 sessionStorage에서 복원 시도
+        const savedUser =
+          localStorage.getItem("loginUser") ||
+          sessionStorage.getItem("loginUser");
+
+        if (savedUser) {
+          // 저장된 정보가 있으면 먼저 복원
+          setLoginUser(JSON.parse(savedUser));
+        }
+
+        // 서버와 세션 동기화
+        const user = await getCurrentUserAPI();
+        setLoginUser(user);
+
+        // ⭐ 서버에서 세션 없으면 저장소도 클리어
+        if (!user) {
+          localStorage.removeItem("loginUser");
+          sessionStorage.removeItem("loginUser");
+        }
       } catch (e) {
-        // 서버 죽었거나 CORS/쿠키 문제여도 앱이 죽지 않게 무시
-        // ⭐ 수정: Unauthorized 에러가 아니면 null 설정
         if (e.message !== "Unauthorized") {
           setLoginUser(null);
+          localStorage.removeItem("loginUser");
+          sessionStorage.removeItem("loginUser");
         }
-        // Unauthorized 에러는 이미 알림 떴으니 무시
       }
     })();
   }, [setLoginUser]);
