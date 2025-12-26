@@ -25,12 +25,10 @@
   color: #1f2937 !important;
   cursor: pointer;
   text-decoration: none;
-  background-color: transparent !important;
 }
 
 .logo-icon {
   color: #2563eb !important;
-  background-color: transparent !important;
   font-size: 1.3rem;
   font-weight: bold;
 }
@@ -75,7 +73,6 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s;
-  text-decoration: none;
 }
 
 .btn-login:hover {
@@ -92,7 +89,6 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.2s;
-  text-decoration: none;
 }
 
 .btn-signup:hover {
@@ -247,7 +243,6 @@
   }
 }
 
-/* 반응형 디자인 */
 @media (max-width: 768px) {
   .header-container {
     flex-wrap: wrap;

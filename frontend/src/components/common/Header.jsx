@@ -21,7 +21,6 @@ const Header = () => {
     logoutAPI(setLoginUser);
   };
 
-  // ✅ (추가) recoil이 비어있으면 /me로 1회 동기화
   useEffect(() => {
     if (!loginUser) {
       (async () => {
@@ -29,7 +28,6 @@ const Header = () => {
         if (me) setLoginUser(me);
       })();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadUnreadCount = async () => {
@@ -81,27 +79,33 @@ const Header = () => {
           <a href="/notice" className="nav-link">
             공지사항
           </a>
-
-          <Link to="/about" className="nav-link">
-            사이트 소개 (임시)
-          </Link>
-          <Link to="/admin" className="nav-link">
-            관리자 (임시)
-          </Link>
+          {/* ✅ HTML 헤더에 있던 미니게임 메뉴 추가 */}
+          <a href="/minigame/apple" className="nav-link">
+            미니게임
+          </a>
         </nav>
 
         <div className="header-right">
+          {/* ✅ loginUser가 없으면(null) 비로그인 상태 */}
           {!loginUser ? (
             <>
-              <Link className="btn-login" to="/login">
+              {/* ✅ HTML처럼 button 태그 + onclick으로 변경 (원래는 Link였음) */}
+              <button
+                className="btn-login"
+                onClick={() => (window.location.href = "/app/login")}
+              >
                 로그인
-              </Link>
-              <Link className="btn-signup" to="/signup">
+              </button>
+              <button
+                className="btn-signup"
+                onClick={() => (window.location.href = "/app/signup")}
+              >
                 회원가입
-              </Link>
+              </button>
             </>
           ) : (
             <>
+              {/* ✅ 알림 아이콘 - 변경 없음 */}
               <Link to="/alert" className="notification-link">
                 <svg
                   className="notification-icon"
@@ -115,8 +119,9 @@ const Header = () => {
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                   <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                 </svg>
+                {/* ✅ 숫자 제거하고 빨간 점만 표시 (HTML처럼) */}
                 {unreadCount > 0 && (
-                  <span className="notification-badge">{unreadCount}</span>
+                  <span className="notification-badge"></span>
                 )}
               </Link>
 
@@ -125,25 +130,91 @@ const Header = () => {
                   <span className="profile-name">
                     {loginUser.nickname || loginUser.name}
                   </span>
+                  {/* ✅ HTML처럼 아래 화살표 아이콘 추가 (원래 없었음) */}
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
                 </button>
 
                 <div
                   className={`dropdown-menu ${isDropdownOpen ? "active" : ""}`}
                 >
+                  {/* ✅ 내 프로필에 사람 모양 아이콘 추가 (원래 없었음) */}
                   <Link to="/profile" className="dropdown-item">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
                     <span>내 프로필</span>
                   </Link>
+
+                  {/* ✅ 설정에 톱니바퀴 아이콘 추가 (원래 없었음) */}
                   <Link to="/settings" className="dropdown-item">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M12 1v6m0 6v6"></path>
+                    </svg>
                     <span>설정</span>
                   </Link>
 
+                  {/* ✅ HTML에 있던 내 게시글 메뉴 추가 (원래 없었음) */}
+                  <a href="/my-posts" className="dropdown-item">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <span>내 게시글</span>
+                  </a>
+
+                  {/* ✅ 구분선 - 변경 없음 */}
                   <div className="dropdown-divider"></div>
 
+                  {/* ✅ 로그아웃에 나가기 아이콘 추가 (원래 없었음) */}
                   <a
                     href="/mainpage"
                     className="dropdown-item logout"
                     onClick={handleLogout}
                   >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                      <polyline points="16 17 21 12 16 7"></polyline>
+                      <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
                     <span>로그아웃</span>
                   </a>
                 </div>
