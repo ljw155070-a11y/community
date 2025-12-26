@@ -35,6 +35,12 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * ⭐ [중복 로그인] 로그인 성공 시 스윗얼럿으로 메시지 표시
+   *
+   * 서버에서 받은 message:
+   * "로그인 성공. 다른 기기에서 로그인한 경우 해당 기기는 자동 로그아웃됩니다."
+   */
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -42,19 +48,20 @@ const Login = () => {
     setIsLoading(true);
 
     try {
+      // ⭐ 로그인 API 호출
+      // - 서버에서 중복 로그인 처리 (기존 세션 삭제)
       const data = await loginAPI(email, password);
 
       // ✅ 서버 응답 user 저장
       setLoginUser(data.user);
 
-      // (선택) rememberMe는 지금 UI만. 진짜 자동로그인은 서버 쿠키/리프레시로 설계
-      // localStorage.setItem("rememberMe", rememberMe ? "true" : "false");
-
-      // 중복 로그인 알림 메시지를 스윗얼럿으로 표시
+      // ⭐ [중복 로그인] 로그인 성공 알림
+      // - 서버에서 받은 메시지 표시
+      // - "다른 기기에서 로그인한 경우..." 안내
       Swal.fire({
         icon: "success",
         title: "로그인 성공",
-        text: data.message,
+        text: data.message, // 서버 메시지
         confirmButtonText: "확인",
       }).then(() => {
         // ✅ SSR 페이지로 이동

@@ -22,15 +22,26 @@ const Header = () => {
     logoutAPI(setLoginUser);
   };
 
-  // 페이지 이동할 때마다 로그인 상태 체크
+  /**
+   * ⭐ [중복 로그인] 페이지 이동할 때마다 로그인 상태 체크
+   *
+   * CSR 페이지에서만 작동 (SSR 페이지는 SSR header.html이 담당)
+   *
+   * 제외 페이지:
+   * - /login, /signup: 로그인/회원가입 페이지에서는 체크 안 함
+   *   (이미 로그아웃된 상태라 알림 불필요)
+   */
   useEffect(() => {
-    // 로그인/회원가입 페이지에서는 체크 안 함
+    // ⭐ 로그인/회원가입 페이지에서는 체크 안 함
+    // - 이미 알림 떴고 로그아웃된 상태
+    // - 다시 체크하면 알림 중복 표시됨
     if (location.pathname === "/login" || location.pathname === "/signup") {
       return;
     }
 
     (async () => {
       try {
+        // API 호출해서 현재 로그인 상태 확인
         const me = await getCurrentUserAPI();
         if (me) {
           setLoginUser(me);
@@ -38,10 +49,11 @@ const Header = () => {
           setLoginUser(null);
         }
       } catch (e) {
+        // Unauthorized 에러 = checkAuthError에서 알림 표시함
         console.log("인증 체크 에러:", e.message);
       }
     })();
-  }, [location.pathname, setLoginUser]);
+  }, [location.pathname, setLoginUser]); // ⭐ 페이지 이동할 때마다 실행
 
   const loadUnreadCount = async () => {
     try {

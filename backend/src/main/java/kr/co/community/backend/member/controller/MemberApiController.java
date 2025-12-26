@@ -37,7 +37,9 @@ public class MemberApiController {
 
             log.info("🔐 API 로그인 요청: {}", email);
 
-            // 로그인 처리 및 JWT 토큰 생성
+            // ⭐ [중복 로그인] MemberService.login()에서 처리됨
+            // - 기존 세션 삭제
+            // - 새 세션 저장
             String token = memberService.login(email, password);
             
             // 회원 정보 조회
@@ -48,14 +50,13 @@ public class MemberApiController {
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(60 * 60 * 24);  // 24시간
-            // cookie.setSecure(true);  // HTTPS 환경에서 활성화
             
             response.addCookie(cookie);
 
-            // 응답 데이터 로그인 중복
+            // ⭐ [중복 로그인] 사용자에게 알림 메시지 전달
             Map<String, Object> result = new HashMap<>();
             result.put("success", true);
-            result.put("message", "로그인 성공. 다른 기기에서 로그인한 경우 해당 기기는 자동 로그아웃됩니다.");  // 중복 로그인 알림 메시지 추가
+            result.put("message", "로그인 성공. 다른 기기에서 로그인한 경우 해당 기기는 자동 로그아웃됩니다.");
             result.put("token", token);
             result.put("user", Map.of(
                 "memberId", member.getMemberId(),
@@ -157,6 +158,10 @@ public class MemberApiController {
 
     /**
      * 현재 로그인 사용자 정보 조회
+     * 
+     * ⭐ [중복 로그인] DB에서 토큰 검증 추가
+     * - 쿠키의 토큰이 DB에 있는지 확인
+     * - 없으면 401 에러 (다른 기기에서 로그인함)
      */
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(
@@ -169,9 +174,12 @@ public class MemberApiController {
                 );
             }
 
+            // JWT에서 회원 ID 추출
             Long memberId = memberService.getMemberIdFromToken(token);
             
-            // ⭐ 추가: DB에서 토큰 확인
+            // ⭐ [중복 로그인] DB에서 토큰 확인
+            // - DB에 저장된 토큰과 쿠키의 토큰 비교
+            // - 다르면 다른 기기에서 로그인한 것
             LoginSessionDTO session = loginSessionMapper.findByMemberId(memberId);
             if (session == null || !token.equals(session.getToken())) {
                 // DB에 토큰 없음 = 다른 곳에서 로그인됨
@@ -180,6 +188,7 @@ public class MemberApiController {
                 );
             }
             
+            // 회원 정보 조회
             MemberDTO member = memberService.getMemberInfo(memberId);
 
             Map<String, Object> result = new HashMap<>();
