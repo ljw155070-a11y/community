@@ -22,19 +22,22 @@ const Header = () => {
     logoutAPI(setLoginUser);
   };
 
-  // ⭐ 수정: location 변경될 때마다 체크
+  // 페이지 이동할 때마다 로그인 상태 체크
   useEffect(() => {
-    if (!loginUser) {
-      (async () => {
-        try {
-          const me = await getCurrentUserAPI();
-          if (me) setLoginUser(me);
-        } catch (e) {
-          // 에러 무시하지 않음 (알림 표시됨)
+    (async () => {
+      try {
+        const me = await getCurrentUserAPI();
+        if (me) {
+          setLoginUser(me);
+        } else {
+          setLoginUser(null);
         }
-      })();
-    }
-  }, [location.pathname]); // ⭐ 수정: location.pathname 의존성 추가
+      } catch (e) {
+        // 에러 발생 시 알림 표시됨
+        console.log("인증 체크 에러:", e.message);
+      }
+    })();
+  }, [location.pathname, setLoginUser]); // ⭐ 수정: location.pathname 의존성 추가
 
   const loadUnreadCount = async () => {
     try {
