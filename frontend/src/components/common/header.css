@@ -29,10 +29,13 @@
 
 .logo-icon {
   color: #2563eb !important;
-  font-size: 1.3rem;
+  font-size: 18px; /* 1.3rem 대신 18px로 변경 */
   font-weight: bold;
+  font-family: "Noto Sans KR"; /* 추가 */
+  width: 32px; /* 추가 */
+  height: 32px; /* 추가 */
+  display: inline-block; /* 추가 */
 }
-
 .logo-text {
   color: #1f2937 !important;
 }
