@@ -194,6 +194,47 @@
 @media (max-width: 1320px){
   .ad-side{ display:none; }
 }
+
+/* =========================
+   ✅ 리스트 NEW 태그 잘림 방지 (compact 전용)
+   - line-height / overflow / 정렬만 최소 수정
+========================= */
+
+/* 1) 링크/행에서 잘리는 경우가 많아서 안전장치 */
+.bl-view-compact .bl-row-link{
+  overflow: visible; /* 기존이 hidden이면 NEW가 잘려보임 */
+}
+
+/* 2) 메타 영역을 세로 중앙정렬 + 라인박스 여유 */
+.bl-view-compact .bl-col-meta{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;   /* NEW 배지 높이 확보 */
+  line-height: 1.2;   /* 라인 박스 타이트한거 완화 */
+  overflow: visible;
+}
+
+/* 3) 날짜 + NEW 래퍼를 inline-flex로 바꿔서 배지가 안정적으로 들어가게 */
+.bl-view-compact .bl-datebox{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  overflow: visible;
+}
+
+/* 4) NEW 자체를 딱 배지처럼: 높이/패딩/라인 안정화 */
+.bl-new.bl-new--sm{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  line-height: 1;
+  transform: translateY(-1px); /* 살짝 위로 올려 더 깔끔하게(원하면 0px) */
+  white-space: nowrap;
+}
+
 </style>
 </head>
 
