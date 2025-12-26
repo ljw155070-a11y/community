@@ -25,13 +25,20 @@ const checkAuthError = async (response) => {
     const hasToken = getAccessToken();
     const hasLoginUser = localStorage.getItem("loginUser");
 
+    // ⭐ (중복 로그인 알림 중복 방지) 이미 알림 표시했는지 체크
+    const alreadyShown = sessionStorage.getItem("logoutAlertShown");
+
     // ⭐ 수정: 즉시 삭제 (알림 중복 방지)
     clearAccessToken();
     localStorage.removeItem("loginUser");
 
-    const shouldShowAlert = hasToken || hasLoginUser;
+    // ⭐ (중복 로그인) 알림 표시 조건: 토큰/유저 있고 + 아직 알림 안 띄운 경우
+    const shouldShowAlert = (hasToken || hasLoginUser) && !alreadyShown;
 
     if (shouldShowAlert) {
+      // ⭐ (중복 로그인) 알림 표시했다고 표시 (세션 동안 유지, 브라우저 닫으면 삭제)
+      sessionStorage.setItem("logoutAlertShown", "true");
+
       Swal.fire({
         icon: "warning",
         title: "로그아웃되었습니다",
@@ -65,6 +72,9 @@ export const loginAPI = async (email, password) => {
 
   // ✅ (추가) 응답 token을 로컬에도 저장 -> 쿠키 막혀도 CSR 인증 유지
   if (data.token) saveAccessToken(data.token);
+
+  // ⭐ (중복 로그인) 로그인 성공하면 알림 플래그 제거
+  sessionStorage.removeItem("logoutAlertShown");
 
   // { success, message, token, user: { memberId, email, name, nickname } }
   return data;
