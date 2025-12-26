@@ -2,6 +2,8 @@ package kr.co.community.backend.member.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.community.backend.member.dao.LoginSessionMapper;
+import kr.co.community.backend.member.dto.LoginSessionDTO;
 import kr.co.community.backend.member.dto.MemberDTO;
 import kr.co.community.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,7 @@ import java.util.Map;
 public class MemberApiController {
 
     private final MemberService memberService;
-
+    private final LoginSessionMapper loginSessionMapper;  // ⭐ 추가
     /**
      * 로그인 API
      */
@@ -168,6 +170,16 @@ public class MemberApiController {
             }
 
             Long memberId = memberService.getMemberIdFromToken(token);
+            
+            // ⭐ 추가: DB에서 토큰 확인
+            LoginSessionDTO session = loginSessionMapper.findByMemberId(memberId);
+            if (session == null || !token.equals(session.getToken())) {
+                // DB에 토큰 없음 = 다른 곳에서 로그인됨
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    Map.of("success", false, "message", "다른 기기에서 로그인되었습니다.")
+                );
+            }
+            
             MemberDTO member = memberService.getMemberInfo(memberId);
 
             Map<String, Object> result = new HashMap<>();

@@ -24,8 +24,13 @@ const Header = () => {
   useEffect(() => {
     if (!loginUser) {
       (async () => {
-        const me = await getCurrentUserAPI();
-        if (me) setLoginUser(me);
+        try {
+          const me = await getCurrentUserAPI();
+          if (me) setLoginUser(me);
+        } catch (e) {
+          // ⭐ 수정: 에러를 그냥 던져서 알림이 뜨도록 함
+          // 에러 무시하지 않음
+        }
       })();
     }
   }, []);

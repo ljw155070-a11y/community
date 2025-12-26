@@ -36,7 +36,11 @@ function App() {
         setLoginUser(user); // null이면 자동 로그아웃 상태로 맞춰짐
       } catch (e) {
         // 서버 죽었거나 CORS/쿠키 문제여도 앱이 죽지 않게 무시
-        setLoginUser(null);
+        // ⭐ 수정: Unauthorized 에러가 아니면 null 설정
+        if (e.message !== "Unauthorized") {
+          setLoginUser(null);
+        }
+        // Unauthorized 에러는 이미 알림 떴으니 무시
       }
     })();
   }, [setLoginUser]);
