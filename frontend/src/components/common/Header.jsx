@@ -29,13 +29,11 @@ const Header = () => {
         const me = await getCurrentUserAPI();
         if (me) {
           setLoginUser(me);
-        }
-        // ⭐ 수정: null 설정하지 않음 (checkAuthError에서 처리)
-      } catch (e) {
-        // Unauthorized 에러는 checkAuthError에서 처리됨
-        if (e.message !== "Unauthorized") {
+        } else {
           setLoginUser(null);
         }
+      } catch (e) {
+        console.log("인증 체크 에러:", e.message);
       }
     })();
   }, [location.pathname, setLoginUser]);

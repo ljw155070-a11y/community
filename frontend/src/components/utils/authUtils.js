@@ -22,22 +22,18 @@ const withAuthHeader = (headers = {}) => {
 // 401 에러 체크 함수
 const checkAuthError = async (response) => {
   if (response.status === 401) {
-    // ⭐ 수정: loginUser 상태도 확인
+    // ⭐ 순서 변경: 삭제 전에 먼저 체크
     const hasToken = getAccessToken();
     const hasLoginUser = localStorage.getItem("loginUser");
 
-    console.log(
-      "401 감지 - hasToken:",
-      hasToken,
-      "hasLoginUser:",
-      hasLoginUser
-    ); // 디버깅
+    // ⭐ 즉시 삭제 (알림 띄우기 전에)
+    const shouldShowAlert = hasToken || hasLoginUser;
 
-    // 토큰이나 loginUser 중 하나라도 있으면 알림 표시
-    if (hasToken || hasLoginUser) {
-      clearAccessToken();
-      localStorage.removeItem("loginUser");
+    clearAccessToken();
+    localStorage.removeItem("loginUser");
 
+    // ⭐ 알림은 나중에
+    if (shouldShowAlert) {
       Swal.fire({
         icon: "warning",
         title: "로그아웃되었습니다",
