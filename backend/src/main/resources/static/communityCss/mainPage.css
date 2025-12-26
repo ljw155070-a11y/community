@@ -12,6 +12,10 @@ body {
     font-family: 'Noto Sans KR', sans-serif;
     color: #333;
     background: linear-gradient(to bottom, #f8f9fc 0%, #fafbff 100%);
+
+	padding : 0;
+	margin : 0;
+
 }
 
 /* 사이드 광고 영역 */

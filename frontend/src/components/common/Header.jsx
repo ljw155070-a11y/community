@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
+
 import { Link, useLocation } from "react-router-dom"; // ⭐ useLocation 추가
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
@@ -87,7 +88,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="header">
+    <header className="header site-header">
       <div className="header-container">
         <a href="/mainpage" className="logo">
           <span className="logo-icon">◀</span>
