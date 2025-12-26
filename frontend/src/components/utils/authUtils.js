@@ -33,26 +33,19 @@ const withAuthHeader = (headers = {}) => {
  */
 const checkAuthError = async (response) => {
   if (response.status === 401) {
-    // 현재 저장된 토큰과 유저 정보 확인
     const hasToken = getAccessToken();
-    const hasLoginUser = localStorage.getItem("loginUser");
-
-    // ⭐ [중복 로그인 알림 중복 방지]
-    // sessionStorage = 브라우저 탭 닫으면 자동 삭제
-    // 같은 세션 동안 알림 한 번만 표시
+    const hasLoginUser =
+      localStorage.getItem("loginUser") || sessionStorage.getItem("loginUser"); // ⭐ sessionStorage도 확인
     const alreadyShown = sessionStorage.getItem("logoutAlertShown");
 
-    // ⭐ 즉시 삭제 (알림 표시 전에 삭제해야 중복 방지됨)
+    // ⭐ 양쪽 모두 삭제
     clearAccessToken();
     localStorage.removeItem("loginUser");
+    sessionStorage.removeItem("loginUser");
 
-    // ⭐ 알림 표시 조건
-    // - 토큰이나 유저 정보가 있었음 (로그인 상태였음)
-    // - 아직 알림 안 띄웠음
     const shouldShowAlert = (hasToken || hasLoginUser) && !alreadyShown;
 
     if (shouldShowAlert) {
-      // ⭐ 알림 표시했다고 표시 (세션 동안 유지)
       sessionStorage.setItem("logoutAlertShown", "true");
 
       Swal.fire({
@@ -60,7 +53,7 @@ const checkAuthError = async (response) => {
         title: "로그아웃되었습니다",
         text: "다른 기기에서 로그인하여 자동 로그아웃되었습니다.",
         confirmButtonText: "확인",
-        allowOutsideClick: false, // 외부 클릭 막기
+        allowOutsideClick: false,
       }).then(() => {
         window.location.href = "/mainpage";
       });
@@ -70,7 +63,6 @@ const checkAuthError = async (response) => {
   }
   return response;
 };
-
 /**
  * ✅ 로그인 (쿠키 저장됨 + 토큰도 저장)
  *
@@ -110,15 +102,16 @@ export const logoutAPI = async (setLoginUser) => {
     await fetch(`${API_BASE_URL}/logout`, {
       method: "POST",
       credentials: "include",
-      // ✅ (추가) 쿠키가 안 붙는 환경 대비해 Bearer도 같이 보냄
       headers: withAuthHeader(),
     });
   } finally {
-    // ✅ (추가) 토큰도 삭제
     clearAccessToken();
-
     setLoginUser(null);
+
+    // ⭐ 양쪽 저장소 모두 삭제
     localStorage.removeItem("loginUser");
+    sessionStorage.removeItem("loginUser");
+
     window.location.href = "/mainpage";
   }
 };

@@ -48,23 +48,28 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // ⭐ 로그인 API 호출
-      // - 서버에서 중복 로그인 처리 (기존 세션 삭제)
       const data = await loginAPI(email, password);
 
-      // ✅ 서버 응답 user 저장
+      // ✅ Recoil state 저장
       setLoginUser(data.user);
 
-      // ⭐ [중복 로그인] 로그인 성공 알림
-      // - 서버에서 받은 메시지 표시
-      // - "다른 기기에서 로그인한 경우..." 안내
+      // ⭐ 자동 로그인 체크 여부에 따라 저장 위치 분리
+      if (rememberMe) {
+        // 자동 로그인 O → localStorage (영구 보관)
+        localStorage.setItem("loginUser", JSON.stringify(data.user));
+        sessionStorage.removeItem("loginUser"); // 혹시 모를 중복 제거
+      } else {
+        // 자동 로그인 X → sessionStorage (브라우저 닫으면 삭제)
+        sessionStorage.setItem("loginUser", JSON.stringify(data.user));
+        localStorage.removeItem("loginUser"); // 기존 자동 로그인 정보 삭제
+      }
+
       Swal.fire({
         icon: "success",
         title: "로그인 성공",
-        text: data.message, // 서버 메시지
+        text: data.message,
         confirmButtonText: "확인",
       }).then(() => {
-        // ✅ SSR 페이지로 이동
         window.location.href = "/mainpage";
       });
     } catch (error) {
