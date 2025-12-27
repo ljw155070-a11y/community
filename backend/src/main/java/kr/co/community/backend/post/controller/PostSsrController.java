@@ -97,12 +97,15 @@ public class PostSsrController {
             if (memberId != null) {
                 boolean isLiked = postSsrService.isPostLiked(postId, memberId);
                 boolean isBookmarked = postSsrService.isBookmarked(postId, memberId);
-
+                boolean isFollowing = postSsrService.isFollowing(memberId, post.getAuthorId());
+                
                 post.setIsLiked(isLiked);
                 post.setIsBookmarked(isBookmarked);
+                post.setIsFollowing(isFollowing);
             } else {
                 post.setIsLiked(false);
                 post.setIsBookmarked(false);
+                post.setIsFollowing(false);
             }
 
             PostDTO prevPost = postSsrService.getPrevPost(postId, post.getCategoryId());
@@ -418,6 +421,44 @@ public class PostSsrController {
             result.put("success", false);
             result.put("message", "신고 처리 중 오류가 발생했습니다.");
         }
+        return result;
+    }
+    /**
+     * ✅ 팔로우 토글 API
+     */
+    @PostMapping("/author/{authorId}/follow")
+    @ResponseBody
+    public Map<String, Object> toggleFollow(
+            @PathVariable Long authorId,
+            @RequestAttribute(value = "memberId", required = false) Long memberId
+    ) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            if (memberId == null) {
+                result.put("success", false);
+                result.put("message", "로그인이 필요합니다.");
+                return result;
+            }
+            
+            if (memberId.equals(authorId)) {
+                result.put("success", false);
+                result.put("message", "자기 자신을 팔로우할 수 없습니다.");
+                return result;
+            }
+            
+            boolean isFollowing = postSsrService.toggleFollow(memberId, authorId);
+            
+            result.put("success", true);
+            result.put("isFollowing", isFollowing);
+            result.put("message", isFollowing ? "팔로우 되었습니다." : "팔로우가 취소되었습니다.");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "팔로우 처리 중 오류가 발생했습니다.");
+        }
+        
         return result;
     }
 }

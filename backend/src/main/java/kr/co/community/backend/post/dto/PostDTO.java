@@ -40,6 +40,8 @@ public class PostDTO {
 	private Boolean isBookmarked;
 	private List<PostImageDTO> images;
 	private String blocksMeta; // JSON 문자열 저장용
-	 private List<Map<String, Object>> blocks;   // ✅ SSR/CSR 공용 렌더 순서
-	 private String authorProfileImage;
+	private List<Map<String, Object>> blocks;   // ✅ SSR/CSR 공용 렌더 순서
+	private String authorProfileImage;
+    private Integer authorFollowerCount;  // ✅ 팔로워 수 추가
+    private Boolean isFollowing;  // ✅ 현재 사용자가 팔로우 중인지
 }

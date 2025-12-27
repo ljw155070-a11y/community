@@ -84,7 +84,17 @@
       border-bottom: 1px solid #f3f4f6;
       margin-bottom: 1rem;
     }
-
+	.btn-follow.following {
+    background: #6b7280;
+	}
+	
+	.btn-follow.following:hover {
+	    background: #dc2626;
+	}
+	
+	.btn-follow.following:hover span::after {
+	    content: ' 취소';
+	}
     .stat-box { text-align: center; }
 
     .stat-value {
@@ -739,35 +749,47 @@
     <!-- 좌측 사이드바 -->
     <aside class="sidebar-left">
       <!-- 작성자 카드 -->
-      <div class="author-card">
-        <div class="author-avatar-large">
-  <img th:if="${post.authorProfileImage != null and !post.authorProfileImage.isEmpty()}"
-       th:src="@{/uploads/{name}(name=${post.authorProfileImage})}"
-       alt="author"
-       style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" />
-  <span th:unless="${post.authorProfileImage != null and !post.authorProfileImage.isEmpty()}"
-        th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">김</span>
+	<div class="author-card">
+	    <div class="author-avatar-large">
+	        <img th:if="${post.authorProfileImage != null and !post.authorProfileImage.isEmpty()}"
+	             th:src="@{/uploads/{name}(name=${post.authorProfileImage})}"
+	             alt="author"
+	             style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" />
+	        <span th:unless="${post.authorProfileImage != null and !post.authorProfileImage.isEmpty()}"
+	              th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">김</span>
+	    </div>
+	    <h3 class="author-name-large" th:text="${post.authorName}">작성자</h3>
+	
+	    <!-- BIO -->
+	    <p class="author-bio"
+	       th:text="${post.authorBio != null and !post.authorBio.isEmpty() ? post.authorBio : '자기소개가 없습니다.'}">
+	    </p>
+	
+	    <div class="author-stats">
+	        <div class="stat-box">
+	            <span class="stat-value" th:text="${authorStats.postCount}">0</span>
+	            <span class="stat-label">게시글</span>
+	        </div>
+	        <div class="stat-box">
+	            <span class="stat-value" th:text="${authorStats.commentCount}">0</span>
+	            <span class="stat-label">댓글</span>
+	        </div>
+	        <!-- ✅ 팔로워 수 추가 -->
+	        <div class="stat-box">
+	            <span class="stat-value" id="followerCount" th:text="${post.authorFollowerCount}">0</span>
+	            <span class="stat-label">팔로워</span>
+	        </div>
+	    </div>
+    
+    <!-- ✅ 팔로우 버튼 (자기 자신이면 숨김) -->
+    <button th:if="${memberId != post.authorId}" 
+            class="btn-follow" 
+            id="followButton"
+            th:classappend="${post.isFollowing} ? 'following' : ''"
+            onclick="followAuthor()">
+        <span th:text="${post.isFollowing} ? '팔로잉' : '팔로우'">팔로우</span>
+    </button>
 </div>
-        <h3 class="author-name-large" th:text="${post.authorName}">작성자</h3>
-
-        <!-- BIO -->
-        <p class="author-bio"
-           th:text="${post.authorBio != null and !post.authorBio.isEmpty() ? post.authorBio : '자기소개가 없습니다.'}">
-        </p>
-
-        <div class="author-stats">
-          <div class="stat-box">
-            <span class="stat-value" th:text="${authorStats.postCount}">0</span>
-            <span class="stat-label">게시글</span>
-          </div>
-          <div class="stat-box">
-            <span class="stat-value" th:text="${authorStats.commentCount}">0</span>
-            <span class="stat-label">댓글</span>
-          </div>
-        </div>
-        <button class="btn-follow" onclick="followAuthor()">팔로우</button>
-      </div>
-
       <!-- 작성자의 다른 글 -->
       <div class="sidebar-section">
         <h4 class="sidebar-title">✍️ 작성자의 다른 글</h4>
@@ -1472,6 +1494,79 @@
       Toast.fire({
         icon: 'info',
         title: '답글 기능은 준비 중입니다!'
+      });
+    }
+ // 팔로우
+    function followAuthor() {
+      if (!isAuthenticated) {
+        Swal.fire({
+          title: '로그인이 필요합니다',
+          text: '로그인 페이지로 이동하시겠습니까?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#2563eb',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/app/login';
+          }
+        });
+        return;
+      }
+      
+      const authorId = [[${post.authorId}]];
+      const button = document.getElementById('followButton');
+      const followerCount = document.getElementById('followerCount');
+      
+      fetch('/board/author/' + authorId + '/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          // 버튼 상태 변경
+          if (data.isFollowing) {
+            button.classList.add('following');
+            button.querySelector('span').textContent = '팔로잉';
+            followerCount.textContent = parseInt(followerCount.textContent) + 1;
+          } else {
+            button.classList.remove('following');
+            button.querySelector('span').textContent = '팔로우';
+            followerCount.textContent = parseInt(followerCount.textContent) - 1;
+          }
+          
+          // 토스트 알림
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+          });
+          
+          Toast.fire({
+            icon: 'success',
+            title: data.message
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: '오류',
+            text: data.message
+          });
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        Swal.fire({
+          icon: 'error',
+          title: '오류 발생',
+          text: '팔로우 처리 중 오류가 발생했습니다.'
+        });
       });
     }
     /*]]>*/

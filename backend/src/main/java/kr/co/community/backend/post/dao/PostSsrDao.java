@@ -84,4 +84,13 @@ public interface PostSsrDao {
 
     // ========== 게시글 삭제 ==========
     void updateIsDeleted(@Param("postId") Long postId);
+    
+    // ✅ 팔로우 관련 추가
+    int selectFollowExists(@Param("followerId") Long followerId, 
+                           @Param("followingId") Long followingId);
+    void insertFollow(@Param("followerId") Long followerId, 
+                      @Param("followingId") Long followingId);
+    void deleteFollow(@Param("followerId") Long followerId, 
+                      @Param("followingId") Long followingId);
 }
+

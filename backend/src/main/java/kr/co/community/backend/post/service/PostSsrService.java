@@ -200,4 +200,23 @@ public class PostSsrService {
         postSsrDao.updateIsDeleted(postId);
         return true;
     }
+ // ✅ 팔로우 여부 확인
+    public boolean isFollowing(Long followerId, Long followingId) {
+        if (followerId == null || followingId == null) return false;
+        return postSsrDao.selectFollowExists(followerId, followingId) > 0;
+    }
+    
+    // ✅ 팔로우 토글
+    @Transactional
+    public boolean toggleFollow(Long followerId, Long followingId) {
+        int exists = postSsrDao.selectFollowExists(followerId, followingId);
+        
+        if (exists > 0) {
+            postSsrDao.deleteFollow(followerId, followingId);
+            return false;  // 팔로우 취소
+        } else {
+            postSsrDao.insertFollow(followerId, followingId);
+            return true;   // 팔로우 추가
+        }
+    }
 }

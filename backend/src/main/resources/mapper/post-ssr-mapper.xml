@@ -103,36 +103,52 @@
 
 
 
-	<!-- 게시글 단건 조회 -->
-<select id="selectPostById" parameterType="long"
-        resultType="kr.co.community.backend.post.dto.PostDTO">
-  SELECT
-    P.POST_ID AS postId,
-    P.CATEGORY_ID AS categoryId,
-    P.AUTHOR_ID AS authorId,
-    P.TITLE AS title,
-    P.CONTENT AS content,
-    P.BLOCKS_META AS blocksMeta,
-    P.VIEW_COUNT AS viewCount,
-    P.LIKE_COUNT AS likeCount,
-    P.COMMENT_COUNT AS commentCount,
-    P.IS_DELETED AS isDeleted,
-    P.CREATED_AT AS createdAt,
-    P.UPDATED_AT AS updatedAt,
-    C.CATEGORY_NAME AS category,
-    NVL(M.NICKNAME, M.NAME) AS authorName,
-    M.BIO AS authorBio,
-
-    -- ✅ 추가: 작성자 프로필 이미지(saveName)
-    M.PROFILE_IMAGE AS authorProfileImage
-
-  FROM POST P
-  LEFT JOIN BOARD_CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
-  LEFT JOIN MEMBER M ON P.AUTHOR_ID = M.MEMBER_ID
-  WHERE P.POST_ID = #{postId}
-    AND P.IS_DELETED = 'N'
-</select>
+	<!-- 게시글 단건 조회 (팔로워 수 포함) -->
+	<select id="selectPostById" parameterType="long"
+		resultType="kr.co.community.backend.post.dto.PostDTO">
+		SELECT
+		P.POST_ID AS postId,
+		P.CATEGORY_ID AS categoryId,
+		P.AUTHOR_ID AS authorId,
+		P.TITLE AS title,
+		P.CONTENT AS content,
+		P.VIEW_COUNT AS viewCount,
+		P.LIKE_COUNT AS likeCount,
+		P.COMMENT_COUNT AS commentCount,
+		P.IS_DELETED AS isDeleted,
+		P.CREATED_AT AS createdAt,
+		P.UPDATED_AT AS updatedAt,
+		C.CATEGORY_NAME AS category,
+		NVL(M.NICKNAME, M.NAME) AS authorName,
+		M.BIO AS authorBio,
+		M.PROFILE_IMAGE AS authorProfileImage,
+		(SELECT COUNT(*) FROM FOLLOW WHERE FOLLOWING_ID = P.AUTHOR_ID) AS authorFollowerCount
+		FROM POST P
+		LEFT JOIN BOARD_CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
+		LEFT JOIN MEMBER M ON P.AUTHOR_ID = M.MEMBER_ID
+		WHERE P.POST_ID = #{postId}
+		AND P.IS_DELETED = 'N'
+	</select>
+	<!-- ✅ 팔로우 여부 확인 -->
+	<select id="selectFollowExists" resultType="int">
+		SELECT COUNT(*)
+		FROM FOLLOW
+		WHERE FOLLOWER_ID = #{followerId}
+		AND FOLLOWING_ID = #{followingId}
+	</select>
 	
+	<!-- ✅ 팔로우 추가 -->
+	<insert id="insertFollow">
+		INSERT INTO FOLLOW (FOLLOW_ID, FOLLOWER_ID, FOLLOWING_ID, CREATED_AT)
+		VALUES (FOLLOW_SEQ.NEXTVAL, #{followerId}, #{followingId}, SYSDATE)
+	</insert>
+	
+	<!-- ✅ 팔로우 취소 -->
+	<delete id="deleteFollow">
+		DELETE FROM FOLLOW
+		WHERE FOLLOWER_ID = #{followerId}
+		AND FOLLOWING_ID = #{followingId}
+	</delete>
 	<!-- ✅ 게시글의 이미지 조회 (정렬 순서대로) -->
 	<select id="selectImagesByPostId" parameterType="long"
 		resultType="kr.co.community.backend.post.dto.PostImageDTO">
