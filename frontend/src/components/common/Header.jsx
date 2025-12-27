@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
 import { logoutAPI, getCurrentUserAPI } from "../utils/authUtils";
-import logoImage from "../assets/커뮤니티_로고.png";
+import logoImage from "../../assets/커뮤니티_로고.png";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

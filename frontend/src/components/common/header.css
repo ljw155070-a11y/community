@@ -19,9 +19,6 @@
   align-items: center;
   padding: 1rem 2rem;
   min-height: 64px;
-  height: 64px;
-  padding-top: 0;
-  padding-bottom: 0;
 }
 
 /* 로고 */
@@ -32,6 +29,7 @@
   text-decoration: none;
   transition: transform 0.2s;
   line-height: 1;
+  background-color: transparent !important;
 }
 
 .site-header .logo:hover {
@@ -42,7 +40,7 @@
   width: 30px;
   height: 30px;
   object-fit: contain;
-
+  background-color: transparent !important;
   /* 부드러운 그림자 효과 */
   filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2));
 
@@ -63,8 +61,6 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-/* 네비게이션 */
 .site-header .header-nav {
   display: flex;
   gap: 2rem;
@@ -80,36 +76,18 @@
   font-size: 0.95rem;
   transition: color 0.2s;
   padding: 0.5rem 0;
-  position: relative;
-}
-
-.site-header .nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  transition: width 0.2s;
 }
 
 .site-header .nav-link:hover {
-  color: #667eea;
+  color: #2563eb;
 }
 
-.site-header .nav-link:hover::after {
-  width: 100%;
-}
-
-/* 우측 버튼 영역 */
 .site-header .header-right {
   display: flex;
   gap: 0.75rem;
   align-items: center;
 }
 
-/* 로그인 버튼 */
 .site-header .btn-login {
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
@@ -127,7 +105,6 @@
   background: #f3f4f6;
 }
 
-/* 회원가입 버튼 */
 .site-header .btn-signup {
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
@@ -147,7 +124,6 @@
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-/* 프로필 드롭다운 */
 .site-header .profile-dropdown {
   position: relative;
 }
@@ -156,29 +132,27 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.75rem;
   border: none;
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  background-color: transparent;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s;
   line-height: 1;
 }
 
 .site-header .profile-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f3f4f6;
 }
 
 .site-header .profile-name {
   font-family: inherit;
   font-size: 0.9rem;
   color: #1f2937;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
 }
 
-/* 드롭다운 메뉴 */
 .site-header .dropdown-menu {
   position: absolute;
   top: calc(100% + 0.5rem);
@@ -207,33 +181,17 @@
   text-decoration: none;
   font-size: 0.9rem;
   transition: background-color 0.2s;
-  background: none;
-  border: none;
-  width: 100%;
-  cursor: pointer;
-  text-align: left;
 }
 
 .site-header .dropdown-item:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.05) 0%,
-    rgba(118, 75, 162, 0.05) 100%
-  );
+  background-color: #f3f4f6;
 }
-
 .site-header .dropdown-item svg {
   color: #6b7280;
 }
-
 .site-header .dropdown-item.logout {
   color: #ef4444;
 }
-
-.site-header .dropdown-item.logout:hover {
-  background: rgba(239, 68, 68, 0.05);
-}
-
 .site-header .dropdown-item.logout svg {
   color: #ef4444;
 }
@@ -244,14 +202,12 @@
   margin: 0.25rem 0;
 }
 
-/* 반응형 */
 @media (max-width: 768px) {
   .site-header .header-container {
     flex-wrap: wrap;
     padding: 1rem;
     position: relative;
   }
-
   .site-header .header-nav {
     position: static;
     transform: none;
@@ -260,29 +216,21 @@
     margin-top: 1rem;
     justify-content: center;
   }
-
-  .site-header .header-right {
-    gap: 0.5rem;
-  }
-
   .site-header .profile-name {
     display: none;
   }
-
   .site-header .btn-login,
   .site-header .btn-signup {
     padding: 0.4rem 1rem;
     font-size: 0.85rem;
   }
+}
 
-  .site-header .logo-text {
-    font-size: 1rem;
-  }
-
-  .site-header .logo-icon {
-    width: 32px;
-    height: 32px;
-  }
+.site-header .header-container {
+  height: 64px;
+  min-height: 64px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .site-header,
