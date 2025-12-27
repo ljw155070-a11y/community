@@ -7,6 +7,7 @@ import { loginUserState } from "../utils/authState";
 import { logoutAPI, getCurrentUserAPI } from "../utils/authUtils";
 import logoImage from "../../assets/커뮤니티_로고.png";
 
+import Swal from "sweetalert2";
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -19,9 +20,21 @@ const Header = () => {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    logoutAPI(setLoginUser);
-  };
 
+    Swal.fire({
+      title: "로그아웃 하시겠습니까?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "확인",
+      cancelButtonText: "취소",
+      confirmButtonColor: "#667eea",
+      cancelButtonColor: "#6c757d",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logoutAPI(setLoginUser);
+      }
+    });
+  };
   // 페이지 이동할 때마다 로그인 상태 체크
   useEffect(() => {
     // 로그인/회원가입 페이지에서는 체크 안 함

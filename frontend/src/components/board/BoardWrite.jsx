@@ -15,6 +15,9 @@ export default function BoardWrite() {
 
   const BACK = (import.meta.env.VITE_BACK_SERVER || "").replace(/\/$/, "");
 
+  const TITLE_MAX = 200; // ⭐ 제목 최대 글자수
+  const CONTENT_MAX = 4000; // ⭐ 본문 최대 글자수
+
   const [categories, setCategories] = useState([]);
   const [categoryId, setCategoryId] = useState("");
 
@@ -90,6 +93,7 @@ export default function BoardWrite() {
     })();
   }, [BACK]);
 
+  // ⭐ 본문 텍스트 합치기
   const contentTextForSearch = useMemo(() => {
     return blocks
       .filter((b) => b.type === "text")
@@ -98,11 +102,30 @@ export default function BoardWrite() {
       .join("\n\n");
   }, [blocks]);
 
+  // ⭐ 제목 글자수
+  const titleLen = title.length;
+  const titleRemain = TITLE_MAX - titleLen;
+  const isTitleOver = titleRemain < 0;
+
+  // ⭐ 본문 글자수
+  const contentLen = contentTextForSearch.length;
+  const contentRemain = CONTENT_MAX - contentLen;
+  const isContentOver = contentRemain < 0;
+
   const validate = async () => {
     if (!categoryId) return swalWarn("입력 확인", "카테고리를 선택해주세요.");
     if (!title.trim()) return swalWarn("입력 확인", "제목을 입력해주세요.");
 
-    const hasAnyText = blocks.some((b) => b.type === "text" && b.text.trim());
+    if (isTitleOver) {
+      return swalWarn(
+        "입력 확인",
+        `제목은 ${TITLE_MAX}자 이내로 입력해주세요. (현재 ${titleLen}자)`
+      );
+    }
+
+    const hasAnyText = blocks.some(
+      (b) => b.type === "text" && (b.text || "").trim()
+    );
     const hasAnyImage = blocks.some((b) => b.type === "image");
     if (!hasAnyText && !hasAnyImage) {
       return swalWarn(
@@ -110,11 +133,18 @@ export default function BoardWrite() {
         "본문(글 또는 이미지)을 1개 이상 넣어주세요."
       );
     }
+
+    if (isContentOver) {
+      return swalWarn(
+        "입력 확인",
+        `본문은 ${CONTENT_MAX}자 이내로 입력해주세요. (현재 ${contentLen}자)`
+      );
+    }
+
     return true;
   };
 
   const submitPost = async () => {
-    // 로그인 보장
     let user = loginUser;
     if (!user) {
       const me = await getCurrentUserAPI();
@@ -140,17 +170,14 @@ export default function BoardWrite() {
     try {
       setLoading(true);
 
-      // ✅ 새 이미지들(업로드 순서)
       const newImageBlocks = blocks.filter(
         (b) => b.type === "image" && b.kind === "new"
       );
       const filesInOrder = newImageBlocks.map((b) => b.file);
 
-      // ✅ blocksMeta: image는 files[] index를 참조
       let fileIndex = 0;
       const blocksMeta = blocks.map((b) => {
         if (b.type === "text") return { type: "text", text: b.text };
-        // image
         if (b.kind === "new")
           return {
             type: "image",
@@ -164,15 +191,13 @@ export default function BoardWrite() {
       const postPayload = {
         categoryId: Number(categoryId),
         authorId: user.memberId,
-        title,
-        content: contentTextForSearch, // 검색/요약용 텍스트만
-        blocksMeta: JSON.stringify(blocksMeta), // ✅ DB에 저장할 값
+        title: title.slice(0, TITLE_MAX), // ⭐ 안전장치
+        content: contentTextForSearch.slice(0, CONTENT_MAX), // ⭐ 안전장치
+        blocksMeta: JSON.stringify(blocksMeta),
       };
 
       const fd = new FormData();
-      // 백엔드 컨트롤러는 @RequestPart("post") String postJson 형태 → String으로 보냄
       fd.append("post", JSON.stringify(postPayload));
-      // 혹시 컨트롤러에서 별도 blocksMeta를 받는 버전이면 같이 보내도 됨(안 받아도 무시됨)
       fd.append("blocksMeta", JSON.stringify(blocksMeta));
       filesInOrder.forEach((f) => fd.append("files", f));
 
@@ -216,28 +241,18 @@ export default function BoardWrite() {
         <h1 className="bw-title">글쓰기</h1>
 
         <div className="bw-card">
+          {/* ⭐ 제목 */}
           <div className="bw-field">
-            <label className="bw-label">카테고리</label>
-            <select
-              className="bw-control"
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              disabled={categories.length === 0}
-            >
-              {categories.length === 0 ? (
-                <option value="">카테고리 불러오는 중...</option>
-              ) : (
-                categories.map((c) => (
-                  <option key={c.categoryId} value={c.categoryId}>
-                    {c.categoryName}
-                  </option>
-                ))
-              )}
-            </select>
-          </div>
-
-          <div className="bw-field">
-            <label className="bw-label">제목</label>
+            <label className="bw-label">
+              제목
+              <span className={`bw-counter ${isTitleOver ? "over" : ""}`}>
+                {isTitleOver
+                  ? `초과 ${Math.abs(
+                      titleRemain
+                    )}자 (현재 ${titleLen}/${TITLE_MAX})`
+                  : `남은 ${titleRemain}자 (현재 ${titleLen}/${TITLE_MAX})`}
+              </span>
+            </label>
             <input
               className="bw-control"
               value={title}
@@ -245,9 +260,26 @@ export default function BoardWrite() {
             />
           </div>
 
+          {/* ⭐ 본문 */}
           <div className="bw-field">
-            <label className="bw-label">본문 (글+이미지 섞기)</label>
+            <label className="bw-label">
+              본문
+              <span className={`bw-counter ${isContentOver ? "over" : ""}`}>
+                {isContentOver
+                  ? `초과 ${Math.abs(
+                      contentRemain
+                    )}자 (현재 ${contentLen}/${CONTENT_MAX})`
+                  : `남은 ${contentRemain}자 (현재 ${contentLen}/${CONTENT_MAX})`}
+              </span>
+            </label>
+
             <PostBlocksEditor blocks={blocks} setBlocks={setBlocks} />
+
+            {isContentOver && (
+              <div className="bw-counter-help">
+                본문은 최대 {CONTENT_MAX}자까지 입력할 수 있습니다.
+              </div>
+            )}
           </div>
 
           <div className="bw-actions">
@@ -261,7 +293,7 @@ export default function BoardWrite() {
             <button
               className="bw-btn bw-btn-primary"
               onClick={submitPost}
-              disabled={loading}
+              disabled={loading || isTitleOver || isContentOver}
               type="button"
             >
               {loading ? "작성 중..." : "작성하기"}
