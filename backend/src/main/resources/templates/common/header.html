@@ -130,27 +130,53 @@
       });
 
       function logout() {
-        if (confirm("로그아웃 하시겠습니까?")) {
-          fetch("/api/member/logout", {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data && data.success) {
-                alert("로그아웃 되었습니다.");
-                window.location.href = "/mainpage";
-              } else {
-                alert("로그아웃에 실패했습니다.");
-              }
-            })
-            .catch((err) => {
-              console.error("로그아웃 오류:", err);
-              alert("로그아웃 중 오류가 발생했습니다.");
-            });
-        }
-      }
+    	  Swal.fire({
+    	    title: '로그아웃 하시겠습니까?',
+    	    icon: 'question',
+    	    showCancelButton: true,
+    	    confirmButtonText: '확인',
+    	    cancelButtonText: '취소',
+    	    confirmButtonColor: '#667eea',
+    	    cancelButtonColor: '#6c757d'
+    	  }).then((result) => {
+    	    if (result.isConfirmed) {
+    	      fetch("/api/member/logout", {
+    	        method: "POST",
+    	        credentials: "include",
+    	        headers: { "Content-Type": "application/json" },
+    	      })
+    	        .then((res) => res.json())
+    	        .then((data) => {
+    	          if (data && data.success) {
+    	            Swal.fire({
+    	              title: '로그아웃 되었습니다',
+    	              icon: 'success',
+    	              confirmButtonText: '확인',
+    	              confirmButtonColor: '#667eea'
+    	            }).then(() => {
+    	              window.location.href = "/mainpage";
+    	            });
+    	          } else {
+    	            Swal.fire({
+    	              title: '로그아웃에 실패했습니다',
+    	              icon: 'error',
+    	              confirmButtonText: '확인',
+    	              confirmButtonColor: '#667eea'
+    	            });
+    	          }
+    	        })
+    	        .catch((err) => {
+    	          console.error("로그아웃 오류:", err);
+    	          Swal.fire({
+    	            title: '로그아웃 중 오류가 발생했습니다',
+    	            icon: 'error',
+    	            confirmButtonText: '확인',
+    	            confirmButtonColor: '#667eea'
+    	          });
+    	        });
+    	    }
+    	  });
+    	}
     </script>
   </body>
 </html>
