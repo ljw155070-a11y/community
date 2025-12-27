@@ -1,18 +1,25 @@
 package kr.co.community.backend.member.service;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kr.co.community.backend.util.JwtUtil;
-import kr.co.community.backend.member.dao.MemberDao;
-import kr.co.community.backend.member.dto.MemberDTO;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import kr.co.community.backend.member.dao.LoginSessionMapper;
+import kr.co.community.backend.member.dao.MemberDao;
+import kr.co.community.backend.member.dto.LoginSessionDTO;
+import kr.co.community.backend.member.dto.MemberDTO;
+import kr.co.community.backend.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -22,6 +29,11 @@ public class MemberService {
     private final MemberDao memberDao;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final LoginSessionMapper loginSessionMapper;
+
+    // ✅ WebMvcConfig와 동일한 경로 (기본값도 동일)
+    @Value("${file.upload.path:C:/uploads/community}")
+    private String uploadPath;
 
     // =========================
     // 중복 체크
@@ -39,9 +51,6 @@ public class MemberService {
         return memberDao.countByNickname(nickname) > 0;
     }
 
-    /**
-     * 이메일로 회원 정보 조회
-     */
     public MemberDTO getMemberByEmail(String email) {
         return memberDao.selectMemberByEmail(email);
     }
@@ -49,24 +58,14 @@ public class MemberService {
     // =========================
     // 회원가입
     // =========================
-
-    /**
-     * 회원가입
-     * - role/status 기본값
-     * - 필수값 검증
-     * - 비밀번호 해시
-     * - 닉네임 자동 생성 (이름 기반)
-     */
     @Transactional
     public int signup(MemberDTO dto) {
 
         log.info("📝 회원가입 시도: {}", dto.getEmail());
 
-        // ✅ NOT NULL 기본값 대응
         if (dto.getRole() == null || dto.getRole().isBlank()) dto.setRole("USER");
         if (dto.getStatus() == null || dto.getStatus().isBlank()) dto.setStatus("ACTIVE");
 
-        // ✅ 필수값 방어
         if (dto.getName() == null || dto.getName().isBlank()) {
             throw new IllegalArgumentException("name은 필수입니다.");
         }
@@ -77,19 +76,14 @@ public class MemberService {
             throw new IllegalArgumentException("password는 필수입니다.");
         }
 
-        // ✅ 이메일 중복 체크
         if (emailExists(dto.getEmail())) {
             log.warn("❌ 이메일 중복: {}", dto.getEmail());
             throw new RuntimeException("이미 사용 중인 이메일입니다.");
         }
 
-        // ✅ 비밀번호 해시 (PasswordEncoder 사용)
         dto.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
-
-        // ✅ 닉네임 자동 생성
         dto.setNickname(generateNickname(dto.getName()));
 
-        // ✅ insert
         int result = memberDao.insertMember(dto);
 
         log.info("✅ 회원가입 성공: {} (memberId={})", dto.getEmail(), dto.getMemberId());
@@ -97,22 +91,18 @@ public class MemberService {
         return result;
     }
 
-    // 이름 그대로 먼저 쓰고, 있으면 #0001, #0002...
     private String generateNickname(String baseName) {
         String base = baseName.trim();
 
-        // 1) 이름 그대로 가능하면 그대로 사용
         if (memberDao.countByNickname(base) == 0) {
             return base;
         }
 
-        // 2) 이미 있으면 suffix 최대값 조회 후 +1
         Integer maxSuffix = memberDao.selectMaxNicknameSuffix(base);
         int next = (maxSuffix == null ? 0 : maxSuffix) + 1;
 
         String nick = base + "#" + String.format("%04d", next);
 
-        // 3) (동시 가입 레이스) 아주 드물게 충돌하면 몇 번 더 밀어준다
         int tries = 0;
         while (memberDao.countByNickname(nick) > 0) {
             tries++;
@@ -128,14 +118,10 @@ public class MemberService {
     // 로그인 (JWT)
     // =========================
 
-    /**
-     * 로그인 (JWT 토큰 반환)
-     */
     @Transactional
     public String login(String email, String password) {
         log.info("🔐 로그인 시도: {}", email);
 
-        // 1) 이메일로 회원 조회
         MemberDTO member = memberDao.selectMemberByEmail(email);
 
         if (member == null) {
@@ -143,23 +129,25 @@ public class MemberService {
             throw new RuntimeException("존재하지 않는 이메일입니다.");
         }
 
-        // 2) 비밀번호 확인
         if (!passwordEncoder.matches(password, member.getPasswordHash())) {
             log.warn("❌ 비밀번호 불일치: {}", email);
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        // 3) 계정 상태 확인
         if (!"ACTIVE".equals(member.getStatus())) {
             log.warn("❌ 비활성화된 계정: {}", email);
             throw new RuntimeException("비활성화된 계정입니다.");
         }
 
-        // 4) 마지막 로그인 시간 업데이트
-        // ※ 아래 DAO 메서드가 실제로 있어야 함 (없으면 DAO/Mapper에 추가 필요)
+        // 중복 로그인 세션 삭제
+        LoginSessionDTO existSession = loginSessionMapper.findByMemberId(member.getMemberId());
+        if (existSession != null) {
+            loginSessionMapper.deleteByMemberId(member.getMemberId());
+            log.info("🔄 기존 세션 삭제: memberId={}", member.getMemberId());
+        }
+
         memberDao.updateLastLoginAt(member.getMemberId());
 
-        // 5) JWT 토큰 생성
         String token = jwtUtil.generateToken(
             member.getMemberId(),
             member.getEmail(),
@@ -167,31 +155,31 @@ public class MemberService {
             member.getNickname()
         );
 
+        LoginSessionDTO newSession = new LoginSessionDTO();
+        newSession.setMemberId(member.getMemberId());
+        newSession.setToken(token);
+        newSession.setLoginIp("127.0.0.1");
+        newSession.setExpireTime(jwtUtil.getExpirationFromToken(token));
+
+        loginSessionMapper.save(newSession);
+        log.info("💾 새 세션 저장: memberId={}", member.getMemberId());
+
         log.info("✅ 로그인 성공: {} (memberId={})", email, member.getMemberId());
         return token;
     }
 
-    /**
-     * JWT 토큰에서 memberId 추출
-     */
     public Long getMemberIdFromToken(String token) {
         return jwtUtil.getMemberIdFromToken(token);
     }
 
     // =========================
-    // 마이페이지 기능
+    // 마이페이지
     // =========================
 
-    /**
-     * 회원 정보 조회
-     */
     public MemberDTO getMemberInfo(Long memberId) {
         return memberDao.selectMemberById(memberId);
     }
 
-    /**
-     * 회원 활동 통계 조회 (작성글/댓글/받은좋아요)
-     */
     public Map<String, Object> getMemberStats(Long memberId) {
         Map<String, Object> stats = new HashMap<>();
 
@@ -207,122 +195,130 @@ public class MemberService {
         return stats;
     }
 
-    /**
-     * 회원이 작성한 글 목록 조회
-     */
     public List<Map<String, Object>> getMemberPosts(Long memberId) {
         return memberDao.selectMemberPosts(memberId);
     }
 
-    /**
-     * 회원이 작성한 댓글 목록 조회
-     */
     public List<Map<String, Object>> getMemberComments(Long memberId) {
         return memberDao.selectMemberComments(memberId);
     }
 
-    /**
-     * 회원이 좋아요한 글 목록 조회
-     */
     public List<Map<String, Object>> getMemberLikedPosts(Long memberId) {
         return memberDao.selectMemberLikedPosts(memberId);
     }
-    
+
+    // ✅ 프로필 이미지 저장 (WebMvcConfig 경로와 완전히 일치)
+    @Transactional
+    public String saveProfileImage(Long memberId, MultipartFile file) throws Exception {
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("파일이 없습니다.");
+        }
+
+        MemberDTO member = memberDao.selectMemberById(memberId);
+        if (member == null) {
+            throw new RuntimeException("회원이 존재하지 않습니다.");
+        }
+
+        String original = file.getOriginalFilename();
+        String ext = (original != null && original.contains("."))
+                ? original.substring(original.lastIndexOf("."))
+                : "";
+
+        String saveName = "profile_" + memberId + "_" + System.currentTimeMillis() + ext;
+
+        Path dir = Paths.get(uploadPath);
+        if (!Files.exists(dir)) {
+            Files.createDirectories(dir);
+        }
+
+        Path target = dir.resolve(saveName);
+        file.transferTo(target.toFile());
+
+        memberDao.updateProfileImage(memberId, saveName);
+
+        return saveName;
+    }
+
+    // =========================
+    // API 회원가입(register)
+    // =========================
     @Transactional
     public Long register(MemberDTO memberDTO) {
         log.info("📝 회원가입(API) 시도: {}", memberDTO.getEmail());
 
-        // ✅ 기존 signup이 password는 dto.getPassword()를 기대함
-        // API에서 passwordHash에 평문이 들어오는 구조라면 password로 옮겨준다.
-        // (둘 중 하나만 와도 동작하게)
         if ((memberDTO.getPassword() == null || memberDTO.getPassword().isBlank())
             && (memberDTO.getPasswordHash() != null && !memberDTO.getPasswordHash().isBlank())) {
             memberDTO.setPassword(memberDTO.getPasswordHash());
         }
 
-        // signup(MemberDTO)는 닉네임 자동생성/role/status 기본값/필수값검증/암호화까지 포함
         int rows = signup(memberDTO);
 
         if (rows != 1) {
             throw new RuntimeException("회원가입에 실패했습니다.");
         }
 
-        return memberDTO.getMemberId(); // insert 후 key가 세팅되는 구조여야 함 (MyBatis useGeneratedKeys 등)
+        return memberDTO.getMemberId();
     }
- // ========== 아이디/비밀번호 찾기 기능 ==========
 
-    /**
-     * 아이디 찾기 (이름 + 이메일로 조회)
-     */
+    // =========================
+    // 아이디/비번 찾기
+    // =========================
+
     public MemberDTO findIdByNameAndEmail(String name, String email) {
         log.info("🔍 아이디 찾기 시도: name={}, email={}", name, email);
-        
-        // 이름과 이메일로 회원 조회
+
         MemberDTO member = memberDao.selectMemberByNameAndEmail(name, email);
-        
+
         if (member == null) {
             log.warn("❌ 일치하는 회원 정보 없음: name={}, email={}", name, email);
             return null;
         }
-        
-        // 민감 정보 제거
+
         member.setPasswordHash(null);
-        
+
         log.info("✅ 아이디 찾기 성공: memberId={}, email={}", member.getMemberId(), member.getEmail());
         return member;
     }
 
-    /**
-     * 계정 확인 (이메일 + 이름) - 비밀번호 찾기 1단계
-     */
     public boolean verifyAccountByEmailAndName(String email, String name) {
         log.info("🔍 계정 확인 시도: email={}, name={}", email, name);
-        
-        // 이메일과 이름으로 회원 조회
+
         MemberDTO member = memberDao.selectMemberByEmailAndName(email, name);
-        
+
         if (member == null) {
             log.warn("❌ 일치하는 회원 정보 없음: email={}, name={}", email, name);
             return false;
         }
-        
-        // 계정 상태 확인
+
         if (!"ACTIVE".equals(member.getStatus())) {
             log.warn("❌ 비활성화된 계정: email={}, status={}", email, member.getStatus());
             return false;
         }
-        
+
         log.info("✅ 계정 확인 성공: memberId={}", member.getMemberId());
         return true;
     }
 
-    /**
-     * 비밀번호 재설정
-     */
     @Transactional
     public boolean resetPassword(String email, String newPassword) {
         log.info("🔐 비밀번호 재설정 시도: email={}", email);
-        
-        // 이메일로 회원 조회
+
         MemberDTO member = memberDao.selectMemberByEmail(email);
-        
+
         if (member == null) {
             log.warn("❌ 존재하지 않는 이메일: {}", email);
             return false;
         }
-        
-        // 계정 상태 확인
+
         if (!"ACTIVE".equals(member.getStatus())) {
             log.warn("❌ 비활성화된 계정: email={}, status={}", email, member.getStatus());
             return false;
         }
-        
-        // 새 비밀번호 해시화
+
         String hashedPassword = passwordEncoder.encode(newPassword);
-        
-        // DB 업데이트
+
         int result = memberDao.updatePassword(member.getMemberId(), hashedPassword);
-        
+
         if (result == 1) {
             log.info("✅ 비밀번호 재설정 성공: memberId={}", member.getMemberId());
             return true;
@@ -331,5 +327,4 @@ public class MemberService {
             return false;
         }
     }
-    
 }

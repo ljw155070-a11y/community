@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import { loginUserState } from "../utils/authState"; // 실제 경로에 맞게 수정하세요
+import { loginUserState } from "../utils/authState";
 import "./mypage.css";
 
 const MyPage = () => {
-  // Recoil에서 로그인 사용자 정보 가져오기
   const loginUser = useRecoilValue(loginUserState);
   const memberId = loginUser?.memberId;
 
-  // 디버깅: 로그인 정보 확인
-  console.log("로그인 사용자:", loginUser);
-  console.log("memberId:", memberId);
+  const BACK = (import.meta.env.VITE_BACK_SERVER || "").replace(/\/$/, "");
 
-  // 회원 정보 및 통계 데이터
   const [userData, setUserData] = useState({
     name: loginUser?.name || "",
     email: loginUser?.email || "",
     nickname: loginUser?.nickname || "",
     joinDate: "",
-    profileImage: null,
+    profileImage: "",
     stats: {
       postsWritten: 0,
       commentsWritten: 0,
@@ -26,65 +22,49 @@ const MyPage = () => {
     },
   });
 
-  // 활동 내역 데이터
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
 
   const [activeTab, setActiveTab] = useState("작성한 글");
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
 
-  // 회원 정보 및 통계 조회
+  // ✅ 업로드 파일 URL 만들기
+  const fileUrl = (saveName) => (saveName ? `/uploads/${saveName}` : "");
+
+  // ✅ SSR 상세 페이지로 이동
+  const goSsrPostDetail = (postId) => {
+    if (!postId) return;
+    window.location.href = `/board/postDetail/${postId}`;
+  };
+
+  // ✅ 회원 정보 + 통계
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(
-          `${
-            import.meta.env.VITE_BACK_SERVER
-          }/member/mypage/profile/${memberId}`
+          `${BACK}/member/mypage/profile/${memberId}`
         );
-
-        // 응답 상태 확인
-        console.log("응답 상태:", response.status);
-        console.log("응답 헤더:", response.headers.get("content-type"));
-
-        // 응답 텍스트 먼저 확인
-        const text = await response.text();
-        console.log("응답 내용 (처음 500자):", text.substring(0, 500));
-
-        // JSON 파싱 시도
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (parseError) {
-          console.error("JSON 파싱 실패:", parseError);
-          console.error(
-            "받은 내용이 HTML입니다. 백엔드 API가 404 또는 에러를 반환했습니다."
-          );
-          setLoading(false);
-          return;
-        }
-
-        console.log("API 응답 데이터:", data);
+        const data = await response.json();
 
         if (response.ok && data.member) {
           const { member, stats } = data;
-
-          console.log("회원 정보:", member);
-          console.log("통계 정보:", stats);
 
           setUserData({
             name: member.name || "이름 없음",
             email: member.email || "",
             nickname: member.nickname || "",
             joinDate: member.createdAt || "",
-            profileImage: null,
+            profileImage: fileUrl(member.profileImage),
             stats: {
               postsWritten: stats?.postsWritten || 0,
               commentsWritten: stats?.commentsWritten || 0,
               receivedLikes: stats?.receivedLikes || 0,
             },
           });
+        } else {
+          console.error("프로필 조회 실패:", data);
         }
       } catch (error) {
         console.error("프로필 조회 중 오류:", error);
@@ -93,82 +73,61 @@ const MyPage = () => {
       }
     };
 
-    if (memberId) {
-      fetchUserProfile();
-    }
+    if (memberId) fetchUserProfile();
   }, [memberId]);
 
-  // 작성한 글 목록 조회
+  // ✅ 작성글
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_BACK_SERVER}/member/mypage/posts/${memberId}`
-        );
+        const response = await fetch(`${BACK}/member/mypage/posts/${memberId}`);
         const data = await response.json();
 
-        if (response.ok) {
-          setPosts(data.posts || []);
-        }
+        if (response.ok) setPosts(data.posts || []);
+        else console.error("작성글 조회 실패:", data);
       } catch (error) {
-        console.error("작성한 글 조회 실패:", error);
+        console.error("작성글 조회 실패:", error);
       }
     };
-
-    if (memberId) {
-      fetchPosts();
-    }
+    if (memberId) fetchPosts();
   }, [memberId]);
 
-  // 작성한 댓글 목록 조회
+  // ✅ 작성댓글
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const response = await fetch(
-          `${
-            import.meta.env.VITE_BACK_SERVER
-          }/member/mypage/comments/${memberId}`
+          `${BACK}/member/mypage/comments/${memberId}`
         );
         const data = await response.json();
 
-        if (response.ok) {
-          setComments(data.comments || []);
-        }
+        if (response.ok) setComments(data.comments || []);
+        else console.error("작성댓글 조회 실패:", data);
       } catch (error) {
-        console.error("작성한 댓글 조회 실패:", error);
+        console.error("작성댓글 조회 실패:", error);
       }
     };
-
-    if (memberId) {
-      fetchComments();
-    }
+    if (memberId) fetchComments();
   }, [memberId]);
 
-  // 좋아요한 글 목록 조회
+  // ✅ 좋아요 글
   useEffect(() => {
     const fetchLikedPosts = async () => {
       try {
         const response = await fetch(
-          `${
-            import.meta.env.VITE_BACK_SERVER
-          }/member/mypage/liked-posts/${memberId}`
+          `${BACK}/member/mypage/liked-posts/${memberId}`
         );
         const data = await response.json();
 
-        if (response.ok) {
-          setLikedPosts(data.likedPosts || []);
-        }
+        if (response.ok) setLikedPosts(data.likedPosts || []);
+        else console.error("좋아요글 조회 실패:", data);
       } catch (error) {
-        console.error("좋아요한 글 조회 실패:", error);
+        console.error("좋아요글 조회 실패:", error);
       }
     };
-
-    if (memberId) {
-      fetchLikedPosts();
-    }
+    if (memberId) fetchLikedPosts();
   }, [memberId]);
 
-  // 현재 탭에 따른 데이터 가져오기
   const getCurrentTabData = () => {
     switch (activeTab) {
       case "작성한 글":
@@ -182,18 +141,43 @@ const MyPage = () => {
     }
   };
 
-  // 프로필 이미지 업로드 핸들러
-  const handleProfileImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUserData((prev) => ({
-          ...prev,
-          profileImage: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
+  // ✅ 프로필 이미지 업로드
+  const handleProfileImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch(
+        `${BACK}/member/mypage/profile-image/${memberId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error("프로필 이미지 업로드 실패:", data);
+        alert(data.error || "프로필 이미지 업로드 실패");
+        return;
+      }
+
+      setUserData((prev) => ({
+        ...prev,
+        profileImage: fileUrl(data.saveName),
+      }));
+    } catch (err) {
+      console.error("프로필 이미지 업로드 오류:", err);
+      alert("프로필 이미지 업로드 중 오류 발생");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -205,7 +189,6 @@ const MyPage = () => {
     );
   }
 
-  // 로그인하지 않은 경우
   if (!loginUser || !memberId) {
     return (
       <div className="mypage-container">
@@ -227,6 +210,7 @@ const MyPage = () => {
               />
               <div className="verified-badge">✓</div>
             </div>
+
             <div className="profile-info">
               <h2 className="profile-name">{userData.name}</h2>
               {userData.nickname && (
@@ -236,15 +220,18 @@ const MyPage = () => {
               <p className="profile-join-date">
                 📅 가입일: {userData.joinDate}
               </p>
+
               <label htmlFor="profile-upload" className="profile-edit-btn">
-                프로필 수정
+                {uploading ? "업로드 중..." : "프로필 수정"}
               </label>
+
               <input
                 type="file"
                 id="profile-upload"
                 accept="image/*"
                 onChange={handleProfileImageChange}
                 style={{ display: "none" }}
+                disabled={uploading}
               />
             </div>
           </div>
@@ -301,64 +288,96 @@ const MyPage = () => {
           </div>
 
           <div className="posts-list">
+            {/* ✅ 작성한 글 (클릭 → SSR 상세) */}
             {activeTab === "작성한 글" &&
               posts.length > 0 &&
               posts.map((post) => (
-                <div key={post.postId} className="post-item">
+                <div
+                  key={post.POSTID}
+                  className="post-item"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => goSsrPostDetail(post.POSTID)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && goSsrPostDetail(post.POSTID)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
                   <div className="post-header">
-                    <span className="post-category">{post.category}</span>
-                    <span className="post-date">{post.createdAt}</span>
+                    <span className="post-category">{post.CATEGORY}</span>
+                    <span className="post-date">{post.CREATEDAT}</span>
                   </div>
-                  <h3 className="post-title">{post.title}</h3>
-                  <p className="post-content">{post.content}</p>
+                  <h3 className="post-title">{post.TITLE}</h3>
+                  <p className="post-content">{post.CONTENT}</p>
                   <div className="post-stats">
-                    <span className="post-stat">조회 {post.viewCount}</span>
+                    <span className="post-stat">조회 {post.VIEWCOUNT}</span>
                     <span className="post-stat">
-                      💬 댓글 {post.commentCount}
+                      💬 댓글 {post.COMMENTCOUNT}
                     </span>
                     <span className="post-stat">
-                      ❤️ 좋아요 {post.likeCount}
+                      ❤️ 좋아요 {post.LIKECOUNT}
                     </span>
                   </div>
                 </div>
               ))}
 
+            {/* ✅ 작성한 댓글 (클릭 → 해당 게시글 SSR 상세) */}
             {activeTab === "작성한 댓글" &&
               comments.length > 0 &&
-              comments.map((comment) => (
-                <div key={comment.commentId} className="post-item">
+              comments.map((c) => (
+                <div
+                  key={c.COMMENTID}
+                  className="post-item"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => goSsrPostDetail(c.POSTID)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && goSsrPostDetail(c.POSTID)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
                   <div className="post-header">
-                    <span className="post-category">{comment.category}</span>
-                    <span className="post-date">{comment.createdAt}</span>
+                    <span className="post-category">{c.CATEGORY}</span>
+                    <span className="post-date">{c.CREATEDAT}</span>
                   </div>
                   <h3 className="post-title">
-                    <span className="comment-label">[댓글]</span>{" "}
-                    {comment.postTitle}
+                    <span className="comment-label">[댓글]</span> {c.POSTTITLE}
                   </h3>
-                  <p className="post-content">{comment.content}</p>
+                  <p className="post-content">{c.CONTENT}</p>
                 </div>
               ))}
 
+            {/* ✅ 좋아요한 글 (클릭 → SSR 상세) */}
             {activeTab === "좋아요한 글" &&
               likedPosts.length > 0 &&
               likedPosts.map((post) => (
-                <div key={post.postId} className="post-item">
+                <div
+                  key={post.POSTID}
+                  className="post-item"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => goSsrPostDetail(post.POSTID)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && goSsrPostDetail(post.POSTID)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
                   <div className="post-header">
-                    <span className="post-category">{post.category}</span>
-                    <span className="post-date">{post.createdAt}</span>
+                    <span className="post-category">{post.CATEGORY}</span>
+                    <span className="post-date">{post.CREATEDAT}</span>
                   </div>
-                  <h3 className="post-title">{post.title}</h3>
-                  <p className="post-content">{post.content}</p>
+                  <h3 className="post-title">{post.TITLE}</h3>
+                  <p className="post-content">{post.CONTENT}</p>
                   <div className="post-stats">
                     <span className="post-stat">
-                      작성자: {post.authorNickname}
+                      작성자: {post.AUTHORNICKNAME}
                     </span>
-                    <span className="post-stat">조회 {post.viewCount}</span>
+                    <span className="post-stat">조회 {post.VIEWCOUNT}</span>
                     <span className="post-stat">
-                      💬 댓글 {post.commentCount}
+                      💬 댓글 {post.COMMENTCOUNT}
                     </span>
                     <span className="post-stat">
-                      ❤️ 좋아요 {post.likeCount}
+                      ❤️ 좋아요 {post.LIKECOUNT}
                     </span>
                   </div>
                 </div>

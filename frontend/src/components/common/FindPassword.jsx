@@ -110,7 +110,7 @@ const FindPassword = () => {
 
       if (response.ok && data.success) {
         alert("비밀번호가 성공적으로 변경되었습니다!");
-        window.location.href = "/login";
+        window.location.href = "/app/login";
       } else {
         setErrors({
           general: data.message || "비밀번호 재설정에 실패했습니다.",

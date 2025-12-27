@@ -1,3 +1,4 @@
+<!-- boardList.html (전체) -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -6,7 +7,7 @@
 <title>게시판</title>
 <link rel="stylesheet" th:href="@{/communityCss/boardList.css}" />
 
-<!-- ✅ 추가 CSS (썸네일/아이콘/호버프리뷰) -->
+<!-- ✅ 추가 CSS (썸네일/아이콘/호버프리뷰 + 좌/우 광고) -->
 <style>
 /* =========================
      카드 썸네일 (공통)
@@ -105,7 +106,6 @@
   align-self: start;
 }
 
-
 /* 카드 뷰에서는 꽉 차게 */
 .bl-view-card .bl-card-thumb img {
   width: 100%;
@@ -144,6 +144,97 @@
 		max-height: 180px;
 	}
 }
+
+/* =========================
+   ✅ 좌/우 사이드 광고 (PC 전용)
+   - bl-wrap max-width: 1120px 기준으로 calc 정렬
+========================= */
+.ad-side{
+  position: fixed;
+  top: 110px;                 /* 헤더 높이에 맞춰 조절 */
+  width: 180px;               /* 광고 폭 */
+  z-index: 60;
+}
+
+.ad-side--left{
+  left: calc(50% - (1120px / 2) - 200px);
+}
+
+.ad-side--right{
+  left: calc(50% + (1120px / 2) + 20px);
+}
+
+.ad-box{
+  position: sticky;           /* 스크롤 따라 내려가도 자연스럽게 */
+  top: 110px;
+  border-radius: 14px;
+  border: 1px solid rgba(15,23,42,0.12);
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 14px 34px rgba(15,23,42,0.10);
+  overflow: hidden;
+  min-height: 320px;          /* 광고 최소 높이 */
+  padding: 10px;
+}
+
+/* 임시 표시용(원하면 지워도 됨) */
+.ad-placeholder{
+  height: 300px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 12px;
+  border: 1px dashed rgba(15,23,42,0.18);
+  color: rgba(15,23,42,0.45);
+  font-weight: 900;
+  letter-spacing: .02em;
+  background: rgba(15,23,42,0.02);
+}
+
+/* 화면 좁아지면 숨김 (태블릿/모바일) */
+@media (max-width: 1320px){
+  .ad-side{ display:none; }
+}
+
+/* =========================
+   ✅ 리스트 NEW 태그 잘림 방지 (compact 전용)
+   - line-height / overflow / 정렬만 최소 수정
+========================= */
+
+/* 1) 링크/행에서 잘리는 경우가 많아서 안전장치 */
+.bl-view-compact .bl-row-link{
+  overflow: visible; /* 기존이 hidden이면 NEW가 잘려보임 */
+}
+
+/* 2) 메타 영역을 세로 중앙정렬 + 라인박스 여유 */
+.bl-view-compact .bl-col-meta{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;   /* NEW 배지 높이 확보 */
+  line-height: 1.2;   /* 라인 박스 타이트한거 완화 */
+  overflow: visible;
+}
+
+/* 3) 날짜 + NEW 래퍼를 inline-flex로 바꿔서 배지가 안정적으로 들어가게 */
+.bl-view-compact .bl-datebox{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  overflow: visible;
+}
+
+/* 4) NEW 자체를 딱 배지처럼: 높이/패딩/라인 안정화 */
+.bl-new.bl-new--sm{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  line-height: 1;
+  transform: translateY(-1px); /* 살짝 위로 올려 더 깔끔하게(원하면 0px) */
+  white-space: nowrap;
+}
+
 </style>
 </head>
 
@@ -151,6 +242,22 @@
 	<th:block th:include="common/header"></th:block>
 
 	<main class="bl-wrap">
+
+    <!-- ✅ 좌/우 고정 광고 (PC에서만 보임) -->
+    <aside class="ad-side ad-side--left" aria-label="왼쪽 광고">
+      <div class="ad-box">
+        <!-- 🔻 여기에 실제 광고 코드 넣기 -->
+        <div class="ad-placeholder">LEFT AD</div>
+      </div>
+    </aside>
+
+    <aside class="ad-side ad-side--right" aria-label="오른쪽 광고">
+      <div class="ad-box">
+        <!-- 🔻 여기에 실제 광고 코드 넣기 -->
+        <div class="ad-placeholder">RIGHT AD</div>
+      </div>
+    </aside>
+
 		<section class="bl-head">
 			<h1 class="bl-title">게시판</h1>
 			<p class="bl-sub">다양한 주제로 자유롭게 소통해보세요</p>
@@ -241,7 +348,8 @@
 					</div>
 
 					<a class="bl-card-link"
-						th:href="@{/board/postDetail/{postId}(postId=${p.postId})}"> <!-- ✅ 카드 썸네일: 첫 이미지 or '이미지 없음' -->
+						th:href="@{/board/postDetail/{postId}(postId=${p.postId})}">
+						<!-- ✅ 카드 썸네일: 첫 이미지 or '이미지 없음' -->
 						<div class="bl-card-thumb">
 							<img th:if="${p.firstImageSaveName != null}"
 								th:src="@{/uploads/{name}(name=${p.firstImageSaveName})}"

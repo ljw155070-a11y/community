@@ -2,12 +2,13 @@ package kr.co.community.backend.member.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.community.backend.member.dao.LoginSessionMapper;
+import kr.co.community.backend.member.dto.LoginSessionDTO;
 import kr.co.community.backend.member.dto.MemberDTO;
 import kr.co.community.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,10 @@ import java.util.Map;
 public class MemberApiController {
 
     private final MemberService memberService;
-
+    private final LoginSessionMapper loginSessionMapper;  // ⭐ 추가
+    /**
+     * 로그인 API
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @RequestBody Map<String, String> loginRequest,
@@ -33,23 +37,26 @@ public class MemberApiController {
 
             log.info("🔐 API 로그인 요청: {}", email);
 
+            // ⭐ [중복 로그인] MemberService.login()에서 처리됨
+            // - 기존 세션 삭제
+            // - 새 세션 저장
             String token = memberService.login(email, password);
+            
+            // 회원 정보 조회
             MemberDTO member = memberService.getMemberByEmail(email);
 
-            // ✅ ResponseCookie 사용
-            ResponseCookie cookie = ResponseCookie.from("accessToken", token)
-                    .httpOnly(true)
-                    .secure(false)  // 개발: false, 프로덕션: true
-                    .path("/")
-                    .maxAge(60 * 60 * 24)
-                    .sameSite("Lax")
-                    .build();
+            // HttpOnly 쿠키에 JWT 토큰 저장
+            Cookie cookie = new Cookie("accessToken", token);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60 * 24);  // 24시간
             
-            response.addHeader("Set-Cookie", cookie.toString());
+            response.addCookie(cookie);
 
+            // ⭐ [중복 로그인] 사용자에게 알림 메시지 전달
             Map<String, Object> result = new HashMap<>();
             result.put("success", true);
-            result.put("message", "로그인 성공");
+            result.put("message", "로그인 성공. 다른 기기에서 로그인한 경우 해당 기기는 자동 로그아웃됩니다.");
             result.put("token", token);
             result.put("user", Map.of(
                 "memberId", member.getMemberId(),
@@ -59,6 +66,7 @@ public class MemberApiController {
             ));
 
             log.info("✅ API 로그인 성공: {}", email);
+
             return ResponseEntity.ok(result);
 
         } catch (Exception e) {
@@ -70,7 +78,7 @@ public class MemberApiController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
     }
-
+    
     /**
      * 로그아웃 API
      */
@@ -78,16 +86,14 @@ public class MemberApiController {
     public ResponseEntity<?> logout(HttpServletResponse response) {
         log.info("🚪 로그아웃 요청");
         
-        ResponseCookie cookie = ResponseCookie.from("accessToken", "")
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(0)
-                .sameSite("Lax")
-                .build();
+        // 쿠키 삭제
+        Cookie cookie = new Cookie("accessToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
         
-        response.addHeader("Set-Cookie", cookie.toString());
-        
+        response.addCookie(cookie);
+
         Map<String, Object> result = new HashMap<>();
         result.put("success", true);
         result.put("message", "로그아웃 성공");
@@ -152,6 +158,10 @@ public class MemberApiController {
 
     /**
      * 현재 로그인 사용자 정보 조회
+     * 
+     * ⭐ [중복 로그인] DB에서 토큰 검증 추가
+     * - 쿠키의 토큰이 DB에 있는지 확인
+     * - 없으면 401 에러 (다른 기기에서 로그인함)
      */
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(
@@ -164,7 +174,21 @@ public class MemberApiController {
                 );
             }
 
+            // JWT에서 회원 ID 추출
             Long memberId = memberService.getMemberIdFromToken(token);
+            
+            // ⭐ [중복 로그인] DB에서 토큰 확인
+            // - DB에 저장된 토큰과 쿠키의 토큰 비교
+            // - 다르면 다른 기기에서 로그인한 것
+            LoginSessionDTO session = loginSessionMapper.findByMemberId(memberId);
+            if (session == null || !token.equals(session.getToken())) {
+                // DB에 토큰 없음 = 다른 곳에서 로그인됨
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    Map.of("success", false, "message", "다른 기기에서 로그인되었습니다.")
+                );
+            }
+            
+            // 회원 정보 조회
             MemberDTO member = memberService.getMemberInfo(memberId);
 
             Map<String, Object> result = new HashMap<>();

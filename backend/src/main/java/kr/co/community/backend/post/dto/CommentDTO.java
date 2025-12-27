@@ -17,6 +17,7 @@ public class CommentDTO {
     private String isDeleted;
     private Date createdAt;
     private Date updatedAt;
+    private String authorProfileImage;
     
     // ✅ 추가 필드
     private String authorName;  // 작성자명 (JOIN - NVL(NICKNAME, NAME))

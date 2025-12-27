@@ -27,6 +27,13 @@ public class AdminService {
         dto.setPendingReports(adminDao.countPendingReports());
 
         dto.setRecentActivities(adminDao.selectRecentActivities()); // 간단 텍스트 리스트
+       
+        // ========== 방문자 통계 추가 ==========
+        dto.setTodayVisitors(adminDao.countTodayVisitors());
+        dto.setTotalVisitors(adminDao.countTotalVisitors());
+        
+        
+        
         return dto;
     }
 
@@ -102,5 +109,11 @@ public class AdminService {
         res.put("success", true);
         res.put("saved", payload);
         return res;
+    }
+// ========== 방문 기록 저장 메서드 추가 ==========
+    
+    // 방문 기록 저장
+    public void recordVisit(String visitIp, String userAgent) {
+        adminDao.insertVisitHistory(visitIp, userAgent);
     }
 }

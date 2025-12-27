@@ -76,4 +76,10 @@ public class PostController {
         postService.deleteImage(postId, imgId);
         return Map.of("success", true);
     }
+ // ✅ 글 삭제 (소프트 삭제)
+    @DeleteMapping("/{postId}")
+    public Map<String, Object> delete(@PathVariable Long postId) {
+        postService.deletePost(postId);
+        return Map.of("success", true);
+    }
 }

@@ -12,6 +12,8 @@ body {
     font-family: 'Noto Sans KR', sans-serif;
     color: #333;
     background: linear-gradient(to bottom, #f8f9fc 0%, #fafbff 100%);
+    padding: 0;
+    margin: 0;
 }
 
 /* 사이드 광고 영역 */
@@ -25,15 +27,16 @@ body {
     z-index: 50;
 }
 
- .new-badge {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 4px;
+.new-badge {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
 }
+
 .mainpage-side-ad {
     position: fixed;
     top: 150px;
@@ -205,160 +208,6 @@ body {
     border-color: white;
 }
 
-/* 커뮤니티 특징 영역 */
-.mainpage-features {
-    padding: 80px 20px;
-    text-align: center;
-    background: white;
-    max-width: 1200px;
-    margin: 20px auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.08);
-}
-
-.mainpage-features-tag {
-    display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-}
-
-.mainpage-features h2 {
-    font-size: 32px;
-    margin-bottom: 50px;
-    color: #333;
-    font-weight: 700;
-}
-
-.mainpage-feature-list {
-    display: flex;
-    gap: 24px;
-    max-width: 1100px;
-    margin: 0 auto;
-    justify-content: center;
-}
-
-.mainpage-feature-item {
-    flex: 1;
-    max-width: 350px;
-    padding: 32px 24px;
-    background: linear-gradient(to bottom, #ffffff 0%, #f8f9fc 100%);
-    border-radius: 12px;
-    transition: all 0.3s;
-    border: 1px solid rgba(102, 126, 234, 0.1);
-}
-
-.mainpage-feature-item:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
-    border-color: rgba(102, 126, 234, 0.3);
-}
-
-.mainpage-feature-icon-wrapper {
-    width: 70px;
-    height: 70px;
-    margin: 0 auto 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
-}
-
-.mainpage-feature-icon {
-    font-size: 36px;
-}
-
-.mainpage-feature-item h3 {
-    font-size: 20px;
-    margin-bottom: 12px;
-    color: #333;
-    font-weight: 600;
-}
-
-.mainpage-feature-item p {
-    font-size: 14px;
-    color: #666;
-    line-height: 1.6;
-}
-
-/* 공지사항 영역 */
-.mainpage-notices {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.mainpage-notices.mainpage-logged-in {
-    background: transparent;
-}
-
-.mainpage-notices h2 {
-    font-size: 24px;
-    color: #333;
-    font-weight: 700;
-}
-
-.mainpage-notices-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.mainpage-notice-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.mainpage-notice-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    background: white;
-    border: 1px solid rgba(102, 126, 234, 0.15);
-    border-radius: 10px;
-    transition: all 0.3s;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.05);
-}
-
-.mainpage-notice-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.12);
-    border-color: rgba(102, 126, 234, 0.3);
-}
-
-.mainpage-notice-badge {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    padding: 5px 14px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
-}
-
-.mainpage-notice-title {
-    flex: 1;
-    font-size: 15px;
-    font-weight: 500;
-    color: #333;
-}
-
-.mainpage-notice-date {
-    color: #999;
-    font-size: 13px;
-}
-
 /* 인기 게시글 영역 */
 .mainpage-posts {
     padding: 40px 20px;
@@ -488,6 +337,9 @@ body {
     margin-bottom: 6px;
     color: #333;
     font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* 게시글 정보 */
@@ -549,96 +401,6 @@ body {
     color: #333;
 }
 
-/* 카테고리별 색상 - 1번째 */
-.mainpage-board-card:nth-child(1) {
-    border-color: rgba(102, 126, 234, 0.15);
-}
-
-.mainpage-board-card:nth-child(1):hover {
-    border-color: rgba(102, 126, 234, 0.4);
-    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
-}
-
-.mainpage-board-card:nth-child(1) .mainpage-board-card-title {
-    background: linear-gradient(to right, #667eea, #764ba2) left bottom no-repeat;
-    background-size: 100% 2px;
-}
-
-/* 카테고리별 색상 - 2번째 */
-.mainpage-board-card:nth-child(2) {
-    border-color: rgba(240, 147, 251, 0.15);
-}
-
-.mainpage-board-card:nth-child(2):hover {
-    border-color: rgba(240, 147, 251, 0.4);
-    box-shadow: 0 12px 40px rgba(240, 147, 251, 0.2);
-}
-
-.mainpage-board-card:nth-child(2) .mainpage-board-card-title {
-    background: linear-gradient(to right, #f093fb, #f5576c) left bottom no-repeat;
-    background-size: 100% 2px;
-}
-
-/* 카테고리별 색상 - 3번째 */
-.mainpage-board-card:nth-child(3) {
-    border-color: rgba(79, 172, 254, 0.15);
-}
-
-.mainpage-board-card:nth-child(3):hover {
-    border-color: rgba(79, 172, 254, 0.4);
-    box-shadow: 0 12px 40px rgba(79, 172, 254, 0.2);
-}
-
-.mainpage-board-card:nth-child(3) .mainpage-board-card-title {
-    background: linear-gradient(to right, #4facfe, #00f2fe) left bottom no-repeat;
-    background-size: 100% 2px;
-}
-
-/* 카테고리별 색상 - 4번째 */
-.mainpage-board-card:nth-child(4) {
-    border-color: rgba(250, 112, 154, 0.15);
-}
-
-.mainpage-board-card:nth-child(4):hover {
-    border-color: rgba(250, 112, 154, 0.4);
-    box-shadow: 0 12px 40px rgba(250, 112, 154, 0.2);
-}
-
-.mainpage-board-card:nth-child(4) .mainpage-board-card-title {
-    background: linear-gradient(to right, #fa709a, #fee140) left bottom no-repeat;
-    background-size: 100% 2px;
-}
-
-/* 카테고리별 색상 - 5번째 */
-.mainpage-board-card:nth-child(5) {
-    border-color: rgba(48, 207, 208, 0.15);
-}
-
-.mainpage-board-card:nth-child(5):hover {
-    border-color: rgba(48, 207, 208, 0.4);
-    box-shadow: 0 12px 40px rgba(48, 207, 208, 0.2);
-}
-
-.mainpage-board-card:nth-child(5) .mainpage-board-card-title {
-    background: linear-gradient(to right, #30cfd0, #330867) left bottom no-repeat;
-    background-size: 100% 2px;
-}
-
-/* 카테고리별 색상 - 6번째 */
-.mainpage-board-card:nth-child(6) {
-    border-color: rgba(168, 237, 234, 0.15);
-}
-
-.mainpage-board-card:nth-child(6):hover {
-    border-color: rgba(168, 237, 234, 0.4);
-    box-shadow: 0 12px 40px rgba(168, 237, 234, 0.2);
-}
-
-.mainpage-board-card:nth-child(6) .mainpage-board-card-title {
-    background: linear-gradient(to right, #a8edea, #fed6e3) left bottom no-repeat;
-    background-size: 100% 2px;
-}
-
 .mainpage-board-card-list {
     display: flex;
     flex-direction: column;
@@ -652,6 +414,13 @@ body {
     transition: all 0.3s;
     cursor: pointer;
     border: 1px solid rgba(102, 126, 234, 0.08);
+    display: flex;
+}
+
+.mainpage-board-card-content {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
 }
 
 .mainpage-board-card-item:hover {
@@ -668,6 +437,9 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: #333;
+    width: 100%;
+    display: block;
+    max-width: 250px;
 }
 
 .mainpage-board-card-info {
@@ -735,36 +507,32 @@ body {
 
 /* 순위별 색상 - 조회수 TOP */
 .mainpage-top-section:nth-child(1) .mainpage-rank {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
 .mainpage-top-section:nth-child(1) .mainpage-section-title {
-    color: #667eea;
+    color: #10b981;
 }
 
 /* 순위별 색상 - 좋아요 TOP */
 .mainpage-top-section:nth-child(2) .mainpage-rank {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
 .mainpage-top-section:nth-child(2) .mainpage-section-title {
-    color: #f5576c;
+    color: #f59e0b;
 }
 
 /* 순위별 색상 - 댓글 TOP */
 .mainpage-top-section:nth-child(3) .mainpage-rank {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
 }
 
 .mainpage-top-section:nth-child(3) .mainpage-section-title {
-    color: #4facfe;
+    color: #8b5cf6;
 }
 
- 
-
-/* =========================
-   반응형 - 태블릿 (768px 이하)
-========================= */
+/* 반응형 - 태블릿 (768px 이하) */
 @media (max-width: 768px) {
     .mainpage-banner {
         padding: 60px 20px;
@@ -789,53 +557,6 @@ body {
     .mainpage-btn-secondary {
         width: 100%;
         max-width: 300px;
-    }
-    
-    .mainpage-features {
-        padding: 50px 20px;
-        margin: 10px;
-        border-radius: 6px;
-    }
-    
-    .mainpage-features h2 {
-        font-size: 28px;
-        margin-bottom: 40px;
-    }
-    
-    .mainpage-feature-list {
-        flex-direction: column;
-        gap: 16px;
-    }
-    
-    .mainpage-feature-item {
-        max-width: 100%;
-        padding: 24px;
-    }
-    
-    .mainpage-notices {
-        padding: 30px 15px;
-    }
-    
-    .mainpage-notices h2 {
-        font-size: 22px;
-    }
-    
-    .mainpage-notice-item {
-        padding: 14px;
-        gap: 10px;
-    }
-    
-    .mainpage-notice-badge {
-        padding: 4px 12px;
-        font-size: 11px;
-    }
-    
-    .mainpage-notice-title {
-        font-size: 14px;
-    }
-    
-    .mainpage-notice-date {
-        font-size: 12px;
     }
     
     .mainpage-posts {
@@ -932,53 +653,6 @@ body {
         margin-bottom: 24px;
     }
     
-    .mainpage-features {
-        padding: 40px 15px;
-    }
-    
-    .mainpage-features h2 {
-        font-size: 24px;
-        margin-bottom: 30px;
-    }
-    
-    .mainpage-feature-item {
-        padding: 20px;
-    }
-    
-    .mainpage-feature-icon {
-        font-size: 32px;
-    }
-    
-    .mainpage-feature-item h3 {
-        font-size: 18px;
-    }
-    
-    .mainpage-feature-item p {
-        font-size: 13px;
-    }
-    
-    .mainpage-notices {
-        padding: 20px 10px;
-    }
-    
-    .mainpage-notices h2 {
-        font-size: 20px;
-    }
-    
-    .mainpage-notices-header {
-        margin-bottom: 16px;
-    }
-    
-    .mainpage-notice-item {
-        flex-wrap: wrap;
-        padding: 12px;
-    }
-    
-    .mainpage-notice-title {
-        width: 100%;
-        margin-top: 8px;
-    }
-    
     .mainpage-posts {
         padding: 20px 10px;
     }
@@ -1066,6 +740,4 @@ body {
         padding: 12px 28px;
         font-size: 14px;
     }
-   
-    
 }

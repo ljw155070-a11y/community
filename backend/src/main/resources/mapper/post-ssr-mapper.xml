@@ -104,29 +104,34 @@
 
 
 	<!-- 게시글 단건 조회 -->
-	<select id="selectPostById" parameterType="long"
-		resultType="kr.co.community.backend.post.dto.PostDTO">
-		SELECT
-		P.POST_ID AS postId,
-		P.CATEGORY_ID AS categoryId,
-		P.AUTHOR_ID AS authorId,
-		P.TITLE AS title,
-		P.CONTENT AS content,
-		P.VIEW_COUNT AS viewCount,
-		P.LIKE_COUNT AS likeCount,
-		P.COMMENT_COUNT AS commentCount,
-		P.IS_DELETED AS isDeleted,
-		P.CREATED_AT AS createdAt,
-		P.UPDATED_AT AS updatedAt,
-		C.CATEGORY_NAME AS category,
-		NVL(M.NICKNAME, M.NAME) AS authorName,
-		M.BIO AS authorBio
-		FROM POST P
-		LEFT JOIN BOARD_CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
-		LEFT JOIN MEMBER M ON P.AUTHOR_ID = M.MEMBER_ID
-		WHERE P.POST_ID = #{postId}
-		AND P.IS_DELETED = 'N'
-	</select>
+<select id="selectPostById" parameterType="long"
+        resultType="kr.co.community.backend.post.dto.PostDTO">
+  SELECT
+    P.POST_ID AS postId,
+    P.CATEGORY_ID AS categoryId,
+    P.AUTHOR_ID AS authorId,
+    P.TITLE AS title,
+    P.CONTENT AS content,
+    P.BLOCKS_META AS blocksMeta,
+    P.VIEW_COUNT AS viewCount,
+    P.LIKE_COUNT AS likeCount,
+    P.COMMENT_COUNT AS commentCount,
+    P.IS_DELETED AS isDeleted,
+    P.CREATED_AT AS createdAt,
+    P.UPDATED_AT AS updatedAt,
+    C.CATEGORY_NAME AS category,
+    NVL(M.NICKNAME, M.NAME) AS authorName,
+    M.BIO AS authorBio,
+
+    -- ✅ 추가: 작성자 프로필 이미지(saveName)
+    M.PROFILE_IMAGE AS authorProfileImage
+
+  FROM POST P
+  LEFT JOIN BOARD_CATEGORY C ON P.CATEGORY_ID = C.CATEGORY_ID
+  LEFT JOIN MEMBER M ON P.AUTHOR_ID = M.MEMBER_ID
+  WHERE P.POST_ID = #{postId}
+    AND P.IS_DELETED = 'N'
+</select>
 	
 	<!-- ✅ 게시글의 이미지 조회 (정렬 순서대로) -->
 	<select id="selectImagesByPostId" parameterType="long"
@@ -153,25 +158,29 @@
 	</update>
 
 	<!-- 댓글 목록 조회 -->
-	<select id="selectCommentsByPostId" parameterType="long"
-		resultType="kr.co.community.backend.post.dto.CommentDTO">
-		SELECT
-		C.COMMENT_ID AS commentId,
-		C.POST_ID AS postId,
-		C.AUTHOR_ID AS authorId,
-		C.PARENT_COMMENT_ID AS parentCommentId,
-		C.CONTENT AS content,
-		C.IS_DELETED AS isDeleted,
-		C.CREATED_AT AS createdAt,
-		C.UPDATED_AT AS updatedAt,
-		NVL(M.NICKNAME, M.NAME) AS authorName
-		FROM COMMENTS C
-		LEFT JOIN MEMBER M ON C.AUTHOR_ID = M.MEMBER_ID
-		WHERE C.POST_ID = #{postId}
-		AND C.IS_DELETED = 'N'
-		AND C.PARENT_COMMENT_ID IS NULL
-		ORDER BY C.CREATED_AT ASC
-	</select>
+<select id="selectCommentsByPostId" parameterType="long"
+        resultType="kr.co.community.backend.post.dto.CommentDTO">
+  SELECT
+    C.COMMENT_ID AS commentId,
+    C.POST_ID AS postId,
+    C.AUTHOR_ID AS authorId,
+    C.PARENT_COMMENT_ID AS parentCommentId,
+    C.CONTENT AS content,
+    C.IS_DELETED AS isDeleted,
+    C.CREATED_AT AS createdAt,
+    C.UPDATED_AT AS updatedAt,
+    NVL(M.NICKNAME, M.NAME) AS authorName,
+
+    -- ✅ 추가: 댓글 작성자 프로필 이미지(saveName)
+    M.PROFILE_IMAGE AS authorProfileImage
+
+  FROM COMMENTS C
+  LEFT JOIN MEMBER M ON C.AUTHOR_ID = M.MEMBER_ID
+  WHERE C.POST_ID = #{postId}
+    AND C.IS_DELETED = 'N'
+    AND C.PARENT_COMMENT_ID IS NULL
+  ORDER BY C.CREATED_AT ASC
+</select>
 
 	<!-- 좋아요 여부 확인 -->
 	<select id="selectPostLikeExists" resultType="int">

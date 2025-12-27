@@ -3,6 +3,7 @@ import { useSetRecoilState } from "recoil";
 import { Link } from "react-router-dom";
 import { loginUserState } from "../utils/authState";
 import { loginAPI } from "../utils/authUtils";
+import Swal from "sweetalert2"; // 중복 로그인 알림을 위해 추가
 import "./login.css";
 
 const Login = () => {
@@ -34,6 +35,12 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * ⭐ [중복 로그인] 로그인 성공 시 스윗얼럿으로 메시지 표시
+   *
+   * 서버에서 받은 message:
+   * "로그인 성공. 다른 기기에서 로그인한 경우 해당 기기는 자동 로그아웃됩니다."
+   */
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -43,16 +50,28 @@ const Login = () => {
     try {
       const data = await loginAPI(email, password);
 
-      // ✅ 서버 응답 user 저장
+      // ✅ Recoil state 저장
       setLoginUser(data.user);
 
-      // (선택) rememberMe는 지금 UI만. 진짜 자동로그인은 서버 쿠키/리프레시로 설계
-      // localStorage.setItem("rememberMe", rememberMe ? "true" : "false");
+      // ⭐ 자동 로그인 체크 여부에 따라 저장 위치 분리
+      if (rememberMe) {
+        // 자동 로그인 O → localStorage (영구 보관)
+        localStorage.setItem("loginUser", JSON.stringify(data.user));
+        sessionStorage.removeItem("loginUser"); // 혹시 모를 중복 제거
+      } else {
+        // 자동 로그인 X → sessionStorage (브라우저 닫으면 삭제)
+        sessionStorage.setItem("loginUser", JSON.stringify(data.user));
+        localStorage.removeItem("loginUser"); // 기존 자동 로그인 정보 삭제
+      }
 
-      alert("로그인 성공!");
-
-      // ✅ SSR 페이지로 이동
-      window.location.href = "/mainpage";
+      Swal.fire({
+        icon: "success",
+        title: "로그인 성공",
+        text: data.message,
+        confirmButtonText: "확인",
+      }).then(() => {
+        window.location.href = "/mainpage";
+      });
     } catch (error) {
       setErrors({ general: error?.message || "서버 연결에 실패했습니다" });
     } finally {

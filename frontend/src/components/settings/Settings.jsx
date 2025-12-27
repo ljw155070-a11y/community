@@ -170,10 +170,6 @@ const Settings = () => {
     }
   };
 
-  const goToAlerts = () => {
-    window.location.href = "/app/alert";
-  };
-
   const goToPrivacy = () => {
     window.location.href = "/app/terms/privacy";
   };

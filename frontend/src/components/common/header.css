@@ -1,22 +1,27 @@
-.header {
+@charset "UTF-8";
+
+.site-header.header {
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   padding: 0;
   position: sticky;
   top: 0;
   z-index: 1000;
+  font-family: var(--font-sans);
+  font-size: 16px;
 }
 
-.header-container {
+.site-header .header-container {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
+  min-height: 64px;
 }
 
-.logo {
+.site-header .logo {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -25,21 +30,22 @@
   color: #1f2937 !important;
   cursor: pointer;
   text-decoration: none;
-  background-color: transparent !important;
+  line-height: 1;
 }
 
-.logo-icon {
+.site-header .logo-icon {
   color: #2563eb !important;
-  background-color: transparent !important;
   font-size: 1.3rem;
   font-weight: bold;
+  font-family: inherit;
+  line-height: 1;
 }
 
-.logo-text {
+.site-header .logo-text {
   color: #1f2937 !important;
 }
 
-.header-nav {
+.site-header .header-nav {
   display: flex;
   gap: 2rem;
   align-items: center;
@@ -48,7 +54,7 @@
   transform: translateX(-50%);
 }
 
-.nav-link {
+.site-header .nav-link {
   color: #6b7280;
   text-decoration: none;
   font-size: 0.95rem;
@@ -56,17 +62,17 @@
   padding: 0.5rem 0;
 }
 
-.nav-link:hover {
+.site-header .nav-link:hover {
   color: #2563eb;
 }
 
-.header-right {
+.site-header .header-right {
   display: flex;
   gap: 0.75rem;
   align-items: center;
 }
 
-.btn-login {
+.site-header .btn-login {
   background-color: transparent;
   color: #6b7280;
   border: none;
@@ -75,15 +81,14 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s;
-  text-decoration: none;
 }
 
-.btn-login:hover {
+.site-header .btn-login:hover {
   background-color: #f3f4f6;
   color: #1f2937;
 }
 
-.btn-signup {
+.site-header .btn-signup {
   background-color: #2563eb;
   color: white;
   border: none;
@@ -92,54 +97,17 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.2s;
-  text-decoration: none;
 }
 
-.btn-signup:hover {
+.site-header .btn-signup:hover {
   background-color: #1d4ed8;
 }
 
-/* 로그인 후 스타일 */
-.notification-link {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  color: #6b7280;
-  transition: all 0.2s;
-  text-decoration: none;
-}
-
-.notification-link:hover {
-  background-color: #f3f4f6;
-  color: #1f2937;
-}
-
-.notification-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.notification-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 8px;
-  height: 8px;
-  background-color: #ef4444;
-  border-radius: 50%;
-  border: 2px solid white;
-}
-
-/* 프로필 드롭다운 */
-.profile-dropdown {
+.site-header .profile-dropdown {
   position: relative;
 }
 
-.profile-button {
+.site-header .profile-button {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -149,28 +117,22 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s;
+  line-height: 1;
 }
 
-.profile-button:hover {
+.site-header .profile-button:hover {
   background-color: #f3f4f6;
 }
 
-.profile-image {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #e5e7eb;
-}
-
-.profile-name {
+.site-header .profile-name {
+  font-family: inherit;
   font-size: 0.9rem;
   color: #1f2937;
   font-weight: 500;
+  line-height: 1;
 }
 
-/* 드롭다운 메뉴 */
-.dropdown-menu {
+.site-header .dropdown-menu {
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
@@ -185,11 +147,11 @@
   z-index: 1000;
 }
 
-.dropdown-menu.active {
+.site-header .dropdown-menu.active {
   display: block;
 }
 
-.dropdown-item {
+.site-header .dropdown-item {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -200,36 +162,32 @@
   transition: background-color 0.2s;
 }
 
-.dropdown-item:hover {
+.site-header .dropdown-item:hover {
   background-color: #f3f4f6;
 }
-
-.dropdown-item svg {
+.site-header .dropdown-item svg {
   color: #6b7280;
 }
-
-.dropdown-item.logout {
+.site-header .dropdown-item.logout {
+  color: #ef4444;
+}
+.site-header .dropdown-item.logout svg {
   color: #ef4444;
 }
 
-.dropdown-item.logout svg {
-  color: #ef4444;
-}
-
-.dropdown-divider {
+.site-header .dropdown-divider {
   height: 1px;
   background-color: #e5e7eb;
   margin: 0.25rem 0;
 }
 
 @media (max-width: 768px) {
-  .header-container {
+  .site-header .header-container {
     flex-wrap: wrap;
     padding: 1rem;
     position: relative;
   }
-
-  .header-nav {
+  .site-header .header-nav {
     position: static;
     transform: none;
     order: 3;
@@ -237,40 +195,27 @@
     margin-top: 1rem;
     justify-content: center;
   }
-
-  .header-right {
+  .site-header .header-right {
     gap: 0.5rem;
   }
-
-  .profile-name {
+  .site-header .profile-name {
     display: none;
   }
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .header-container {
-    flex-wrap: wrap;
-    padding: 1rem;
-    position: relative;
-  }
-
-  .header-nav {
-    position: static;
-    transform: none;
-    order: 3;
-    width: 100%;
-    margin-top: 1rem;
-    justify-content: center;
-  }
-
-  .header-right {
-    gap: 0.5rem;
-  }
-
-  .btn-login,
-  .btn-signup {
+  .site-header .btn-login,
+  .site-header .btn-signup {
     padding: 0.4rem 1rem;
     font-size: 0.85rem;
   }
+}
+
+.site-header .header-container {
+  height: 64px;
+  min-height: 64px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.site-header,
+.site-header * {
+  line-height: 1.2;
 }

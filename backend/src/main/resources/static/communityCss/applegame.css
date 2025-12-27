@@ -4,6 +4,10 @@
    Apple Game (Scoped) - Modern / Clean + Emoji Apples + Moving Bonus
 ========================= */
 
+body{
+	padding : 0;
+	margin : 0;
+}
 .applegame{
   position: relative;
   padding: 44px 16px 72px;

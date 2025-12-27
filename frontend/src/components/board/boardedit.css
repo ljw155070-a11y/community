@@ -24,6 +24,10 @@
     ),
     #f5f7fb;
 }
+body {
+  padding: 0;
+  margin: 0;
+}
 
 /* ✅ 실제 컨텐츠 폭 */
 .bw-page {

@@ -17,7 +17,7 @@ public class PostService {
 
     private final PostDao postDao;
 
-    private final Path uploadDir = Paths.get("C:/upload/community");
+    private final Path uploadDir = Paths.get("C:/uploads/community");
 
     // ✅ 글 생성 (텍스트만)
     public Long write(PostDTO dto) {
@@ -137,4 +137,11 @@ public class PostService {
             Files.deleteIfExists(uploadDir.resolve(img.getSaveName()));
         } catch (Exception ignored) {}
     }
+    public void deletePost(Long postId) {
+        if (postId == null) throw new IllegalArgumentException("postId는 필수입니다.");
+
+        int rows = postDao.deletePost(postId);
+        if (rows != 1) throw new RuntimeException("게시글 삭제 실패");
+    }
+
 }

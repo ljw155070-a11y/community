@@ -39,7 +39,10 @@
   font-size: 18px;
   font-weight: 700;
 }
-
+body {
+  padding: 0;
+  margin: 0;
+}
 .logo-text {
   color: #333;
 }

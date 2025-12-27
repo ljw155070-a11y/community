@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
-import { Link } from "react-router-dom";
+
+import { Link, useLocation } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
 import { logoutAPI, getCurrentUserAPI } from "../utils/authUtils";
-import axios from "axios";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
+  const location = useLocation();
 
   const loginUser = useRecoilValue(loginUserState);
   const setLoginUser = useSetRecoilState(loginUserState);
@@ -21,38 +21,28 @@ const Header = () => {
     logoutAPI(setLoginUser);
   };
 
-  // ✅ (추가) recoil이 비어있으면 /me로 1회 동기화
+  // 페이지 이동할 때마다 로그인 상태 체크
   useEffect(() => {
-    if (!loginUser) {
-      (async () => {
+    // 로그인/회원가입 페이지에서는 체크 안 함
+    if (location.pathname === "/login" || location.pathname === "/signup") {
+      return;
+    }
+
+    (async () => {
+      try {
         const me = await getCurrentUserAPI();
-        if (me) setLoginUser(me);
-      })();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+        if (me) {
+          setLoginUser(me);
+        } else {
+          setLoginUser(null);
+        }
+      } catch (e) {
+        console.log("인증 체크 에러:", e.message);
+      }
+    })();
+  }, [location.pathname, setLoginUser]);
 
-  const loadUnreadCount = async () => {
-    try {
-      const memberId = loginUser?.memberId;
-      if (!memberId) return;
-
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACK_SERVER}/alert/list/${memberId}`,
-        { withCredentials: true }
-      );
-
-      const count = response.data.filter((a) => a.isRead === "N").length;
-      setUnreadCount(count);
-    } catch (error) {
-      console.error("알림 개수 불러오기 실패:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (loginUser) loadUnreadCount();
-  }, [loginUser]);
-
+  // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -64,7 +54,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="header">
+    <header className="header site-header">
       <div className="header-container">
         <a href="/mainpage" className="logo">
           <span className="logo-icon">◀</span>
@@ -81,59 +71,76 @@ const Header = () => {
           <a href="/notice" className="nav-link">
             공지사항
           </a>
-
-          <Link to="/about" className="nav-link">
-            사이트 소개 (임시)
-          </Link>
-          <Link to="/admin" className="nav-link">
-            관리자 (임시)
-          </Link>
+          <a href="/minigame/apple" className="nav-link">
+            미니게임
+          </a>
         </nav>
 
         <div className="header-right">
           {!loginUser ? (
             <>
-              <Link className="btn-login" to="/login">
+              <button
+                className="btn-login"
+                onClick={() => (window.location.href = "/app/login")}
+              >
                 로그인
-              </Link>
-              <Link className="btn-signup" to="/signup">
+              </button>
+              <button
+                className="btn-signup"
+                onClick={() => (window.location.href = "/app/signup")}
+              >
                 회원가입
-              </Link>
+              </button>
             </>
           ) : (
             <>
-              <Link to="/alert" className="notification-link">
-                <svg
-                  className="notification-icon"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-                {unreadCount > 0 && (
-                  <span className="notification-badge">{unreadCount}</span>
-                )}
-              </Link>
-
               <div className="profile-dropdown" ref={dropdownRef}>
                 <button className="profile-button" onClick={toggleDropdown}>
                   <span className="profile-name">
                     {loginUser.nickname || loginUser.name}
                   </span>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
                 </button>
 
                 <div
                   className={`dropdown-menu ${isDropdownOpen ? "active" : ""}`}
                 >
                   <Link to="/profile" className="dropdown-item">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
                     <span>내 프로필</span>
                   </Link>
+
                   <Link to="/settings" className="dropdown-item">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M12 1v6m0 6v6"></path>
+                    </svg>
                     <span>설정</span>
                   </Link>
 
@@ -144,6 +151,18 @@ const Header = () => {
                     className="dropdown-item logout"
                     onClick={handleLogout}
                   >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                      <polyline points="16 17 21 12 16 7"></polyline>
+                      <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
                     <span>로그아웃</span>
                   </a>
                 </div>
