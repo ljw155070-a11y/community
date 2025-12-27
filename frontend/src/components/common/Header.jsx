@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginUserState } from "../utils/authState";
 import { logoutAPI, getCurrentUserAPI } from "../utils/authUtils";
+import logoImage from "../assets/커뮤니티_로고.png";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -57,7 +58,7 @@ const Header = () => {
     <header className="header site-header">
       <div className="header-container">
         <a href="/mainpage" className="logo">
-          <span className="logo-icon">◀</span>
+          <img src={logoImage} alt="커뮤니티 로고" className="logo-icon" />
           <span className="logo-text">커뮤니티</span>
         </a>
 

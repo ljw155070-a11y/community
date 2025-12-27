@@ -21,30 +21,45 @@
   min-height: 64px;
 }
 
+/* 로고 */
 .site-header .logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1f2937 !important;
-  cursor: pointer;
+  gap: 0.75rem;
   text-decoration: none;
+  transition: transform 0.2s;
   line-height: 1;
+}
+
+.site-header .logo:hover {
+  transform: translateY(-2px);
 }
 
 .site-header .logo-icon {
-  color: #2563eb !important;
-  font-size: 1.3rem;
-  font-weight: bold;
-  font-family: inherit;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  
+  /* 부드러운 그림자 효과 */
+  filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2));
+  
+  transition: all 0.2s;
   line-height: 1;
 }
 
-.site-header .logo-text {
-  color: #1f2937 !important;
+.site-header .logo:hover .logo-icon {
+  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3));
+  transform: scale(1.05);
 }
 
+.site-header .logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 .site-header .header-nav {
   display: flex;
   gap: 2rem;
