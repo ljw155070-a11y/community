@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title th:text="${post.title} + ' - 커뮤니티'">게시글 - 커뮤니티</title>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1081,10 +1081,11 @@
 
   <th:block th:include="common/footer"></th:block>
 
-  <script>
-    const postId = [[${post.postId}]];
-    const isAuthenticated = [[${isAuthenticated}]];
-    const memberId = [[${memberId}]];
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    const postId = /*[[${post.postId}]]*/ 1;
+    const isAuthenticated = /*[[${isAuthenticated}]]*/ false;
+    const memberId = /*[[${memberId}]]*/ null;
 
     console.log('postId:', postId);
     console.log('isAuthenticated:', isAuthenticated, typeof isAuthenticated);
@@ -1093,15 +1094,27 @@
     // 좋아요 토글
     function toggleLike() {
       if (!isAuthenticated) {
-        alert('로그인이 필요합니다.');
-        window.location.href = '/app/login';
+        Swal.fire({
+          title: '로그인이 필요합니다',
+          text: '로그인 페이지로 이동하시겠습니까?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#2563eb',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/app/login';
+          }
+        });
         return;
       }
 
       const button = document.getElementById('likeButton');
       const countSpan = document.getElementById('likeCount');
 
-      fetch(`/board/postDetail/${postId}/like`, {
+      fetch('/board/postDetail/' + postId + '/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
@@ -1111,28 +1124,67 @@
         if (data.success) {
           button.classList.toggle('liked');
           countSpan.textContent = data.likeCount;
+          
+          // 좋아요 토스트 알림
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+          });
+          
+          Toast.fire({
+            icon: 'success',
+            title: button.classList.contains('liked') ? '좋아요!' : '좋아요 취소'
+          });
         } else {
-          alert(data.message || '좋아요 처리에 실패했습니다.');
-          if (data.message && data.message.includes('로그인')) window.location.href = '/app/login';
+          Swal.fire({
+            icon: 'error',
+            title: '오류',
+            text: data.message || '좋아요 처리에 실패했습니다.'
+          });
+          
+          if (data.message && data.message.includes('로그인')) {
+            setTimeout(() => {
+              window.location.href = '/app/login';
+            }, 1500);
+          }
         }
       })
       .catch(err => {
         console.error(err);
-        alert('좋아요 처리 중 오류가 발생했습니다.');
+        Swal.fire({
+          icon: 'error',
+          title: '오류 발생',
+          text: '좋아요 처리 중 오류가 발생했습니다.'
+        });
       });
     }
 
     // 북마크 토글
     function toggleBookmark() {
       if (!isAuthenticated) {
-        alert('로그인이 필요합니다.');
-        window.location.href = '/app/login';
+        Swal.fire({
+          title: '로그인이 필요합니다',
+          text: '로그인 페이지로 이동하시겠습니까?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#2563eb',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/app/login';
+          }
+        });
         return;
       }
 
       const button = document.getElementById('bookmarkButton');
 
-      fetch(`/board/postDetail/${postId}/bookmark`, {
+      fetch('/board/postDetail/' + postId + '/bookmark', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
@@ -1141,15 +1193,41 @@
       .then(data => {
         if (data.success) {
           button.classList.toggle('bookmarked');
-          alert(data.message);
+          
+          // 북마크 토스트 알림
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+          });
+          
+          Toast.fire({
+            icon: 'success',
+            title: data.message
+          });
         } else {
-          alert(data.message || '북마크 처리에 실패했습니다.');
-          if (data.message && data.message.includes('로그인')) window.location.href = '/app/login';
+          Swal.fire({
+            icon: 'error',
+            title: '오류',
+            text: data.message || '북마크 처리에 실패했습니다.'
+          });
+          
+          if (data.message && data.message.includes('로그인')) {
+            setTimeout(() => {
+              window.location.href = '/app/login';
+            }, 1500);
+          }
         }
       })
       .catch(err => {
         console.error(err);
-        alert('북마크 처리 중 오류가 발생했습니다.');
+        Swal.fire({
+          icon: 'error',
+          title: '오류 발생',
+          text: '북마크 처리 중 오류가 발생했습니다.'
+        });
       });
     }
 
@@ -1162,46 +1240,121 @@
         });
       } else {
         navigator.clipboard.writeText(window.location.href);
-        alert('링크가 복사되었습니다!');
+        
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        });
+        
+        Toast.fire({
+          icon: 'success',
+          title: '링크가 복사되었습니다!'
+        });
       }
     }
 
     // 신고
     function reportPost() {
       if (!isAuthenticated) {
-        alert('로그인이 필요합니다.');
-        window.location.href = '/app/login';
+        Swal.fire({
+          title: '로그인이 필요합니다',
+          text: '로그인 페이지로 이동하시겠습니까?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#2563eb',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/app/login';
+          }
+        });
         return;
       }
 
-      if (!confirm('이 게시글을 신고하시겠습니까?')) return;
-
-      fetch(`/board/postDetail/${postId}/report`, {
-        method: 'POST',
-        credentials: 'include'
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) alert('신고가 접수되었습니다.');
-        else alert(data.message || '신고 처리에 실패했습니다.');
-      })
-      .catch(err => {
-        console.error(err);
-        alert('신고 처리 중 오류가 발생했습니다.');
+      Swal.fire({
+        title: '게시글 신고',
+        text: '이 게시글을 신고하시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: '신고',
+        cancelButtonText: '취소'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch('/board/postDetail/' + postId + '/report', {
+            method: 'POST',
+            credentials: 'include'
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              Swal.fire({
+                icon: 'success',
+                title: '신고 완료',
+                text: '신고가 접수되었습니다.',
+                confirmButtonColor: '#2563eb'
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: '신고 실패',
+                text: data.message || '신고 처리에 실패했습니다.'
+              });
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            Swal.fire({
+              icon: 'error',
+              title: '오류 발생',
+              text: '신고 처리 중 오류가 발생했습니다.'
+            });
+          });
+        }
       });
     }
 
     // 팔로우
     function followAuthor() {
       if (!isAuthenticated) {
-        alert('로그인이 필요합니다.');
-        window.location.href = '/app/login';
+        Swal.fire({
+          title: '로그인이 필요합니다',
+          text: '로그인 페이지로 이동하시겠습니까?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#2563eb',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/app/login';
+          }
+        });
         return;
       }
-      alert('팔로우 되었습니다!');
+      
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true
+      });
+      
+      Toast.fire({
+        icon: 'success',
+        title: '팔로우 되었습니다!'
+      });
     }
 
-    // 이미지 모달 (blocks 이미지에도 class="post-image" 붙어있음)
+    // 이미지 모달
     function setupImageModal() {
       const images = document.querySelectorAll('.post-image');
       const modal = document.createElement('div');
@@ -1229,34 +1382,77 @@
 
     // 게시글 수정
     function editPost() {
-      window.location.href = `/board/edit/${postId}`;
+      window.location.href = '/board/edit/' + postId;
     }
 
     // 게시글 삭제
     function deletePost() {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
-
-      fetch(`/board/delete/${postId}`, {
-        method: 'POST',
-        credentials: 'include'
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('삭제되었습니다.');
-          window.location.href = '/board';
-        } else {
-          alert(data.message || '삭제 실패');
+      Swal.fire({
+        title: '게시글 삭제',
+        text: '정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch('/board/delete/' + postId, {
+            method: 'POST',
+            credentials: 'include'
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              Swal.fire({
+                icon: 'success',
+                title: '삭제 완료',
+                text: '게시글이 삭제되었습니다.',
+                confirmButtonColor: '#2563eb'
+              }).then(() => {
+                window.location.href = '/board';
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: '삭제 실패',
+                text: data.message || '게시글 삭제에 실패했습니다.'
+              });
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            Swal.fire({
+              icon: 'error',
+              title: '오류 발생',
+              text: '삭제 중 오류가 발생했습니다.'
+            });
+          });
         }
-      })
-      .catch(err => {
-        console.error(err);
-        alert('삭제 중 오류가 발생했습니다.');
       });
     }
 
     // 댓글 좋아요(임시)
     function toggleCommentLike(button) {
+      if (!isAuthenticated) {
+        Swal.fire({
+          title: '로그인이 필요합니다',
+          text: '로그인 페이지로 이동하시겠습니까?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#2563eb',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: '로그인',
+          cancelButtonText: '취소'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/app/login';
+          }
+        });
+        return;
+      }
+      
       button.classList.toggle('liked');
       const countSpan = button.querySelector('span');
       const currentCount = parseInt(countSpan.textContent, 10);
@@ -1265,8 +1461,20 @@
 
     // 답글(임시)
     function replyComment() {
-      alert('답글 기능은 준비 중입니다!');
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true
+      });
+      
+      Toast.fire({
+        icon: 'info',
+        title: '답글 기능은 준비 중입니다!'
+      });
     }
-  </script>
+    /*]]>*/
+</script>
 </body>
 </html>
