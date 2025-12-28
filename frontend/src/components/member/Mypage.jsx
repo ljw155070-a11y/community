@@ -222,7 +222,7 @@ const MyPage = () => {
               </p>
 
               <label htmlFor="profile-upload" className="profile-edit-btn">
-                {uploading ? "업로드 중..." : "프로필 수정"}
+                {uploading ? "업로드 중..." : "이미지 변경"}
               </label>
 
               <input
