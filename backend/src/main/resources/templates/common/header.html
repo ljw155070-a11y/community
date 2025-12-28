@@ -37,6 +37,7 @@
           <th:block th:if="${isAuthenticated}">
             <div class="profile-dropdown">
               <button class="profile-button" type="button" onclick="toggleDropdown()">
+              
               <div class="profile-avatar">
 		        <img th:if="${profileImage != null and !profileImage.isEmpty()}"
 		             th:src="@{/uploads/{name}(name=${profileImage})}"

@@ -823,13 +823,13 @@
           <div class="post-meta">
             <div class="author-info">
               <div class="author-avatar">
-  <img th:if="${post.authorProfileImage != null and !post.authorProfileImage.isEmpty()}"
-       th:src="@{/uploads/{name}(name=${post.authorProfileImage})}"
-       alt="author"
-       style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" />
-  <span th:unless="${post.authorProfileImage != null and !post.authorProfileImage.isEmpty()}"
-        th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">U</span>
-</div>
+				  <img th:if="${post.authorProfileImage != null and !post.authorProfileImage.isEmpty()}"
+				       th:src="@{/uploads/{name}(name=${post.authorProfileImage})}"
+				       alt="author"
+				       style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" />
+				  <span th:unless="${post.authorProfileImage != null and !post.authorProfileImage.isEmpty()}"
+				        th:text="${post.authorName != null ? post.authorName.substring(0, 1) : 'U'}">U</span>
+			</div>
               <span class="author-name" th:text="${post.authorName}"></span>
             </div>
 
