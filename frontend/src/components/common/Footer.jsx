@@ -1,5 +1,6 @@
 import React from "react";
 import "./footer.css";
+import logoImage from "../../assets/커뮤니티_로고.png";
 
 const Footer = () => {
   return (
@@ -8,7 +9,11 @@ const Footer = () => {
         <div className="footer-container">
           <div className="footer-section">
             <h3 className="footer-title">
-              <span className="footer-logo-icon">◀</span>
+              <img
+                src={logoImage}
+                alt="커뮤니티 로고"
+                className="footer-logo-icon"
+              />
               커뮤니티
             </h3>
             <p className="footer-description">
