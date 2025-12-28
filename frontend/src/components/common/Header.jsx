@@ -116,7 +116,7 @@ const Header = () => {
                         <img
                           src={`/uploads/${loginUser.profileImage}`}
                           alt="프로필"
-                          className="profile-image"
+                          className="profile-images"
                         />
                       ) : (
                         <span className="profile-initial">
