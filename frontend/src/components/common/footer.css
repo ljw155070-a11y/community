@@ -33,16 +33,17 @@
 }
 
 .footer-logo-icon {
-  color: #2563eb;
-  font-size: 1.5rem;
-  font-weight: bold;
+  width: 32px;
+  height: 32px;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  object-fit: contain;
 }
 
 .footer-description {
-  color: #6b7280;
-  line-height: 1.7;
+  color: #9ca3af;
+  line-height: 1.6;
   font-size: 0.9rem;
-  margin: 0;
 }
 
 .footer-heading {
