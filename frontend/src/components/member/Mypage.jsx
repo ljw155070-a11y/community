@@ -157,6 +157,7 @@ const MyPage = () => {
         {
           method: "POST",
           body: formData,
+          credentials: "include",
         }
       );
 
@@ -167,7 +168,11 @@ const MyPage = () => {
         alert(data.error || "프로필 이미지 업로드 실패");
         return;
       }
+      // ✅ 성공 알림
+      alert("프로필 이미지가 업데이트되었습니다.");
 
+      // ✅ 페이지 새로고침 (토큰이 재발급되었으므로 SSR도 업데이트됨)
+      window.location.reload();
       setUserData((prev) => ({
         ...prev,
         profileImage: fileUrl(data.saveName),

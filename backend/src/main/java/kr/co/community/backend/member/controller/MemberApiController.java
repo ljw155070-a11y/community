@@ -6,6 +6,7 @@ import kr.co.community.backend.member.dao.LoginSessionMapper;
 import kr.co.community.backend.member.dto.LoginSessionDTO;
 import kr.co.community.backend.member.dto.MemberDTO;
 import kr.co.community.backend.member.service.MemberService;
+import kr.co.community.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,8 @@ public class MemberApiController {
 
     private final MemberService memberService;
     private final LoginSessionMapper loginSessionMapper;  // ⭐ 추가
+    private final JwtUtil jwtUtil;  // ✅ 추가
+    
     /**
      * 로그인 API
      */

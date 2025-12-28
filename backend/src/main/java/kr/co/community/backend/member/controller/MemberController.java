@@ -10,10 +10,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import kr.co.community.backend.member.dao.LoginSessionMapper;
 import kr.co.community.backend.member.dto.LoginRequestDTO;
 import kr.co.community.backend.member.dto.LoginResponseDTO;
+import kr.co.community.backend.member.dto.LoginSessionDTO;
 import kr.co.community.backend.member.dto.MemberDTO;
 import kr.co.community.backend.member.service.MemberService;
+import kr.co.community.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
 @CrossOrigin("*")
@@ -23,7 +28,9 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
     private final MemberService memberService;
-
+    private final JwtUtil jwtUtil;  // ✅ 추가
+    private final LoginSessionMapper loginSessionMapper;  // ✅ 추가
+    
     // ✅ 로그인
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
@@ -180,11 +187,39 @@ public class MemberController {
     @PostMapping(value = "/mypage/profile-image/{memberId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> uploadProfileImage(
             @PathVariable Long memberId,
-            @RequestPart("file") MultipartFile file
+            @RequestPart("file") MultipartFile file,
+            HttpServletResponse response
     ) {
         try {
             String saveName = memberService.saveProfileImage(memberId, file);
+            MemberDTO member = memberService.getMemberInfo(memberId);
+            
+         
+            // 3. ✅ 새로운 토큰 생성 (업데이트된 프로필 이미지 포함)
+            String newToken = jwtUtil.generateToken(
+                member.getMemberId(),
+                member.getEmail(),
+                member.getName(),
+                member.getNickname(),
+                member.getProfileImage()
+            );
 
+            // 4. ✅ 쿠키 업데이트
+            Cookie cookie = new Cookie("accessToken", newToken);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60 * 24);
+            response.addCookie(cookie);
+
+            // 5. ✅ DB 세션 업데이트
+            loginSessionMapper.deleteByMemberId(memberId);
+            LoginSessionDTO newSession = new LoginSessionDTO();
+            newSession.setMemberId(memberId);
+            newSession.setToken(newToken);
+            newSession.setLoginIp("127.0.0.1");
+            newSession.setExpireTime(jwtUtil.getExpirationFromToken(newToken));
+            loginSessionMapper.save(newSession);
+            
             Map<String, Object> res = new HashMap<>();
             res.put("success", true);
             res.put("saveName", saveName);
