@@ -37,6 +37,15 @@
           <th:block th:if="${isAuthenticated}">
             <div class="profile-dropdown">
               <button class="profile-button" type="button" onclick="toggleDropdown()">
+              <div class="profile-avatar">
+		        <img th:if="${profileImage != null and !profileImage.isEmpty()}"
+		             th:src="@{/uploads/{name}(name=${profileImage})}"
+		             alt="프로필"
+		             class="profile-image" />
+		        <span th:unless="${profileImage != null and !profileImage.isEmpty()}"
+		              th:text="${nickname != null ? nickname.substring(0, 1) : 'U'}"
+		              class="profile-initial">U</span>
+		      </div>
                 <span class="profile-name" th:text="${nickname}">사용자</span>
                 <svg
                   width="12"

@@ -1,5 +1,3 @@
-@charset "UTF-8";
-
 .site-header.header {
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
@@ -29,7 +27,6 @@
   text-decoration: none;
   transition: transform 0.2s;
   line-height: 1;
-  background-color: transparent !important;
 }
 
 .site-header .logo:hover {
@@ -40,7 +37,7 @@
   width: 30px;
   height: 30px;
   object-fit: contain;
-  background-color: transparent !important;
+
   /* 부드러운 그림자 효과 */
   filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2));
 
@@ -124,10 +121,33 @@
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
-.site-header .profile-dropdown {
-  position: relative;
+.site-header .profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fff 0%, #fff 100%);
+  border: 0.5px solid rgba(102, 126, 234, 0.3);
+  flex-shrink: 0;
+  line-height: 1;
 }
 
+.site-header .profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.site-header .profile-initial {
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1;
+}
 .site-header .profile-button {
   display: flex;
   align-items: center;
@@ -151,6 +171,22 @@
   color: #1f2937;
   font-weight: 500;
   line-height: 1;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.site-header .profile-button svg {
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.site-header .dropdown-menu.active .profile-button svg {
+  transform: rotate(180deg);
+}
+
+/* ===== 드롭다운 메뉴 ===== */
+.site-header .profile-dropdown {
+  position: relative;
 }
 
 .site-header .dropdown-menu {
@@ -181,17 +217,27 @@
   text-decoration: none;
   font-size: 0.9rem;
   transition: background-color 0.2s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.4;
 }
 
 .site-header .dropdown-item:hover {
   background-color: #f3f4f6;
 }
+
 .site-header .dropdown-item svg {
   color: #6b7280;
+  flex-shrink: 0;
 }
+
 .site-header .dropdown-item.logout {
   color: #ef4444;
 }
+
 .site-header .dropdown-item.logout svg {
   color: #ef4444;
 }
@@ -223,6 +269,22 @@
   .site-header .btn-signup {
     padding: 0.4rem 1rem;
     font-size: 0.85rem;
+  }
+  .site-header .profile-name {
+    display: none;
+  }
+
+  .site-header .profile-button {
+    padding: 0.4rem;
+  }
+
+  .site-header .profile-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .site-header .profile-initial {
+    font-size: 1rem;
   }
 }
 

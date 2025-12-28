@@ -43,7 +43,8 @@
       NAME AS name,
       NICKNAME AS nickname,
       ROLE AS role,
-      STATUS AS status
+      STATUS AS status,
+      PROFILE_IMAGE AS profileImage
     FROM MEMBER
     WHERE EMAIL = #{email}
       AND STATUS = 'ACTIVE'
@@ -164,6 +165,7 @@
       NICKNAME AS nickname,
       ROLE AS role,
       STATUS AS status,
+      PROFILE_IMAGE AS profileImage,
       TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS createdAt
     FROM MEMBER
     WHERE NAME = #{name}
@@ -179,6 +181,7 @@
       NICKNAME AS nickname,
       ROLE AS role,
       STATUS AS status,
+      PROFILE_IMAGE AS profileImage,
       TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS createdAt
     FROM MEMBER
     WHERE EMAIL = #{email}

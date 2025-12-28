@@ -21,15 +21,16 @@ public class JwtUtil {
     /**
      * JWT 토큰 생성
      */
-    public String generateToken(Long memberId, String email, String name, String nickname) {
+    public String generateToken(Long memberId, String email, String name, String nickname, String profileImage) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + accessTokenValidityMs);
 
         return Jwts.builder()
-                .setSubject(String.valueOf(memberId))
+        		.setSubject(String.valueOf(memberId))
                 .claim("email", email)
                 .claim("name", name)
                 .claim("nickname", nickname)
+                .claim("profileImage", profileImage)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS512)
@@ -67,6 +68,14 @@ public class JwtUtil {
         Claims claims = parseToken(token);
         return claims.get("nickname", String.class);
     }
+    /**
+     * ✅ JWT 토큰에서 profileImage 추출
+     */
+    public String getProfileImageFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.get("profileImage", String.class);
+    }
+
 
     /**
      * JWT 토큰에서 만료시간 추출

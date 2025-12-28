@@ -152,7 +152,8 @@ public class MemberService {
             member.getMemberId(),
             member.getEmail(),
             member.getName(),
-            member.getNickname()
+            member.getNickname(),
+            member.getProfileImage() 
         );
 
         LoginSessionDTO newSession = new LoginSessionDTO();
@@ -235,6 +236,8 @@ public class MemberService {
         file.transferTo(target.toFile());
 
         memberDao.updateProfileImage(memberId, saveName);
+
+        log.info("✅ 프로필 이미지 저장: memberId={}, saveName={}", memberId, saveName);
 
         return saveName;
     }

@@ -62,7 +62,8 @@ public class MemberApiController {
                 "memberId", member.getMemberId(),
                 "email", member.getEmail(),
                 "name", member.getName(),
-                "nickname", member.getNickname()
+                "nickname", member.getNickname(),
+                "profileImage", member.getProfileImage() != null ? member.getProfileImage() : "" 
             ));
 
             log.info("✅ API 로그인 성공: {}", email);
@@ -83,8 +84,24 @@ public class MemberApiController {
      * 로그아웃 API
      */
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
+    public ResponseEntity<?> logout(
+            @CookieValue(value = "accessToken", required = false) String token,
+            HttpServletResponse response
+    ) {
         log.info("🚪 로그아웃 요청");
+        
+        try {
+            // ✅ DB 세션 삭제
+            if (token != null) {
+                Long memberId = memberService.getMemberIdFromToken(token);
+                if (memberId != null) {
+                    loginSessionMapper.deleteByMemberId(memberId);
+                    log.info("✅ DB 세션 삭제: memberId={}", memberId);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("세션 삭제 중 오류 (무시): {}", e.getMessage());
+        }
         
         // 쿠키 삭제
         Cookie cookie = new Cookie("accessToken", null);
@@ -197,7 +214,8 @@ public class MemberApiController {
                 "memberId", member.getMemberId(),
                 "email", member.getEmail(),
                 "name", member.getName(),
-                "nickname", member.getNickname()
+                "nickname", member.getNickname(),
+                "profileImage", member.getProfileImage() != null ? member.getProfileImage() : ""  
             ));
 
             return ResponseEntity.ok(result);

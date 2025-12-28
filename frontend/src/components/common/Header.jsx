@@ -110,6 +110,21 @@ const Header = () => {
             <>
               <div className="profile-dropdown" ref={dropdownRef}>
                 <button className="profile-button" onClick={toggleDropdown}>
+                  <div class="profile-avatar">
+                    <div className="profile-avatar">
+                      {profileImage ? (
+                        <img
+                          src={`/uploads/${profileImage}`}
+                          alt="프로필"
+                          className="profile-image"
+                        />
+                      ) : (
+                        <span className="profile-initial">
+                          {nickname ? nickname.substring(0, 1) : "U"}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                   <span className="profile-name">
                     {loginUser.nickname || loginUser.name}
                   </span>

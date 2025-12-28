@@ -29,12 +29,12 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String token = extractToken(request);
-
+        
         // ✅ 디버깅 로그 추가
         System.out.println("========== AuthInterceptor ==========");
         System.out.println("URL: " + request.getRequestURI());
         System.out.println("토큰: " + (token != null ? "있음 (" + token.substring(0, 20) + "...)" : "없음"));
-
+        
         if (token != null && jwtUtil.validateToken(token)) {
             try {
                 // JWT에서 회원 ID 추출
@@ -55,15 +55,19 @@ public class AuthInterceptor implements HandlerInterceptor {
                 String email = jwtUtil.getEmailFromToken(token);
                 String name = jwtUtil.getNameFromToken(token);
                 String nickname = jwtUtil.getNicknameFromToken(token);
+                String profileImage = jwtUtil.getProfileImageFromToken(token);
 
                 // Request에 사용자 정보 저장 (Thymeleaf에서 사용)
                 request.setAttribute("memberId", memberId);
                 request.setAttribute("email", email);
                 request.setAttribute("name", name);
                 request.setAttribute("nickname", nickname);
+                request.setAttribute("profileImage", profileImage);
                 request.setAttribute("isAuthenticated", true);
                 request.setAttribute("loginMemberId", memberId);
-
+                
+                System.out.println("✅ 인증 성공: memberId=" + memberId + ", nickname=" + nickname + ", profileImage=" + profileImage);
+                log.debug("✅ Authenticated: memberId={}, email={}, profileImage={}", memberId, email, profileImage);
                 System.out.println("✅ 인증 성공: memberId=" + memberId + ", nickname=" + nickname);
                 log.debug("✅ Authenticated: memberId={}, email={}", memberId, email);
             } catch (Exception e) {
