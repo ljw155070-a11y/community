@@ -112,15 +112,19 @@ const Header = () => {
                 <button className="profile-button" onClick={toggleDropdown}>
                   <div class="profile-avatar">
                     <div className="profile-avatar">
-                      {profileImage ? (
+                      {loginUser.profileImage ? (
                         <img
-                          src={`/uploads/${profileImage}`}
+                          src={`/uploads/${loginUser.profileImage}`}
                           alt="프로필"
                           className="profile-image"
                         />
                       ) : (
                         <span className="profile-initial">
-                          {nickname ? nickname.substring(0, 1) : "U"}
+                          {loginUser.nickname
+                            ? loginUser.nickname.substring(0, 1)
+                            : loginUser.name
+                            ? loginUser.name.substring(0, 1)
+                            : "U"}
                         </span>
                       )}
                     </div>
